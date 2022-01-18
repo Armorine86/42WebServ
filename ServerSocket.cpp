@@ -6,22 +6,29 @@
 /*   By: mmondell <mmondell@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/17 08:57:26 by mmondell          #+#    #+#             */
-/*   Updated: 2022/01/17 13:54:24 by mmondell         ###   ########.fr       */
+/*   Updated: 2022/01/18 10:10:16 by mmondell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <stdint.h>
 #include "ServerSocket.hpp"
 #include "colors.hpp"
 
+
+// 1. Create the socket
+// 2. Identify the socket
+// 3. On the server, wait for an incoming connection
+// 4. Send and receive messages
+// 5. Close the socket
 ServerSocket::ServerSocket(int port, int QueuedClient) :
 	listening_port(port),
 	server_fd(),
-	QueuedClient(QueuedClient) {}
+	MaxQueuedClient(QueuedClient) {}
 
 ServerSocket::ServerSocket(const ServerSocket& src) :
 	listening_port(src.listening_port),
 	server_fd(src.server_fd),
-	QueuedClient(src.QueuedClient) {}
+	MaxQueuedClient(src.MaxQueuedClient) {}
 	
 ServerSocket ServerSocket::operator=(const ServerSocket& rhs) 
 {
@@ -29,7 +36,7 @@ ServerSocket ServerSocket::operator=(const ServerSocket& rhs)
 	{
 		this->listening_port = rhs.listening_port;
 		this->server_fd = rhs.server_fd;
-		this->QueuedClient = rhs.QueuedClient;
+		this->MaxQueuedClient = rhs.MaxQueuedClient;
 		
 		return *this;
 	}
@@ -40,18 +47,14 @@ void ServerSocket::CreateServerSocket()
 {
 	// AF_INET --> Ip Protocol family 
 	// SOCK_STREAM --> Means this is a TCP socket
-	if (server_fd = socket(AF_INET, SOCK_STREAM, 0) < 0)
+	if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
 			throw std::runtime_error("ServerSocket: Error getting Socket FD\n");
 			
-	try {
-		bind_port();
-	} catch (std::runtime_error &e) {
-		std::cerr << RED << e.what() << END << std::endl;
-		exit(EXIT_FAILURE);
-	}
+	bind_port();
 	
 	// QueuedClient--> nb of pending clients before a connection is refused
-	listen(server_fd, QueuedClient);
+	listen(server_fd, MaxQueuedClient);
+	
 }
 
 void ServerSocket::bind_port() 
@@ -64,9 +67,4 @@ void ServerSocket::bind_port()
 	
 	if (bind(server_fd, (struct sockaddr *)&socketAddr, sizeof(socketAddr)) < 0)
 		throw std::runtime_error("ServerSocket: Error binding socket\n");
-}
-
-const char* ServerSocket::BadFdException::what() const throw()
-{
-	return "ServerSocket: Error getting File Descriptor";
 }

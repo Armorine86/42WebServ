@@ -5,6 +5,6 @@ There are a few steps involved in using sockets:
 2. Identify the socket
 3. On the server, wait for an incoming connection
 4. Send and receive messages
-5 Close the socket
+5. Close the socket
 
 
