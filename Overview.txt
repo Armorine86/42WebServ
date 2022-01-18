@@ -15,3 +15,14 @@ STEP 5. Client requests Image files if needed
 
 
 STEP 6. Server sends requested files to the client
+
+
+RESOURCES:
+
+https://github.com/adbenoit-9/42_webserv
+
+https://github.com/rbourgeat/webserv
+
+https://beej.us/guide/bgnet/
+
+https://www.ibm.com/docs/en/i/7.2?topic=designs-example-nonblocking-io-select

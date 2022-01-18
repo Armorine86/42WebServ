@@ -6,7 +6,7 @@
 /*   By: mmondell <mmondell@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/16 16:56:31 by mmondell          #+#    #+#             */
-/*   Updated: 2022/01/18 13:08:49 by mmondell         ###   ########.fr       */
+/*   Updated: 2022/01/18 14:18:01 by mmondell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,4 +47,5 @@ int main(int argc, char** argv)
 		std::cerr << RED <<  e.what() << END << std::endl;
 		exit(EXIT_FAILURE);
 	}
+
 }

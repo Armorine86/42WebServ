@@ -6,7 +6,7 @@
 /*   By: mmondell <mmondell@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/16 16:42:59 by mmondell          #+#    #+#             */
-/*   Updated: 2022/01/18 10:10:28 by mmondell         ###   ########.fr       */
+/*   Updated: 2022/01/18 13:57:06 by mmondell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,12 +26,17 @@ public:
 	ServerSocket(const ServerSocket& src);
 	~ServerSocket() {}
 	ServerSocket operator=(const ServerSocket& rhs);
+
 	void CreateServerSocket();
 	void bind_port();
+
+	int getFD();
+	int getPort();
+	struct sockaddr_in getAddress();
 
 private:
 	int listening_port;
 	int server_fd;
 	int MaxQueuedClient;
-		
+	struct sockaddr_in socketAddr;
 };

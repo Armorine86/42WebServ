@@ -32,7 +32,7 @@ OBJS 		=	$(addprefix $(OBJS_PATH), $(OBJS_FILES))
 VPATH		=	$(SRCS_PATH) $(UTILS_PATH) $(SERVER_PATH)
 
 $(OBJS_PATH)%.o: %.cpp
-	@$(CC) $(CFLAGS) -I$(INC_PATH) -c $< -o $@
+	@$(CC) $(CFLAGS) -I$(INC_PATH) -I$(UTILS_PATH) -I$(SERVER_PATH) -c $< -o $@
 
 all:	CFLAGS += -O2
 all:	$(NAME)

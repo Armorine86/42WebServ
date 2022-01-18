@@ -6,7 +6,13 @@
 /*   By: mmondell <mmondell@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/18 12:13:33 by mmondell          #+#    #+#             */
-/*   Updated: 2022/01/18 12:13:34 by mmondell         ###   ########.fr       */
+/*   Updated: 2022/01/18 13:22:10 by mmondell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#pragma once
+
+#include <string>
+
+void logEvent(const std::string &msg);
 
