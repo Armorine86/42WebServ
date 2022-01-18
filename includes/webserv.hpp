@@ -1,18 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.hpp                                          :+:      :+:    :+:   */
+/*   webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mmondell <mmondell@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/01/18 10:12:09 by mmondell          #+#    #+#             */
-/*   Updated: 2022/01/18 10:14:56 by mmondell         ###   ########.fr       */
+/*   Created: 2022/01/18 12:13:33 by mmondell          #+#    #+#             */
+/*   Updated: 2022/01/18 12:13:34 by mmondell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
-
-#include <string>
-#include <ctime>
-
-void logEvent(std::string &msg);
