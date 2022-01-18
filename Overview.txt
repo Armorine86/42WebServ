@@ -1,0 +1,17 @@
+STEP 1. Client requests a web page from the server (Transport Layer(4) of the OSI model)
+	-> a. Implement Transmission Control Protocol --> sockets
+
+
+STEP 2. Server sends an html file to the client
+
+
+STEP 3. Client request .css / .js files to display web page correctly
+
+
+STEP 4. Server Sends requested file to the client
+
+
+STEP 5. Client requests Image files if needed
+
+
+STEP 6. Server sends requested files to the client
