@@ -6,7 +6,7 @@
 /*   By: mmondell <mmondell@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 14:51:06 by mmondell          #+#    #+#             */
-/*   Updated: 2022/01/20 10:14:01 by mmondell         ###   ########.fr       */
+/*   Updated: 2022/01/20 12:39:36 by mmondell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ public:
 private:
 
 	std::string default_config_file;
+	
 	// iterator for the config file content
 	typedef std::vector<std::string>::iterator ParserIterator;
 
@@ -41,8 +42,7 @@ private:
 	
 	// Parser Functions
 	std::string parseLine(std::string line);
-	void sanitize_FileContent(StringVector &content);
-	void parseConfigs(const std::string &file_path);
-	bool lineIsValid(std::string line);
+	void parseConfig(StringVector &content);
+	void parseFile(const std::string &file_path);
 	bool isInServerScope(const std::string &line);
 };

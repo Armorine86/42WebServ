@@ -6,7 +6,7 @@
 /*   By: mmondell <mmondell@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/20 09:26:11 by mmondell          #+#    #+#             */
-/*   Updated: 2022/01/20 12:22:19 by mmondell         ###   ########.fr       */
+/*   Updated: 2022/01/20 13:24:23 by mmondell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ std::string format_line(std::string &line) {
 		line.erase(0, i);
 	}
 
-	return new_string;
+	return left_trim(new_string, " ");
 }
 
 std::string& left_trim(std::string &line, const char* delimiters) {
@@ -54,4 +54,25 @@ std::string& right_trim(std::string &line, const char* delimiters) {
 std::string& both_trim(std::string &line, const char* delimiters) {
 
 	return left_trim(right_trim(line, delimiters), delimiters);	
+}
+
+StringVector split(std::string line, std::string delimiter) {
+   
+   StringVector result;
+   
+   size_t i = 0, j = 0;
+   
+   while (i < line.length() && j < line.length()) {
+	   i = line.find_first_of(delimiter, j);
+	   if (i == std::string::npos) {
+		   i = line.length();
+	   }
+	   std::string str = line.substr(j, i - j);
+	   if (!str.empty()) {
+		   result.push_back(str);
+	   }
+	   j = i + 1;
+   }
+
+   return result;
 }

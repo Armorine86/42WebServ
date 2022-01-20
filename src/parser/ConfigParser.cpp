@@ -6,7 +6,7 @@
 /*   By: mmondell <mmondell@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 15:02:37 by mmondell          #+#    #+#             */
-/*   Updated: 2022/01/20 12:27:47 by mmondell         ###   ########.fr       */
+/*   Updated: 2022/01/20 13:32:31 by mmondell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,53 +14,57 @@
 
 ConfigParser::ConfigParser() : default_config_file(DEFAULT_CONFIG_FILE)
 {
-	parseConfigs(default_config_file);
+	parseFile(default_config_file);
 }
 
 ConfigParser::ConfigParser(const std::string &file_path) 
 {
-	parseConfigs(file_path);
+	parseFile(file_path);
 }
 
-
-void ConfigParser::parseConfigs(const std::string &file_path) 
+// Parse the config file, formats each line and build a String Vector
+void ConfigParser::parseFile(const std::string &file_path) 
 {
 	StringVector content;
 	std::string line;
 	std::ifstream file(file_path.c_str());
 	
 	if (!(file.is_open() && file.good())) {
-		std::cerr << logEvent("Error: cannot open file") << END << std::endl;
+		std::cerr << logEvent("[PARSE ERROR] Cannot open file") << END << std::endl;
 		exit(EXIT_FAILURE);
 	}
 
 	while (std::getline(file, line))
 		content.push_back(format_line(line));
-	
+	if (content.empty())
+		std::cerr << logEvent("[PARSE ERROR] File is empty") << END << std::endl;
+	parseConfig(content);
 }
 
-// Validates fields and if a value is associated with it.
-// If valid, returns
-std::string ConfigParser::parseLine(std::string line) 
+void ConfigParser::parseConfig(StringVector &content) 
 {
+	ParserIterator iter;
 	
-	if (!lineIsValid(line))
-		std::cerr << logEvent("Error: Invalid Config Directive") << END << std::endl;
-		
-	return line;
-}
+	iter = content.begin();
+	bool inServerScope = isInServerScope(*iter);
 
-
-bool ConfigParser::lineIsValid(std::string line) 
-{
-	(void)line;
-	return true;
+	
 }
 
 bool ConfigParser::isInServerScope(const std::string &line) 
 {
-	if ((line.find("server")) != std::string::npos) {
-		return true;
+	StringVector tmp = split(line, " ");
+	
+	if (tmp.size() < 2) {
+		std::cerr << logEvent("[PARSE ERROR] Invaline Server Scope") << END << std::endl;
+		exit(EXIT_FAILURE);
 	}
+	
+	if (tmp[0] == "server") {
+		if (tmp[1] == "{") {
+			return true;	
+		}
+	}
+	
 	return false;
 }
