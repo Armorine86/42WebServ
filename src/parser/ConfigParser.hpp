@@ -6,7 +6,7 @@
 /*   By: mmondell <mmondell@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 14:51:06 by mmondell          #+#    #+#             */
-/*   Updated: 2022/01/20 12:39:36 by mmondell         ###   ########.fr       */
+/*   Updated: 2022/01/20 16:16:24 by mmondell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ private:
 	typedef std::vector<std::string>::iterator ParserIterator;
 
 	// vector holding multiple servers blocks
-	//std::vector<server_directive> servers;
+	std::vector<server_directive> servers;
 
 	
 	// Parser Functions
@@ -45,4 +45,8 @@ private:
 	void parseConfig(StringVector &content);
 	void parseFile(const std::string &file_path);
 	bool isInServerScope(const std::string &line);
+	bool validLine(std::string &line);
+
+	//Server Setup
+	void createServer(ParserIterator start, ParserIterator end);
 };

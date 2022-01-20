@@ -6,7 +6,7 @@
 /*   By: mmondell <mmondell@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 15:02:37 by mmondell          #+#    #+#             */
-/*   Updated: 2022/01/20 13:32:31 by mmondell         ###   ########.fr       */
+/*   Updated: 2022/01/20 16:16:28 by mmondell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void ConfigParser::parseFile(const std::string &file_path)
 	
 	if (!(file.is_open() && file.good())) {
 		std::cerr << logEvent("[PARSE ERROR] Cannot open file") << END << std::endl;
-		exit(EXIT_FAILURE);
+		exit(FILESTREAM_ERROR);
 	}
 
 	while (std::getline(file, line))
@@ -43,11 +43,48 @@ void ConfigParser::parseFile(const std::string &file_path)
 
 void ConfigParser::parseConfig(StringVector &content) 
 {
-	ParserIterator iter;
+	ParserIterator scopeStart, scopeEnd;
 	
-	iter = content.begin();
-	bool inServerScope = isInServerScope(*iter);
+	scopeStart = content.begin();
+	scopeEnd = content.begin();
+	
+	for (size_t i = 0; i < content.size(); ++i) {
+		if ((*scopeEnd).empty()){
+			scopeEnd++;
+			scopeStart = scopeEnd;
+		}
+		if (isInServerScope(*scopeStart)) {
+			int scopeLevel = 1;
+			scopeEnd++;
+			i++;
+			while (validLine(*scopeEnd) && scopeLevel > 0){
+				if ((*scopeEnd).find('{') != std::string::npos)
+					scopeLevel++;
+				else if ((*scopeEnd).find('}') != std::string::npos)
+					scopeLevel--;
+				if (scopeEnd == content.end())
+					break;
+				scopeEnd++;
+				i++;
+			}
+			if (scopeLevel == 0)
+				createServer(scopeStart, scopeEnd);
+			else {
+				std::cerr << logEvent("[PARSE ERROR] Invalid Scope.. Missing `}`") << END << std::endl;
+				exit(PARSING_ERROR);
+			}
+		}
+	}
+}
 
+bool ConfigParser::validLine(std::string &line) 
+{
+	(void)line;
+	return true;	
+}
+
+void ConfigParser::createServer(ParserIterator start, ParserIterator end) 
+{
 	
 }
 
@@ -56,15 +93,18 @@ bool ConfigParser::isInServerScope(const std::string &line)
 	StringVector tmp = split(line, " ");
 	
 	if (tmp.size() < 2) {
-		std::cerr << logEvent("[PARSE ERROR] Invaline Server Scope") << END << std::endl;
-		exit(EXIT_FAILURE);
+		std::cerr << logEvent("[PARSE ERROR] Invalid Server Scope") << END << std::endl;
+		exit(PARSING_ERROR);
 	}
 	
 	if (tmp[0] == "server") {
 		if (tmp[1] == "{") {
 			return true;	
 		}
+		else {
+			std::cerr << logEvent("[PARSE ERROR] Missing opening `{`") << END << std::endl;
+			exit(PARSING_ERROR);
+		}
 	}
-	
 	return false;
 }

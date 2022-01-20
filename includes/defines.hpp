@@ -6,7 +6,7 @@
 /*   By: mmondell <mmondell@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 14:52:27 by mmondell          #+#    #+#             */
-/*   Updated: 2022/01/20 12:52:47 by mmondell         ###   ########.fr       */
+/*   Updated: 2022/01/20 16:14:31 by mmondell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,5 +22,8 @@
 #define WHITESPACES " \t\n\v\f\r"
 #define CONFIG_BLOCKS_DELIMITERS "{};"
 
+// error codes
+#define PARSING_ERROR 3
+#define FILESTREAM_ERROR 1
 typedef std::vector<std::string> StringVector;
 
