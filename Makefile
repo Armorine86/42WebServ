@@ -1,38 +1,49 @@
-NAME 		=	webserv
+NAME 			=	webserv
 
-INC_PATH	=	includes/
-OBJS_PATH 	=	obj/
-SRCS_PATH 	=	src/
-CC 			=	clang++
-CFLAGS		=	-Wall -Werror -Wextra -Wpedantic -std=c++98 -fstandalone-debug
-RM			=	rm -rf
+INC_PATH		=	includes/
+OBJS_PATH 		=	obj/
+SRCS_PATH 		=	src/
+CC 				=	clang++
+CFLAGS			=	-Wall -Werror -Wextra -Wpedantic -std=c++98 -fstandalone-debug
+RM				=	rm -rf
 
-INC_FILES 	=	webserv.hpp
+INC_FILES 		=	colors.hpp defines.hpp
 
-SRCS_FILES	=	main.cpp
+SRCS_FILES		=	main.cpp 
 
-UTILS_FILES	=	utils.cpp
-UTILS_HDRS	=	utils.hpp
+UTILS_FILES		=	utils.cpp
+UTILS_HDRS		=	utils.hpp
+
+PARSER_FILES	=	ConfigParser.cpp
+PARSER_HDRS		=	config_fields.hpp ConfigParser.hpp
 				
-SERVER_FILES	= ServerSocket.cpp
-SERVER_HDRS		= ServerSocket.hpp
+SERVER_FILES	= 	
+SERVER_HDRS		= 	
 
-UTILS_PATH	= 	$(SRCS_PATH)utils
-SERVER_PATH	=	$(SRCS_PATH)server
+UTILS_PATH		= 	$(SRCS_PATH)utils
+SERVER_PATH		=	$(SRCS_PATH)server
+PARSER_PATH		=	$(SRCS_PATH)parser
 
-SRCS 		=	$(addprefix $(SRCS_PATH), $(SRCS_FILES))
-SERVER_SRCS	=	$(addprefix $(SERVER_PATH), $(SERVER_FILES))
-UTILS_SRCS	= 	$(addprefix $(UTILS_PATH), $(UTILS_FILES))
+SRCS 			=	$(addprefix $(SRCS_PATH), $(SRCS_FILES))
+SERVER_SRCS		=	$(addprefix $(SERVER_PATH), $(SERVER_FILES))
+UTILS_SRCS		= 	$(addprefix $(UTILS_PATH), $(UTILS_FILES))
+PARSER_SRCS		= 	$(addprefix $(PARSER_PATH), $(PARSER_FILES))
 
-OBJS_FILES	= 	$(SRCS_FILES:.cpp=.o) $(UTILS_FILES:.cpp=.o) $(SERVER_FILES:.cpp=.o)
+OBJS_FILES		= 	$(SRCS_FILES:.cpp=.o) $(UTILS_FILES:.cpp=.o) $(SERVER_FILES:.cpp=.o)\
+					$(PARSER_FILES:.cpp=.o)
 
-INCLUDES	=	$(addprefix $(INC_PATH), $(INC_FILES))
-OBJS 		=	$(addprefix $(OBJS_PATH), $(OBJS_FILES))
+INCLUDES		=	$(addprefix $(INC_PATH), $(INC_FILES))	
+OBJS 			=	$(addprefix $(OBJS_PATH), $(OBJS_FILES))
 
-VPATH		=	$(SRCS_PATH) $(UTILS_PATH) $(SERVER_PATH)
+VPATH			=	$(SRCS_PATH) $(UTILS_PATH) $(SERVER_PATH) $(PARSER_PATH)
+
+ALL_INCLUDES	= 	-I$(INC_PATH)\
+					-I$(UTILS_PATH)\
+					-I$(PARSER_PATH)\
+					-I$(SERVER_PATH)\
 
 $(OBJS_PATH)%.o: %.cpp
-	@$(CC) $(CFLAGS) -I$(INC_PATH) -I$(UTILS_PATH) -I$(SERVER_PATH) -c $< -o $@
+	@$(CC) $(CFLAGS) $(ALL_INCLUDES) -c $< -o $@
 
 all:	CFLAGS += -O2
 all:	$(NAME)

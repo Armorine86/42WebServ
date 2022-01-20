@@ -1,0 +1,3 @@
+STEP 1.  Parse the config file
+	|->	Tokenize every line and pertinent information into vectors
+	|->	Record informations into corresponding server fields

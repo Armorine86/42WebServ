@@ -6,46 +6,35 @@
 /*   By: mmondell <mmondell@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/16 16:56:31 by mmondell          #+#    #+#             */
-/*   Updated: 2022/01/18 14:18:01 by mmondell         ###   ########.fr       */
+/*   Updated: 2022/01/19 15:22:27 by mmondell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <iostream>
-#include <cstring>
-#include <arpa/inet.h>
-#include <exception>
-#include <list>
+#include "defines.hpp"
+#include "utils.hpp"
+#include "ConfigParser.hpp"
 
-#include "colors.hpp"
-#include "server/ServerSocket.hpp"
+void close_serv(int sig)
+{
+	(void)sig;
+	std::cout << YELLOW << "Closing Server...." << END << std::endl;
+}
 
-#define DEFAULT_PORT 4242
-
-// STEP 1. Client requests a web page from the server
-// STEP 2. Server sends an html file to the client
-// STEP 3. Client request .css / .js files to display web page correctly
-// STEP 4. Server Sends requested file to the client
-// STEP 5. Client requests Image files if needed
-// STEP 6. Server sends requested files to the client
 int main(int argc, char** argv)
 {
-	(void)argv;
-	if (argc != 2) {
-		std::cerr << RED << "Error: Invalid arguments" << END << std::endl;
+	std::string config_path;
+	
+	signal(SIGINT, close_serv);
+	signal(SIGQUIT, close_serv);
+	
+	if (argc <= 2){
+		
+		config_path = (argc == 2) ? argv[1] : DEFAULT_CONFIG_FILE; // No arguments = default file
+		
+		ConfigParser config(config_path);
+
+	} else {
+		std::cerr << RED << "Error: Too Many Arguments" << END << std::endl;
 		exit(EXIT_FAILURE);
 	}
-
-	// Pass in argv[1] --> Config File
-	//TODO ConfigParser config(argv[1])
-			
-	// Server Socket init
-	ServerSocket serverSock(4242, 5);
-
-	try {
-		serverSock.CreateServerSocket();
-	} catch (std::runtime_error &e) {
-		std::cerr << RED <<  e.what() << END << std::endl;
-		exit(EXIT_FAILURE);
-	}
-
 }
