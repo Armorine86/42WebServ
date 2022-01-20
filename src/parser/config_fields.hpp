@@ -6,14 +6,16 @@
 /*   By: mmondell <mmondell@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 14:22:37 by mmondell          #+#    #+#             */
-/*   Updated: 2022/01/19 16:09:50 by mmondell         ###   ########.fr       */
+/*   Updated: 2022/01/20 10:16:32 by mmondell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#pragma once
 
 #include <string>
 #include <vector>
 
-typedef std::vector<std::string> StringVector;
+#include "defines.hpp"
 
 struct location_directive {
 	bool			autoindex;
@@ -32,7 +34,7 @@ struct location_directive {
 
 typedef std::vector<location_directive> LocationVector;
 
-struct config_directive {
+struct server_directive {
 	std::string 	listen_port;
 	std::string 	index;
 	std::string 	host; 	//either 127.0.0.1 || localhost
@@ -44,12 +46,12 @@ struct config_directive {
 	unsigned int	client_max_body_size;
 };
 
-const char *server_fields[] = {
-	"server",
-	"listen",
-	"host",
-	"server_name",
-	"root",
-	"error",
-	NULL,
-};
+// const char *server_fields[] = {
+// 	"server",
+// 	"listen",
+// 	"host",
+// 	"server_name",
+// 	"root",
+// 	"error",
+// 	NULL,
+// };

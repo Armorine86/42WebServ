@@ -6,7 +6,7 @@
 /*   By: mmondell <mmondell@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/18 09:55:33 by mmondell          #+#    #+#             */
-/*   Updated: 2022/01/19 14:59:00 by mmondell         ###   ########.fr       */
+/*   Updated: 2022/01/20 09:26:09 by mmondell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,3 +24,4 @@ std::string logEvent(const std::string &msg) {
 
 	return ss.str();
 }
+

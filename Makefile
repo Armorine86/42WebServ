@@ -4,14 +4,14 @@ INC_PATH		=	includes/
 OBJS_PATH 		=	obj/
 SRCS_PATH 		=	src/
 CC 				=	clang++
-CFLAGS			=	-Wall -Werror -Wextra -Wpedantic -std=c++98 -fstandalone-debug
+CFLAGS			=	-std=c++98 -Wall -Werror -Wextra -Wpedantic -fstandalone-debug
 RM				=	rm -rf
 
 INC_FILES 		=	colors.hpp defines.hpp
 
 SRCS_FILES		=	main.cpp 
 
-UTILS_FILES		=	utils.cpp
+UTILS_FILES		=	utils.cpp string_utils.cpp
 UTILS_HDRS		=	utils.hpp
 
 PARSER_FILES	=	ConfigParser.cpp
