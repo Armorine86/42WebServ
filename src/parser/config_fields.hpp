@@ -6,7 +6,7 @@
 /*   By: mmondell <mmondell@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 14:22:37 by mmondell          #+#    #+#             */
-/*   Updated: 2022/01/20 10:16:32 by mmondell         ###   ########.fr       */
+/*   Updated: 2022/01/21 12:49:52 by mmondell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 
 #include "defines.hpp"
 
@@ -34,24 +35,27 @@ struct location_directive {
 
 typedef std::vector<location_directive> LocationVector;
 
-struct server_directive {
-	std::string 	listen_port;
+struct server_info {
 	std::string 	index;
 	std::string 	host; 	//either 127.0.0.1 || localhost
 	std::string 	root;
 	StringVector 	server_names;
-	StringVector 	error_pages;
+	std::map<int, std::string> 	error_pages;
 	LocationVector	locations;
-	unsigned int 	port;
-	unsigned int	client_max_body_size;
+	int listen_port;
+	int	client_max_body_size;
 };
 
-// const char *server_fields[] = {
-// 	"server",
-// 	"listen",
-// 	"host",
-// 	"server_name",
-// 	"root",
-// 	"error",
-// 	NULL,
-// };
+typedef enum server_fields {
+	//server,
+	listen_port,
+	host,
+	server_name,
+	root,
+	error,
+	none
+} server_fields;
+
+//enum location_fields {
+	
+// }

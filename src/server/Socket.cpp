@@ -1,27 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.cpp                                          :+:      :+:    :+:   */
+/*   Socket.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mmondell <mmondell@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/01/18 09:55:33 by mmondell          #+#    #+#             */
-/*   Updated: 2022/01/21 09:42:52 by mmondell         ###   ########.fr       */
+/*   Created: 2022/01/21 08:15:22 by mmondell          #+#    #+#             */
+/*   Updated: 2022/01/21 10:29:14 by mmondell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "utils.hpp"
+#include "Server.hpp"
+#include "Socket.hpp"
 
-std::string logEvent(const std::string &msg) {
-
-	std::stringstream ss;
-	time_t timeNow = time(0);
-
-	std::string date = (ctime(&timeNow));
-	date.resize(date.length() - 1);
-	
-	ss << "[" << date << "] " << msg;
-
-	return ss.str();
-}
+Sockets::Sockets() {}
 

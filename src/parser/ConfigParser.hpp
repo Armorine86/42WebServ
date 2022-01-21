@@ -6,7 +6,7 @@
 /*   By: mmondell <mmondell@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 14:51:06 by mmondell          #+#    #+#             */
-/*   Updated: 2022/01/20 16:16:24 by mmondell         ###   ########.fr       */
+/*   Updated: 2022/01/21 12:55:19 by mmondell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,23 +23,26 @@
 #include "utils.hpp"
 #include "defines.hpp"
 
+// **This class will parse the config file and build a vector with
+// **all the infos of each server blocks found in the file passed as parameter	 
 class ConfigParser {
 public:
 	ConfigParser();
 	ConfigParser(const std::string &file_path);
 	~ConfigParser() {}
 	
+	std::vector<server_info> getServInfos();
+	
 private:
 
 	std::string default_config_file;
 	
+	// vector holding multiple servers blocks
+	std::vector<server_info> servers_block;
+
 	// iterator for the config file content
 	typedef std::vector<std::string>::iterator ParserIterator;
 
-	// vector holding multiple servers blocks
-	std::vector<server_directive> servers;
-
-	
 	// Parser Functions
 	std::string parseLine(std::string line);
 	void parseConfig(StringVector &content);
@@ -47,6 +50,14 @@ private:
 	bool isInServerScope(const std::string &line);
 	bool validLine(std::string &line);
 
-	//Server Setup
-	void createServer(ParserIterator start, ParserIterator end);
+	// Switch
+	server_fields type;
+	server_fields getFieldType(std::string line);
+
+	// Will fill Servers_Infos private member vector with all the information
+	// found in the config file to relevant fields
+	void fillVector(ParserIterator start, ParserIterator end);
+	void fillServerFields(StringVector vec, server_info &serv_info, server_fields type);
+	
+	
 };
