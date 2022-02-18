@@ -6,7 +6,7 @@
 /*   By: mmondell <mmondell@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 15:02:37 by mmondell          #+#    #+#             */
-/*   Updated: 2022/01/21 16:18:28 by mmondell         ###   ########.fr       */
+/*   Updated: 2022/01/22 13:41:59 by mmondell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,6 +152,9 @@ void ConfigParser::fillServerFields(StringVector vec, server_info &serv_info, se
 					serv_info.listen_port = atoi(vec[1].c_str());
 					break;
 				}
+			}
+			else {
+				std::cerr << logEvent("[PARSE ERROR] Missing Listen Directive Value...") << END << std::endl;
 			}
 		}
 		case host: {
