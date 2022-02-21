@@ -6,13 +6,14 @@
 /*   By: mmondell <mmondell@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 08:06:44 by mmondell          #+#    #+#             */
-/*   Updated: 2022/01/21 11:07:57 by mmondell         ###   ########.fr       */
+/*   Updated: 2022/02/21 11:35:08 by mmondell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include <sys/socket.h>
+#include <arpa/inet.h>
 #include <netinet/in.h>
 #include <fcntl.h>
 
