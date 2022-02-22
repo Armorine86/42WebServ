@@ -6,7 +6,7 @@
 /*   By: mmondell <mmondell@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 15:02:37 by mmondell          #+#    #+#             */
-/*   Updated: 2022/01/22 13:41:59 by mmondell         ###   ########.fr       */
+/*   Updated: 2022/02/21 14:03:46 by mmondell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ void ConfigParser::parseConfig(StringVector &content)
 	}
 }
 
-bool ConfigParser::validLine(std::string &line) 
+bool ConfigParser::validLine(std::string &line)
 {
 	(void)line;
 	return true;	

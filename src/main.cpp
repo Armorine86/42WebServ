@@ -6,7 +6,7 @@
 /*   By: mmondell <mmondell@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/16 16:56:31 by mmondell          #+#    #+#             */
-/*   Updated: 2022/01/21 10:38:57 by mmondell         ###   ########.fr       */
+/*   Updated: 2022/02/21 14:34:01 by mmondell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ int main(int argc, char** argv)
 	if (argc <= 2){
 		config_path = (argc == 2) ? argv[1] : DEFAULT_CONFIG_FILE; // No arguments = default file
 		ConfigParser config(config_path);
+
 		
 	} else {
 		std::cerr << RED << "Error: Too Many Arguments" << END << std::endl;

@@ -6,7 +6,7 @@
 /*   By: mmondell <mmondell@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 14:52:27 by mmondell          #+#    #+#             */
-/*   Updated: 2022/01/21 12:08:09 by mmondell         ###   ########.fr       */
+/*   Updated: 2022/02/22 08:30:52 by mmondell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,10 @@
 #include <string>
 #include <cstring>
 
+#include "colors.hpp"
+#include "utils.hpp"
+
+
 // General Purpose defines
 #define DEFAULT_CONFIG_FILE "config_files/default.conf"
 #define WHITESPACES " \t\n\v\f\r"
@@ -25,8 +29,12 @@
 #define LOCALHOST "127.0.0.1"
 
 // Error codes
-#define PARSING_ERROR 3
 #define FILESTREAM_ERROR 1
+#define PARSING_ERROR 2
+#define INV_SOCKET 3
+#define BINDING_ERR 4
+#define OPT_ERR 5
+#define LISTEN_ERR 6
 
 // Vector typedefs  (cuz writing std::vector<blablabla> is tedious)
 typedef std::vector<std::string> StringVector;
