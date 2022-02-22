@@ -17,8 +17,8 @@ UTILS_HDRS		=	utils.hpp
 PARSER_FILES	=	ConfigParser.cpp
 PARSER_HDRS		=	config_fields.hpp ConfigParser.hpp
 				
-SERVER_FILES	= 	
-SERVER_HDRS		= 	
+SERVER_FILES	= 	Server.cpp Socket.cpp
+SERVER_HDRS		= 	Server.hpp Socket.hpp
 
 UTILS_PATH		= 	$(SRCS_PATH)utils
 SERVER_PATH		=	$(SRCS_PATH)server

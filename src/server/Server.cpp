@@ -6,15 +6,11 @@
 /*   By: mmondell <mmondell@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 15:26:09 by mmondell          #+#    #+#             */
-/*   Updated: 2022/02/22 08:58:56 by mmondell         ###   ########.fr       */
+/*   Updated: 2022/02/22 10:26:44 by mmondell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
-
-Server::Server() {
-	
-}
 
 void Server::run()
 {
