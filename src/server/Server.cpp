@@ -6,7 +6,7 @@
 /*   By: mmondell <mmondell@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 15:26:09 by mmondell          #+#    #+#             */
-/*   Updated: 2022/02/21 13:46:25 by mmondell         ###   ########.fr       */
+/*   Updated: 2022/02/22 08:58:56 by mmondell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,4 +14,9 @@
 
 Server::Server() {
 	
+}
+
+void Server::run()
+{
+	// While(true) loop in here
 }

@@ -6,7 +6,7 @@
 /*   By: mmondell <mmondell@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 08:15:22 by mmondell          #+#    #+#             */
-/*   Updated: 2022/02/22 08:30:59 by mmondell         ###   ########.fr       */
+/*   Updated: 2022/02/22 08:47:36 by mmondell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ Sockets::Sockets(server_info& info) : serv_info(info)
 	int yes = 1;
 	
 	// Makes the port reusable if a socket lingers in the Kernel
-	if (setsockopt(socket_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &yes, sizeof(yes))) {
+	if (setsockopt(socket_fd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes))) {
 
 		std::cerr << logEvent("[SOCKET] Could not set Options: ") << strerror(errno) << END << std::endl;
 		exit(OPT_ERR);
@@ -54,4 +54,9 @@ Sockets::Sockets(server_info& info) : serv_info(info)
 		exit(LISTEN_ERR);
 		
 	}
+}
+
+int Sockets::getServFD()
+{
+	return socket_fd;
 }
