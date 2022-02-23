@@ -6,7 +6,7 @@
 /*   By: mmondell <mmondell@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 08:06:44 by mmondell          #+#    #+#             */
-/*   Updated: 2022/02/22 08:41:15 by mmondell         ###   ########.fr       */
+/*   Updated: 2022/02/22 19:00:21 by mmondell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,8 @@ public:
 	Sockets(server_info& serv_info);
 	~Sockets();
 
-	int getServFD();
+	void init_sockaddr();
+	int getServFD(); // returns socket_fd
 
 private:
 	int socket_fd;
