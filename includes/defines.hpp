@@ -6,7 +6,7 @@
 /*   By: mmondell <mmondell@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 14:52:27 by mmondell          #+#    #+#             */
-/*   Updated: 2022/02/22 08:30:52 by mmondell         ###   ########.fr       */
+/*   Updated: 2022/02/28 14:21:23 by mmondell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,9 @@
 #define BINDING_ERR 4
 #define OPT_ERR 5
 #define LISTEN_ERR 6
+
+// Other Macros
+#define SIG_EXIT 0
 
 // Vector typedefs  (cuz writing std::vector<blablabla> is tedious)
 typedef std::vector<std::string> StringVector;

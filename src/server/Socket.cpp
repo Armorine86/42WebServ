@@ -1,24 +1,14 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Socket.cpp                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mmondell <mmondell@student.42quebec.com    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/01/21 08:15:22 by mmondell          #+#    #+#             */
-/*   Updated: 2022/02/22 18:57:52 by mmondell         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "Socket.hpp"
 
 #include <cerrno>
+#include <unistd.h>
+#include <poll.h>
 
 // Creates a socket for the server with the infos gathered in the parser.
 // Makes the sockets Non-Blocking with fcntl(), and binds it to the port.
 //
 // If an error occurs, the program exits with appropriate code.
-Sockets::Sockets(server_info& info) : serv_info(info)
+Sockets::Sockets()
 {
 	if ((socket_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
 		
@@ -28,7 +18,7 @@ Sockets::Sockets(server_info& info) : serv_info(info)
 	}
 	
 	// Sets socket to non-blocking
-	fcntl(socket_fd, F_SETFL, O_NONBLOCK);
+	//fcntl(socket_fd, F_SETFL, O_NONBLOCK);
 	
 	int yes = 1;
 	
@@ -55,7 +45,6 @@ Sockets::Sockets(server_info& info) : serv_info(info)
 		std::cerr << logEvent("[SOCKET] Could not listen on port: ")
 				  << strerror(errno) << END << std::endl;
 		exit(LISTEN_ERR);
-		
 	}
 }
 
@@ -65,13 +54,13 @@ Sockets::Sockets(server_info& info) : serv_info(info)
 // sin_port = htons(listen_port) 127.0.0.1 | Localhost
 // sin_addr.s_addr = inet_addr(host)
 //
-// according to some sources, sin_zero doesn't need to be touched at all as it changes nothing 
+// according to some beej's tutorial, sin_zero doesn't need to be touched at all as it changes nothing
 void Sockets::init_sockaddr()
 {
 	bzero(&address, sizeof(address));
 	address.sin_family = AF_INET; //IPv4
-	address.sin_port = htons(serv_info.listen_port);
-	address.sin_addr.s_addr = inet_addr(serv_info.host.c_str());
+	address.sin_port = htons(8080);
+	address.sin_addr.s_addr = inet_addr("127.0.0.1");
 }
 
 int Sockets::getServFD()

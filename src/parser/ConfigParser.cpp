@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ConfigParser.cpp                                   :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mmondell <mmondell@student.42quebec.com    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/01/19 15:02:37 by mmondell          #+#    #+#             */
-/*   Updated: 2022/02/21 14:03:46 by mmondell         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "ConfigParser.hpp"
 
 ConfigParser::ConfigParser() : default_config_file(DEFAULT_CONFIG_FILE)
@@ -22,9 +10,9 @@ ConfigParser::ConfigParser(const std::string &file_path)
 	parseFile(file_path);
 }
 
-std::vector<server_info> ConfigParser::getServInfos() 
+std::vector<server_info> ConfigParser::getServers()
 {
-	return servers_block;
+	return servers_config;
 }
 
 // Parse the config file, formats each line and build a String Vector
@@ -121,10 +109,11 @@ void ConfigParser::fillVector(ParserIterator start, ParserIterator end)
 				start++;
 			}
 		} else {
-			; //serv_info.locations
+			; //TODO fillLocationFields(serv_info.location)
 		}
 	}
-	servers_block.push_back(serv_info);
+	// fill a vector with a complete Server block (including its locations blocks)
+	servers_config.push_back(serv_info);
 }
 
 void ConfigParser::fillServerFields(StringVector vec, server_info &serv_info, server_fields type) 

@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Socket.hpp                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mmondell <mmondell@student.42quebec.com    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/01/21 08:06:44 by mmondell          #+#    #+#             */
-/*   Updated: 2022/02/22 19:00:21 by mmondell         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #pragma once
 
 #include <sys/socket.h>
@@ -29,15 +17,14 @@ class Sockets {
 public:
 	Sockets();
 	Sockets(const Sockets& src) { *this = src; }
-	Sockets(server_info& serv_info);
-	~Sockets();
+	~Sockets() {}
 
 	void init_sockaddr();
 	int getServFD(); // returns socket_fd
 
 private:
 	int socket_fd;
-	int addrlen;
+	//int addrlen;
 	struct sockaddr_in address;
 	server_info serv_info;  // Contain server infos from Config file
 };

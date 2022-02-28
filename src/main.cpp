@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mmondell <mmondell@student.42quebec.com    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/01/16 16:56:31 by mmondell          #+#    #+#             */
-/*   Updated: 2022/02/21 14:34:01 by mmondell         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "defines.hpp"
 #include "utils.hpp"
 #include "ConfigParser.hpp"
@@ -19,6 +7,7 @@ void close_serv(int sig)
 {
 	(void)sig;
 	std::cout << YELLOW << "Closing Server...." << END << std::endl;
+	exit(SIG_EXIT);
 }
 
 int main(int argc, char** argv)
@@ -29,10 +18,10 @@ int main(int argc, char** argv)
 	signal(SIGQUIT, close_serv);
 
 	if (argc <= 2){
-		config_path = (argc == 2) ? argv[1] : DEFAULT_CONFIG_FILE; // No arguments = default file
+		// No arguments = default file
+		config_path = (argc == 2) ? argv[1] : DEFAULT_CONFIG_FILE;
 		ConfigParser config(config_path);
 
-		
 	} else {
 		std::cerr << RED << "Error: Too Many Arguments" << END << std::endl;
 		exit(EXIT_FAILURE);

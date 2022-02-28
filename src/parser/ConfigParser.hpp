@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ConfigParser.hpp                                   :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mmondell <mmondell@student.42quebec.com    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/01/19 14:51:06 by mmondell          #+#    #+#             */
-/*   Updated: 2022/02/21 15:29:10 by mmondell         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #pragma once
 
 #include <fstream>
@@ -31,17 +19,16 @@ public:
 	ConfigParser(const std::string &file_path);
 	~ConfigParser() {}
 	
-	std::vector<server_info> getServInfos();
-	
+	std::vector<server_info> getServers();
 private:
+	// iterator for the config file content
+	typedef std::vector<std::string>::iterator ParserIterator;
 
 	std::string default_config_file;
 	
 	// vector holding multiple servers blocks
-	std::vector<server_info> servers_block;
+	std::vector<server_info> servers_config;
 
-	// iterator for the config file content
-	typedef std::vector<std::string>::iterator ParserIterator;
 
 	// Parser Functions
 	std::string parseLine(std::string line);
