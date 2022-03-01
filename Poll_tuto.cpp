@@ -83,7 +83,7 @@ void add_to_pfds(struct pollfd *pfds[], int newfd, int *fd_count, int *fd_size)
     if (*fd_count == *fd_size) {
         *fd_size *= 2; // Double it
 
-        *pfds = realloc(*pfds, sizeof(**pfds) * (*fd_size));
+        *pfds = (pollfd *)realloc(*pfds, sizeof(**pfds) * (*fd_size));
     }
 
     (*pfds)[*fd_count].fd = newfd;
@@ -118,7 +118,7 @@ int main(void)
     // (We'll realloc as necessary)
     int fd_count = 0;
     int fd_size = 5;
-    struct pollfd *pfds = malloc(sizeof *pfds * fd_size);
+    struct pollfd *pfds = (pollfd *)malloc(sizeof *pfds * fd_size);
 
     // Set up and get a listening socket
     listener = get_listener_socket();
