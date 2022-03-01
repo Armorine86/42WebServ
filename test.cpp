@@ -11,6 +11,8 @@
 #include <vector>
 #include <iostream>
 
+#define PORT 8080
+
 std::vector<struct pollfd> getServersSockets(std::vector<struct pollfd> pfds, int n_server)
 {
 	int yes = 1;
@@ -24,7 +26,7 @@ std::vector<struct pollfd> getServersSockets(std::vector<struct pollfd> pfds, in
 
 		bzero(&sa, sizeof(sa));
 		sa.sin_family = AF_INET; //IPv4
-		sa.sin_port = htons(i + 8079);
+		sa.sin_port = htons(PORT);
 		sa.sin_addr.s_addr = inet_addr("127.0.0.1");
 
 		if ((pfd.fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {

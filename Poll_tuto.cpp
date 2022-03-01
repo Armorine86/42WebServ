@@ -12,8 +12,18 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <poll.h>
+#include <fcntl.h>
+#include <iostream>
+
 
 #define PORT "9034"   // Port we're listening on
+
+void exit_server(int sig)
+{
+	(void)sig;
+	std::cout << "Closing Server..." << std::endl;
+	exit(1);
+}
 
 // Get sockaddr, IPv4 or IPv6:
 void *get_in_addr(struct sockaddr *sa)
@@ -32,20 +42,26 @@ int get_listener_socket(void)
     int yes=1;        // For setsockopt() SO_REUSEADDR, below
     int rv;
 
-    struct addrinfo hints, *ai, *p;
+    // struct addrinfo hints, *ai, *p;
 
     // Get us a socket and bind it
-    memset(&hints, 0, sizeof hints);
-    hints.ai_family = AF_UNSPEC;
-    hints.ai_socktype = SOCK_STREAM;
-    hints.ai_flags = AI_PASSIVE;
-    if ((rv = getaddrinfo(NULL, PORT, &hints, &ai)) != 0) {
-        fprintf(stderr, "selectserver: %s\n", gai_strerror(rv));
-        exit(1);
-    }
+    // memset(&hints, 0, sizeof hints);
+    // hints.ai_family = AF_UNSPEC;
+    // hints.ai_socktype = SOCK_STREAM;
+    // hints.ai_flags = AI_PASSIVE;
+    // if ((rv = getaddrinfo(NULL, PORT, &hints, &ai)) != 0) {
+    //     fprintf(stderr, "selectserver: %s\n", gai_strerror(rv));
+    //     exit(1);
+    // }
+
+    struct sockaddr_in sa;
+    bzero(&sa, sizeof(sa));
+	sa.sin_family = AF_INET; //IPv4
+	sa.sin_port = htons(8080);
+	sa.sin_addr.s_addr = inet_addr("10.12.3.5");
     
-    for(p = ai; p != NULL; p = p->ai_next) {
-        listener = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
+    for(;;) {
+        listener = socket(AF_INET, SOCK_STREAM, 0);
         if (listener < 0) { 
             continue;
         }
@@ -53,20 +69,22 @@ int get_listener_socket(void)
         // Lose the pesky "address already in use" error message
         setsockopt(listener, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int));
 
-        if (bind(listener, p->ai_addr, p->ai_addrlen) < 0) {
+        fcntl(listener, F_SETFL, O_NONBLOCK);
+
+        if (bind(listener, (struct sockaddr *)&sa, sizeof(sa)) < 0) {
+            std::cout << "Can't bind" << std::endl;
             close(listener);
             continue;
         }
-
         break;
     }
 
-    freeaddrinfo(ai); // All done with this
+    //freeaddrinfo(ai); // All done with this
 
     // If we got here, it means we didn't get bound
-    if (p == NULL) {
-        return -1;
-    }
+   // if (p == NULL) {
+   //    return -1;
+   // }
 
     // Listen
     if (listen(listener, 10) == -1) {
@@ -110,6 +128,7 @@ int main(void)
     struct sockaddr_storage remoteaddr; // Client address
     socklen_t addrlen;
 
+
     char buf[256];    // Buffer for client data
 
     char remoteIP[INET6_ADDRSTRLEN];
@@ -119,6 +138,9 @@ int main(void)
     int fd_count = 0;
     int fd_size = 5;
     struct pollfd *pfds = (pollfd *)malloc(sizeof *pfds * fd_size);
+
+    signal(SIGINT, exit_server);
+	signal(SIGQUIT, exit_server);
 
     // Set up and get a listening socket
     listener = get_listener_socket();
@@ -153,6 +175,8 @@ int main(void)
                     // If listener is ready to read, handle new connection
 
                     addrlen = sizeof remoteaddr;
+
+                    // Return a FD for the client
                     newfd = accept(listener, (struct sockaddr *)&remoteaddr, &addrlen);
 
                     if (newfd == -1) {
@@ -170,7 +194,7 @@ int main(void)
                 } else {
                     // If not the listener, we're just a regular client
                     int nbytes = recv(pfds[i].fd, buf, sizeof buf, 0);
-
+                    printf("%s\n",buf);
                     int sender_fd = pfds[i].fd;
 
                     if (nbytes <= 0) {
