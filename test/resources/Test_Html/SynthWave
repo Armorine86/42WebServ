@@ -1,0 +1,19 @@
+"HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: 1084\n\n\
+		<!DOCTYPE html>\n\
+		<html>\n\
+		<head>\n\
+		<!-- HTML Codes by Quackit.com -->\n\
+		<title>\n\
+		Les surfeurs du web</title>\n\
+		<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n\
+		<style>\n\
+		body {background-color:#f55fff;background-image:url(https://c4.wallpaperflare.com/wallpaper/500/442/354/outrun-vaporwave-hd-wallpaper-preview.jpg);background-repeat:repeat;background-position:top left;background-attachment:scroll;}\n\
+		h1{font-family:Impact, sans-serif;color:#000000;background-color:#ffffff;}\n\
+		p {font-family:Georgia, serif;font-size:14px;font-style:normal;font-weight:normal;color:#000000;background-color:#ffffff;}\n\
+		</style>\n\
+		</head>\n\
+		<body>\n\
+		<h1>Yo men bienvenue sur notre site trop swag!</h1>\n\
+		<p>Random text bla bla bla</p>\n\
+		</body>\n\
+		</html>"
