@@ -54,7 +54,7 @@ Sockets::Sockets()
 // sin_port = htons(listen_port) 127.0.0.1 | Localhost
 // sin_addr.s_addr = inet_addr(host)
 //
-// according to some beej's tutorial, sin_zero doesn't need to be touched at all as it changes nothing
+// according to beej's tutorial, sin_zero doesn't need to be touched at all as it changes nothing
 void Sockets::init_sockaddr()
 {
 	bzero(&address, sizeof(address));
