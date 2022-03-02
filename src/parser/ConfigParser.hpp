@@ -19,7 +19,8 @@ public:
 	ConfigParser(const std::string &file_path);
 	~ConfigParser() {}
 	
-	std::vector<server_info> getServers();
+	std::vector<server_info> getServersInfos();
+
 private:
 	// iterator for the config file content
 	typedef std::vector<std::string>::iterator ParserIterator;

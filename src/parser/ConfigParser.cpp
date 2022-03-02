@@ -10,7 +10,7 @@ ConfigParser::ConfigParser(const std::string &file_path)
 	parseFile(file_path);
 }
 
-std::vector<server_info> ConfigParser::getServers()
+std::vector<server_info> ConfigParser::getServersInfos()
 {
 	return servers_config;
 }
@@ -105,8 +105,9 @@ void ConfigParser::fillVector(ParserIterator start, ParserIterator end)
 				if (!(*start).empty()) {
 					fillServerFields(split(*start, " "), serv_info, getFieldType(*start));
 					start++;
+				} else {
+					start++;
 				}
-				start++;
 			}
 		} else {
 			; //TODO fillLocationFields(serv_info.location)

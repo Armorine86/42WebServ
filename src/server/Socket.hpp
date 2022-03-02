@@ -16,6 +16,7 @@
 class Sockets {
 public:
 	Sockets();
+	Sockets(const server_info serv_info);
 	Sockets(const Sockets& src) { *this = src; }
 	~Sockets() {}
 

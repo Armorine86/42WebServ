@@ -17,6 +17,7 @@ public:
 	
 private:
 	Sockets socket;
+	server_info config;
 
 	// int poll(struct pollfd fds[], nfds_t nfds, int timeout);
 	std::vector<pollfd> pfds;  //fd vectors to use with poll()

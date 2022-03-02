@@ -10,8 +10,9 @@
 #include <poll.h>
 #include <vector>
 #include <iostream>
+#include <fcntl.h>
 
-#define PORT 8080
+#define PORT 8585
 
 std::vector<struct pollfd> getServersSockets(std::vector<struct pollfd> pfds, int n_server)
 {
@@ -34,14 +35,19 @@ std::vector<struct pollfd> getServersSockets(std::vector<struct pollfd> pfds, in
 			exit(1);
 		}
 
+		fcntl(pfd.fd, F_SETFL, O_NONBLOCK);
+
 		if (setsockopt(pfd.fd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes)) < 0) {
 			std::cout << "Setting option failed" << std::endl;
 			exit(1);
 		}
 
-		if (bind(pfd.fd, (struct sockaddr *)&sa, sizeof(sa)) < 0) {
-			std::cout << "Could not bind" << std::endl;
-			exit(1);
+		if (i == 0)
+		{
+			if (bind(pfd.fd, (struct sockaddr *)&sa, sizeof(sa)) < 0) {
+				std::cout << "Could not bind" << std::endl;
+				exit(1);
+			}
 		}
 
 		if (listen(pfd.fd, 10) < 0) {

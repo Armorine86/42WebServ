@@ -257,10 +257,10 @@ int main(void)
 
                             } else if (request.find("/favicon.ico") != std::string::npos) {
 
-                                std::string headers = "HTTP/1.0 200 OK\r\nContent-type: image/jpeg \r\nContent-Length: 409059\r\n\r\n";
+                                std::string headers = "HTTP/1.0 200 OK\r\nContent-type: image/jpeg \r\nContent-Length: 67646\r\n\r\n";
                                 send (newfd, headers.data(), headers.length(), 0);
 
-                                std::ifstream f("check_one.ico", std::ios::in|std::ios::binary|std::ios::ate);
+                                std::ifstream f("favicon.ico", std::ios::in|std::ios::binary|std::ios::ate);
                                 if(!f.is_open()) perror ("bloody file is nowhere to be found. Call the cops");
                                 std::streampos size = f.tellg();
                                 char* image = new char [size];

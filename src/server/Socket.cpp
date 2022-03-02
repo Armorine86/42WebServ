@@ -8,7 +8,7 @@
 // Makes the sockets Non-Blocking with fcntl(), and binds it to the port.
 //
 // If an error occurs, the program exits with appropriate code.
-Sockets::Sockets()
+Sockets::Sockets(const server_info serv_info)
 {
 	if ((socket_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
 		
@@ -18,7 +18,7 @@ Sockets::Sockets()
 	}
 	
 	// Sets socket to non-blocking
-	//fcntl(socket_fd, F_SETFL, O_NONBLOCK);
+	fcntl(socket_fd, F_SETFL, O_NONBLOCK);
 	
 	int yes = 1;
 	
@@ -59,8 +59,8 @@ void Sockets::init_sockaddr()
 {
 	bzero(&address, sizeof(address));
 	address.sin_family = AF_INET; //IPv4
-	address.sin_port = htons(8080);
-	address.sin_addr.s_addr = inet_addr("127.0.0.1");
+	address.sin_port = htons(serv_info.listen_port);
+	address.sin_addr.s_addr = inet_addr(serv_info.host.c_str());
 }
 
 int Sockets::getServFD()

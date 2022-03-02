@@ -33,18 +33,6 @@ void *get_in_addr(struct sockaddr *sa)
         return &(((struct sockaddr_in*)sa)->sin_addr);
     }
 
-    return &(((struct sockaddr_in6*)sa)->sin6_addr);
-}
-
-// Return a listening socket
-int get_listener_socket(void)
-{
-    int listener;     // Listening socket descriptor
-    int yes=1;        // For setsockopt() SO_REUSEADDR, below
-    int rv;
-
-    // struct addrinfo hints, *ai, *p;
-
     // Get us a socket and bind it
     // memset(&hints, 0, sizeof hints);
     // hints.ai_family = AF_UNSPEC;
@@ -129,7 +117,6 @@ int main(void)
     struct sockaddr_storage remoteaddr; // Client address
     socklen_t addrlen;
 
-
     char buf[256];    // Buffer for client data
 
     char remoteIP[INET6_ADDRSTRLEN];
@@ -180,9 +167,12 @@ int main(void)
                     // Return a FD for the client
                     newfd = accept(listener, (struct sockaddr *)&remoteaddr, &addrlen);
 
-                    if (newfd == -1) {
+                    if (newfd == -1) 
+                    {
                         perror("accept");
-                    } else {
+                    } 
+                    else 
+                    {
                         add_to_pfds(&pfds, newfd, &fd_count, &fd_size);
 
                         printf("pollserver: new connection from %s on "
@@ -192,7 +182,9 @@ int main(void)
                                 remoteIP, INET6_ADDRSTRLEN),
                             newfd);
                     }
-                } else {
+                } 
+                else 
+                {
                     // If not the listener, we're just a regular client
                     int nbytes = recv(pfds[i].fd, buf, sizeof buf, 0);
                     printf("%s\n",buf);
@@ -211,7 +203,9 @@ int main(void)
 
                         del_from_pfds(pfds, i, &fd_count);
 
-                    } else {
+                    } 
+                    else 
+                    {
                         // We got some good data from a client
 
                         for(int j = 0; j < fd_count; j++) {
