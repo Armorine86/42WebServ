@@ -159,17 +159,13 @@ int main(void)
     
     //const char* img_buf = copy_file("test/Surfer_Girl.jpg");
 
-    std::ifstream fin("test/Surfer_Girl.jpg", std::ios::in | std::ios::binary);
-    std::ostringstream oss;
-    oss << fin.rdbuf();
-    std::string data(oss.str());
+    // std::ifstream fin("test/Surfer_Girl.jpg", std::ios::binary);
+    // std::ostringstream oss;
+    // oss << fin.rdbuf();
+    //std::string data(oss.str());
+    //size_t len = data.length();
+    //std::string img_response = "HTTP/1.1 200 OK\nContent-Type: image/jpeg \nContent-Length: 409059\n\n" + data;
 
-    size_t len = data.length();
-
-    std::string img_response = "HTTP/1.1 200 OK\nContent-Type: image/jpeg \nContent-Length: " + std::to_string(len) + "\n\n" + data.c_str();
-    
-    // const char *img_response = "HTTP/1.1 200 OK\nContent-Type: image/jpeg \nContent-Length: 283\n\n"
-		
     // Set up and get a listening socket
     listener = get_listener_socket();
 
@@ -242,12 +238,43 @@ int main(void)
                         // We got some good data from a client
 						if (pfds[i].fd == sender_fd){
                             std::string request = buf;
-                            if (request.find("/Surfer_Girl") == std::string::npos){
+                            if (request.find("/Surfer_Girl") != std::string::npos){
+
+                                //Build the header and image for the Response in two send
+                                std::string headers = "HTTP/1.0 200 OK\r\nContent-type: image/jpeg \r\nContent-Length: 409059\r\n\r\n";
+                                send (newfd, headers.data(), headers.length(), 0);
+
+                                std::ifstream f("Surfer_Girl.jpg", std::ios::in|std::ios::binary|std::ios::ate);
+                                if(!f.is_open()) perror ("bloody file is nowhere to be found. Call the cops");
+                                std::streampos size = f.tellg();
+                                char* image = new char [size];
+                                f.seekg (0, std::ios::beg);
+                                f.read (image, size);
+                                f.close();
+
+                                send (newfd, image, size, MSG_CONFIRM);
+                                std::cout << GREEN << "+++ IMAGE RESPONSE +++\n\n" << END << headers << image << std::endl;
+
+                            } else if (request.find("/favicon.ico") != std::string::npos) {
+
+                                std::string headers = "HTTP/1.0 200 OK\r\nContent-type: image/jpeg \r\nContent-Length: 409059\r\n\r\n";
+                                send (newfd, headers.data(), headers.length(), 0);
+
+                                std::ifstream f("check_one.ico", std::ios::in|std::ios::binary|std::ios::ate);
+                                if(!f.is_open()) perror ("bloody file is nowhere to be found. Call the cops");
+                                std::streampos size = f.tellg();
+                                char* image = new char [size];
+                                f.seekg (0, std::ios::beg);
+                                f.read (image, size);
+                                f.close();
+
+                                send (newfd, image, size, MSG_CONFIRM);
+                                
+                                std::cout << GREEN << "+++ FAVICON RESPONSE +++\n\n" << END << headers << image << std::endl;
+                                } else {
+        
                                 std::cout << GREEN << "+++ RESPONSE +++\n\n" << END << response << std::endl;
                             	send(newfd, response, strlen(response), 0);
-                            } else {
-                                std::cout << GREEN << "+++ IMAGE RESPONSE +++\n\n" << END << img_response << std::endl;
-                                send(newfd, img_response.c_str(), sizeof(img_response.c_str()), 0);
                             }
                         }
 
