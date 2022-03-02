@@ -14,7 +14,10 @@
 #include <poll.h>
 #include <fcntl.h>
 #include <iostream>
+#include <fstream>
+#include <sstream>
 
+#include "../includes/colors.hpp"
 
 #define PORT 8080   // Port we're listening on
 
@@ -133,7 +136,7 @@ int main(void)
     struct pollfd *pfds = (pollfd *)malloc(sizeof *pfds * fd_size);
 
 	// Content Length must be exactly the the number of bytes in the body. Otherwise 
-	const char *respond = "HTTP/1.1 200 OK\nContent-Type: text/html image/jpeg \nContent-Length: 700\n\n\
+	const char *response = "HTTP/1.1 200 OK\nContent-Type: text/html \nContent-Length: 700\n\n\
 		<!DOCTYPE html>\n\
 		<html>\n\
 		<head>\n\
@@ -142,7 +145,7 @@ int main(void)
 		Les surfeurs du web</title>\n\
 		<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n\
 		<style>\n\
-		body {background-color:#f55fff;background-image:url(./resources/img/Surfer_Girl.jpg);background-repeat:repeat;background-position:top left;background-attachment:scroll;}\n\
+		body {background-color:#f55fff;background-image:url(/Surfer_Girl.jpg);background-repeat:repeat;background-position:top left;background-attachment:scroll;}\n\
 		h1{font-family:Impact, sans-serif;color:#000000;background-color:#ffffff;}\n\
 		p {font-family:Georgia, serif;font-size:14px;font-style:normal;font-weight:normal;color:#000000;background-color:#ffffff;}\n\
 		</style>\n\
@@ -150,15 +153,28 @@ int main(void)
 		<body>\n\
 		<h1>Yo men bienvenue sur notre site trop swag!</h1>\n\
 		<p>Random text bla bla bla</p>\n\
-		<img src=\"resources/img/Surfer_Girl.jpg\" alt=\"\">\n\
+		<img src=\"Surfer_Girl.jpg\" alt=\"\">\n\
 		</body>\n\
 		</html>";
+    
+    //const char* img_buf = copy_file("test/Surfer_Girl.jpg");
 
+    std::ifstream fin("test/Surfer_Girl.jpg", std::ios::in | std::ios::binary);
+    std::ostringstream oss;
+    oss << fin.rdbuf();
+    std::string data(oss.str());
+
+    size_t len = data.length();
+
+    std::string img_response = "HTTP/1.1 200 OK\nContent-Type: image/jpeg \nContent-Length: " + std::to_string(len) + "\n\n" + data.c_str();
+    
+    // const char *img_response = "HTTP/1.1 200 OK\nContent-Type: image/jpeg \nContent-Length: 283\n\n"
+		
     // Set up and get a listening socket
     listener = get_listener_socket();
 
     if (listener == -1) {
-        fprintf(stderr, "error getting listening socket\n");
+        std::cerr << "error getting listening socket" << std::endl;
         exit(1);
     }
 
@@ -197,24 +213,23 @@ int main(void)
                     } else {
                         add_to_pfds(&pfds, newfd, &fd_count, &fd_size);
 
-                        printf("pollserver: new connection from %s on "
-                            "socket %d\n",
-                            inet_ntop(remoteaddr.ss_family,
-                                get_in_addr((struct sockaddr*)&remoteaddr),
-                                remoteIP, INET6_ADDRSTRLEN),
-                            newfd);
+                        std::cout   << "pollserver: new connection from "
+                                    <<  inet_ntop(remoteaddr.ss_family,
+                                        get_in_addr((struct sockaddr*)&remoteaddr),
+                                        remoteIP, INET6_ADDRSTRLEN)
+                                    << "on socket " << newfd << std::endl;
                     }
                 } else {
                     // If not the listener, we're just a regular client
                     int nbytes = recv(pfds[i].fd, buf, sizeof buf, 0);
-       				printf("%s\n",buf);
+       				std::cout << GREEN << "+++ REQUEST +++ \n\n" << END << buf << std::endl;
                     int sender_fd = pfds[i].fd;
 
                     if (nbytes <= 0) {
                         // Got error or connection closed by client
                         if (nbytes == 0) {
                             // Connection closed
-                            printf("pollserver: socket %d hung up\n", sender_fd);
+                            std::cout << "pollserver: socket " << sender_fd << " hung up" << std::endl;
                         } else {
                             perror("recv");
                         }
@@ -225,8 +240,17 @@ int main(void)
 
                     } else {
                         // We got some good data from a client
-						if (pfds[i].fd == sender_fd)
-                        	write(newfd , respond , strlen(respond));
+						if (pfds[i].fd == sender_fd){
+                            std::string request = buf;
+                            if (request.find("/Surfer_Girl") == std::string::npos){
+                                std::cout << GREEN << "+++ RESPONSE +++\n\n" << END << response << std::endl;
+                            	send(newfd, response, strlen(response), 0);
+                            } else {
+                                std::cout << GREEN << "+++ IMAGE RESPONSE +++\n\n" << END << img_response << std::endl;
+                                send(newfd, img_response.c_str(), sizeof(img_response.c_str()), 0);
+                            }
+                        }
+
                     }
                 } // END handle data from client
             } // END got ready-to-read from poll()
