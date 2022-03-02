@@ -14,6 +14,7 @@
 #include <poll.h>
 #include <fcntl.h>
 #include <iostream>
+#include <signal.h>
 
 
 #define PORT "9034"   // Port we're listening on
