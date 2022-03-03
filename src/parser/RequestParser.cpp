@@ -43,7 +43,6 @@ void RequestParser::RequestInfo(StringVector& content){
 	}
 }
 
-//Parse the first line of the request
 void RequestParser::ParseFirstLine(StringIterator& line){
 	StringVector vec_str;
 	StringIterator start, end;
