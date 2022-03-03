@@ -24,8 +24,9 @@ int main(int argc, char** argv)
 		config_path = (argc == 2) ? argv[1] : DEFAULT_CONFIG_FILE;
 		ConfigParser config(config_path);
 
-		for (int i = 0; i < config.server)
-		config.getServersInfos();
+		(void)argv;
+		// for (int i = 0; i < config.server)
+		// config.getServersInfos();
 		
 		// Allume le sockets pour chaque serveur du config file pour receive request (port unique)
 		// Parse Request

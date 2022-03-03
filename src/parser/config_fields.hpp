@@ -6,7 +6,7 @@
 /*   By: gcollet <gcollet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 14:22:37 by mmondell          #+#    #+#             */
-/*   Updated: 2022/03/02 14:42:51 by gcollet          ###   ########.fr       */
+/*   Updated: 2022/03/03 14:33:59 by gcollet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 
 #include "defines.hpp"
 
+// All the parameters contained in the different Location blocks in the config file
 struct location_directive {
 	bool			autoindex;
 	bool			upload;
@@ -35,10 +36,10 @@ struct location_directive {
 
 typedef std::vector<location_directive> LocationVector;
 
+// All the parameters contained in the server portion of the config file
 struct server_info {
-	std::string 	index;
+	std::string		root;
 	std::string 	host; 	//either 127.0.0.1 || localhost
-	std::string 	root;
 	std::string 	server_names;
 	std::map<int, std::string> 	error_pages;
 	LocationVector	locations;
@@ -46,13 +47,14 @@ struct server_info {
 	int	client_max_body_size;
 };
 
+// Used for the switch case function to build the server_info struct
 typedef enum server_fields {
 	//server,
-	listen_port,
-	host,
+	listen_field,
 	server_name,
 	root,
 	error,
+	body_size,
 	none
 } server_fields;
 

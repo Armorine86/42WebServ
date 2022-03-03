@@ -10,6 +10,7 @@
 // If an error occurs, the program exits with appropriate code.
 Sockets::Sockets(const server_info serv_info)
 {
+	(void)serv_info;
 	if ((socket_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
 		
 		std::cerr << logEvent("[SOCKET] Invalid fd: ")
@@ -60,7 +61,7 @@ void Sockets::init_sockaddr()
 	bzero(&address, sizeof(address));
 	address.sin_family = AF_INET; //IPv4
 	address.sin_port = htons(serv_info.listen_port);
-	address.sin_addr.s_addr = inet_addr(serv_info.host.c_str());
+	address.sin_addr.s_addr = inet_addr(LOCALHOST);
 }
 
 int Sockets::getServFD()

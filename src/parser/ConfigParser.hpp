@@ -40,7 +40,7 @@ private:
 
 	// Switch
 	server_fields type;
-	server_fields getFieldType(std::string line);
+	server_fields getFieldType(std::string& line);
 
 	// Will fill Servers_Infos private member vector with all the information
 	// found in the config file to relevant fields

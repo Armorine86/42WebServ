@@ -70,6 +70,7 @@ void ConfigParser::parseConfig(StringVector &content)
 				exit(PARSING_ERROR);
 			}
 		}
+		else exit(PARSING_ERROR);
 	}
 }
 
@@ -79,16 +80,18 @@ bool ConfigParser::validLine(std::string &line)
 	return true;	
 }
 
-server_fields ConfigParser::getFieldType(std::string line) 
+server_fields ConfigParser::getFieldType(std::string& line) 
 {
 	if (line.find("listen") != std::string::npos)
-		return listen_port;
-	else if (line.find("host") != std::string::npos)
-		return host;
+		return listen_field;
+	// else if (line.find("host") != std::string::npos)
+	// 	return host;
 	else if (line.find("server_name") != std::string::npos)
 		return server_name;
 	else if (line.find("root") != std::string::npos)
 		return root;
+	else if (line.find("body_size") != std::string::npos)
+		return body_size;
 	else if (line.find("error") != std::string::npos)
 		return error;
 	return none;
@@ -125,13 +128,18 @@ void ConfigParser::fillServerFields(StringVector vec, server_info &serv_info, se
 	// TODO	Find a better way of splitting the lines to easily retrieve field values
 	// TODO	When arriving here, lines should've already been validated
 	// TODO Make a Parse Directive function
+
 	
 	switch (type) {
-		case listen_port: {
+		case listen_field: {
+			// Listen field contains both host ip and listen port
 			if (vec.size() == 2) {
-				serv_info.listen_port = atoi(right_trim(vec[1], ";").c_str());
+				StringVector tmp = split(vec[1], ":");
+				serv_info.host = tmp[0];
+				serv_info.listen_port = atoi(right_trim(tmp[1], ";").c_str());
 				break;
 			}
+			// if the listen and host are splitted in the conf file
 			else if (vec.size() == 3) {
 				if (vec[2] == "localhost" || vec[1] == LOCALHOST) {
 					serv_info.host = vec[1];
@@ -147,18 +155,26 @@ void ConfigParser::fillServerFields(StringVector vec, server_info &serv_info, se
 				std::cerr << logEvent("[PARSE ERROR] Missing Listen Directive Value...") << END << std::endl;
 			}
 		}
-		case host: {
-			serv_info.host = vec[1];
-			break;
-		}
+		// case host: {
+		// 	serv_info.host = vec[1];
+		// 	break;
+		// }
+		
 		case server_name: {
-			serv_info.server_names.push_back(vec[1]);
+			serv_info.server_names = vec[1];
+			//serv_info.server_names.push_back(vec[1]);
 			break;
 		}
+
 		case root: {
 			serv_info.root = vec[1];
 			break;
 		}
+
+		case body_size: {
+			serv_info.client_max_body_size = atoi(right_trim(vec[1], ";").c_str());
+		}
+
 		case error: {
 			if (vec.size() < 3) {
 				vec = split(vec[1], ",");
@@ -169,6 +185,7 @@ void ConfigParser::fillServerFields(StringVector vec, server_info &serv_info, se
 			break;
 			// parseServerDirective(serv_info);
 		}
+
 		case none: {
 			std::cerr << logEvent("[PARSE ERROR] Unrecognized Server Directive") << END << std::endl;
 		}
@@ -176,22 +193,14 @@ void ConfigParser::fillServerFields(StringVector vec, server_info &serv_info, se
 }
 
 bool ConfigParser::isInServerScope(const std::string &line) 
-{
-	StringVector tmp = split(line, " ");
-	
-	if (tmp.size() < 2) {
+{	
+	if (line.find("server") == std::string::npos) {
 		std::cerr << logEvent("[PARSE ERROR] Invalid Server Scope") << END << std::endl;
-		exit(PARSING_ERROR);
+		return false;
 	}
-	
-	if (tmp[0] == "server") {
-		if (tmp[1] == "{") {
-			return true;	
-		}
-		else {
-			std::cerr << logEvent("[PARSE ERROR] Missing opening `{`") << END << std::endl;
-			exit(PARSING_ERROR);
-		}
+	if (line.find("{") == std::string::npos) {
+		std::cerr << logEvent("[PARSE ERROR] Missing Opening Bracket") << END << std::endl;
+		return false;
 	}
-	return false;
+	return true;
 }
