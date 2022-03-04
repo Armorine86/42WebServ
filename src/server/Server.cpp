@@ -9,7 +9,7 @@ Server::Server(server_info serv_info)
 	run(socket);
 }
 
-pollfd addToPollfd(int newfd) {
+pollfd Server::addToPollfd(int newfd) {
 	pollfd new_pfd;
 
 	new_pfd.fd = newfd;
@@ -60,8 +60,10 @@ void Server::run(Sockets socket)
 		
 					if (client_fd == -1)
 						perror("accept");
-					else 
+					else {
 						pfds.push_back(addToPollfd(client_fd));
+						it = pfds.begin();
+					}
 				} 
 				else {
 					int bytes = recv((*it).fd, buffer, sizeof(buffer), 0);
@@ -80,15 +82,16 @@ void Server::run(Sockets socket)
 						close((*it).fd);
 
 						pfds.erase(it);
+						it = pfds.begin();
 					}
 					else {
 						if ((*it).fd == sender_fd) {
 							std::string request = buffer;
-							if (request.find("/Surfer_Girl") != std::string::npos) {
+							if (request.find("Surfer_Girl") != std::string::npos) {
 								std::string header = "HTTP/1.0 200 OK\r\nContent-type: image/jpeg \r\nContent-Length: 409059\r\n\r\n";
 								send(client_fd, header.data(), header.length(), 0);
 
-								std::ifstream f("favicon.ico", std::ios::in|std::ios::binary|std::ios::ate);
+								std::ifstream f("Surfer_Girl.jpg", std::ios::in|std::ios::binary|std::ios::ate);
                                 if(!f.is_open()) perror ("bloody file is nowhere to be found. Call the cops");
                             	std::streampos size = f.tellg();
                                 char* image = new char [static_cast<long>(size)];

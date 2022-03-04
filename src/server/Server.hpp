@@ -34,4 +34,6 @@ private:
 	char buffer[MAX_BODY_SIZE];
 	// int poll(struct pollfd fds[], nfds_t nfds, int timeout);
 	std::vector<pollfd> pfds;  //fd vectors to use with poll()
+
+	pollfd addToPollfd(int newfd);
 };
