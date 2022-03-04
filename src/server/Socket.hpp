@@ -16,12 +16,13 @@
 class Sockets {
 public:
 	Sockets();
-	Sockets(const server_info serv_info);
+	Sockets(server_info& serv_info);
 	Sockets(const Sockets& src) { *this = src; }
 	~Sockets() {}
 
-	void init_sockaddr();
+	void init_sockaddr(const server_info& serv_info);
 	int getServFD(); // returns socket_fd
+	sockaddr_in& getAddress() { return address; }
 
 private:
 	int socket_fd;

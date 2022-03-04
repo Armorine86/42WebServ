@@ -19,7 +19,7 @@ public:
 	ConfigParser(const std::string &file_path);
 	~ConfigParser() {}
 	
-	std::vector<server_info> getServersInfos();
+	server_info getServersInfos(const int& index);
 
 private:
 	// iterator for the config file content

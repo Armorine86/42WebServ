@@ -215,7 +215,8 @@ int main(void)
                                         remoteIP, INET6_ADDRSTRLEN)
                                     << "on socket " << newfd << std::endl;
                     }
-                } else {
+                } 
+                else {
                     // If not the listener, we're just a regular client
                     int nbytes = recv(pfds[i].fd, buf, sizeof buf, 0);
        				std::cout << GREEN << "+++ REQUEST +++ \n\n" << END << buf << std::endl;

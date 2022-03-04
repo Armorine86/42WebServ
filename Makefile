@@ -14,8 +14,8 @@ SRCS_FILES		=	main.cpp
 UTILS_FILES		=	utils.cpp string_utils.cpp
 UTILS_HDRS		=	utils.hpp
 
-PARSER_FILES	=	ConfigParser.cpp
-PARSER_HDRS		=	config_fields.hpp ConfigParser.hpp
+PARSER_FILES	=	ConfigParser.cpp #RequestParser.cpp
+PARSER_HDRS		=	config_fields.hpp ConfigParser.hpp #RequestParser.hpp
 				
 SERVER_FILES	= 	Server.cpp Socket.cpp
 SERVER_HDRS		= 	Server.hpp Socket.hpp
@@ -76,4 +76,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re linux debug

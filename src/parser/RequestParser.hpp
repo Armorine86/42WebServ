@@ -7,13 +7,10 @@
 class RequestParser {
 
 public:
-	RequestParser();
+	RequestParser() {};
 	RequestParser(std::string &request);
 	RequestParser(const RequestParser& src) { *this = src; }
-	~RequestParser();
-
-
-
+	~RequestParser() {};
 
 private:
 	std::string method; // Method

@@ -8,9 +8,8 @@
 // Makes the sockets Non-Blocking with fcntl(), and binds it to the port.
 //
 // If an error occurs, the program exits with appropriate code.
-Sockets::Sockets(const server_info serv_info)
+Sockets::Sockets(server_info& serv_info) : serv_info(serv_info)
 {
-	(void)serv_info;
 	if ((socket_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
 		
 		std::cerr << logEvent("[SOCKET] Invalid fd: ")
@@ -32,7 +31,7 @@ Sockets::Sockets(const server_info serv_info)
 		exit(OPT_ERR);
 	}
 	
-	init_sockaddr();
+	init_sockaddr(serv_info);
 	
 	if (bind(socket_fd, (struct sockaddr *)&address, sizeof(address)) < 0) {
 		
@@ -56,12 +55,12 @@ Sockets::Sockets(const server_info serv_info)
 // sin_addr.s_addr = inet_addr(host)
 //
 // according to beej's tutorial, sin_zero doesn't need to be touched at all as it changes nothing
-void Sockets::init_sockaddr()
+void Sockets::init_sockaddr(const server_info& serv_info)
 {
 	bzero(&address, sizeof(address));
 	address.sin_family = AF_INET; //IPv4
 	address.sin_port = htons(serv_info.listen_port);
-	address.sin_addr.s_addr = inet_addr(LOCALHOST);
+	address.sin_addr.s_addr = inet_addr(serv_info.host.c_str());
 }
 
 int Sockets::getServFD()

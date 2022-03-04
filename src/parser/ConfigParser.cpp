@@ -10,9 +10,9 @@ ConfigParser::ConfigParser(const std::string &file_path)
 	parseFile(file_path);
 }
 
-std::vector<server_info> ConfigParser::getServersInfos()
+server_info ConfigParser::getServersInfos(const int& index)
 {
-	return servers_config;
+	return servers_config.at(index);
 }
 
 // Parse the config file, formats each line and build a String Vector

@@ -1,13 +1,10 @@
 #include "RequestParser.hpp"
 #include "utils.hpp"
-
 #include <string>
 
 RequestParser::RequestParser(std::string &request){
 	StringVector content = split(request, "\n");
 
-	for (StringIterator it = content.begin(); it != content.end(); it++)	
-		content.push_back(format_line(*it));
 	if (content.empty()) {
 		std::cerr << logEvent("[PARSE ERROR] Request is empty") << END << std::endl;
 		exit(PARSING_ERROR);
@@ -22,20 +19,22 @@ void RequestParser::RequestInfo(StringVector& content){
 	end = content.end();
 	
 	for (; start != end; start++) {
-		if ((*start).find("GET") || (*start).find("POST") || (*start).find("DELETE"))
+		if ((*start).find("GET") != std::string::npos 
+			|| (*start).find("POST") != std::string::npos 
+			|| (*start).find("DELETE") != std::string::npos)
 			ParseFirstLine(start);
-		else if ((*start).find("Host:"))
-			host = (*start).find_first_not_of(("Host: "));
-		else if ((*start).find("User-Agent:"))
-			user_agent = (*start).find_first_not_of(("User-Agent: "));
-		else if ((*start).find("Accept:"))
-			accept = split((*start), ",");
-		else if ((*start).find("Accept-Language:"))
-			language = split((*start), ",");
-		else if ((*start).find("Accept-Charset:"))
+		else if ((*start).find("Host:") != std::string::npos)
+			host = (*start).erase(0,6);
+		else if ((*start).find("User-Agent:") != std::string::npos)
+			user_agent = (*start).erase(0, 12);
+		else if ((*start).find("Accept:") != std::string::npos)
+			accept = split((*start).erase(0,8), ",");
+		else if ((*start).find("Accept-Language:") != std::string::npos)
+			language = split((*start).erase(0,17), ",");
+		else if ((*start).find("Accept-Charset:") != std::string::npos)
 			char_set = split((*start), ",");
-		else if ((*start).find("Connection:")) {
-			if ((*start).find("keep-alive")) {
+		else if ((*start).find("Connection:") != std::string::npos) {
+			if ((*start).find("keep-alive") != std::string::npos) {
 				connection = true; }
 			else {
 				connection = false; }
@@ -52,12 +51,14 @@ void RequestParser::ParseFirstLine(StringIterator& line){
 	end = vec_str.end();
 
 	for (; start != end; start++) {
-		if ((*start).find("GET") || (*start).find("POST") || (*start).find("DELETE")){
-			if ((*start).find("GET"))
+		if ((*start).find("GET") != std::string::npos
+			|| (*start).find("POST") != std::string::npos
+			|| (*start).find("DELETE") != std::string::npos){
+			if ((*start).find("GET") != std::string::npos)
 				method = "GET";
-			else if((*start).find("POST"))
+			else if((*start).find("POST") != std::string::npos)
 				method = "POST";
-			else if((*start).find("DELETE"))
+			else if((*start).find("DELETE") != std::string::npos)
 				method = "DELETE";
 			else{
 				std::cerr << logEvent("[405] Method not Allowed") << END << std::endl;
@@ -66,10 +67,12 @@ void RequestParser::ParseFirstLine(StringIterator& line){
 		}
 		else if((*start).at(0) == '/')
 			url = *start;
-		else if((*start).find("HTTP") && (*start) != "HTTP/1.1"){
-			std::cerr << logEvent("[505] HTTP Version Not Supported") << END << std::endl;
-			return;
-		}
+		else if((*start).find("HTTP") != std::string::npos) {
+			if ((*start) != "HTTP/1.1") {
+				std::cerr << logEvent("[505] HTTP Version Not Supported") << END << std::endl;
+				return;
+			}
+		} 
 		else{
 			std::cerr << logEvent("[400] Bad Request") << END << std::endl;
 			return;

@@ -6,7 +6,7 @@
 /*   By: gcollet <gcollet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 14:52:27 by mmondell          #+#    #+#             */
-/*   Updated: 2022/03/03 15:35:19 by gcollet          ###   ########.fr       */
+/*   Updated: 2022/03/04 10:00:16 by gcollet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,6 @@
 
 // Vector typedefs  (cuz writing std::vector<blablabla> is tedious)
 typedef std::vector<std::string> StringVector;
-typedef std::vector<std::string>::iterator StringIterator
+typedef std::vector<std::string>::iterator StringIterator;
 
 
