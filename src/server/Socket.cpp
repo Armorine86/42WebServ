@@ -1,9 +1,5 @@
 #include "Socket.hpp"
 
-#include <cerrno>
-#include <unistd.h>
-#include <poll.h>
-
 // Creates a socket for the server with the infos gathered in the parser.
 // Makes the sockets Non-Blocking with fcntl(), and binds it to the port.
 //
@@ -66,4 +62,13 @@ void Sockets::init_sockaddr(const server_info& serv_info)
 int Sockets::getServFD()
 {
 	return socket_fd;
+}
+
+std::string Sockets::getHostName() 
+{
+	std::string s;
+	std::stringstream out;
+	out << serv_info.listen_port;
+	s = out.str();
+	return serv_info.host + ":" + s;
 }
