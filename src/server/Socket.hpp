@@ -5,6 +5,10 @@
 #include <netinet/in.h>
 #include <fcntl.h>
 #include <iostream>
+#include <cerrno>
+#include <unistd.h>
+#include <poll.h>
+#include <sstream>
 
 #include "defines.hpp"
 #include "config_fields.hpp"
@@ -22,6 +26,7 @@ public:
 
 	void init_sockaddr(const server_info& serv_info);
 	int getServFD(); // returns socket_fd
+	std::string getHostName(); //return IP, and port#
 	sockaddr_in& getAddress() { return address; }
 
 private:

@@ -27,7 +27,7 @@ void Server::run(Sockets socket)
 		<!DOCTYPE html>\n\
 		<html>\n\
 		<head>\n\
-		<!-- HTML Codes by Quackit.com -->\n\
+		<!-- HTML -->\n\
 		<title>\n\
 		Les surfeurs du web</title>\n\
 		<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n\
@@ -43,8 +43,9 @@ void Server::run(Sockets socket)
 		<img src=\"Surfer_Girl.jpg\" alt=\"\">\n\
 		</body>\n\
 		</html>";
+	//const char *response = "HTTP/1.1 301 Moved Permanently\nLocation: http://cyborgab.com/\n\n";
 
-
+	std::cout << YELLOW << "Server is listening on: " << socket.getHostName() << END << std::endl;
 	while(true) {
 		if (poll(&(pfds.front()), pfds.size(), 60000) < 0) {
 			perror("poll"); 
@@ -84,6 +85,9 @@ void Server::run(Sockets socket)
 						pfds.erase(it);
 						it = pfds.begin();
 					}
+					// parse the request in buffer
+					// look on which server the request is suposed to go 
+					// send the response
 					else {
 						if ((*it).fd == sender_fd) {
 							std::string request = buffer;
@@ -101,9 +105,26 @@ void Server::run(Sockets socket)
 
                                 send (client_fd, image, size, MSG_CONFIRM);
                                 
-                                std::cout << GREEN << "+++ FAVICON RESPONSE +++\n\n" << END << header << image << std::endl;
-                                } else {
-        
+                                std::cout << GREEN << "+++ IMAGE RESPONSE +++\n\n" << END << header << image << std::endl;
+                                } 
+							else if (request.find("favicon.ico") != std::string::npos) {
+
+                                std::string headers = "HTTP/1.0 200 OK\r\nContent-type: image/jpeg \r\nContent-Length: 67646\r\n\r\n";
+                                send (client_fd, headers.data(), headers.length(), 0);
+
+                                std::ifstream f("favicon.ico", std::ios::in|std::ios::binary|std::ios::ate);
+                                if(!f.is_open()) perror ("bloody file is nowhere to be found. Call the cops");
+                                std::streampos size = f.tellg();
+                                char* image = new char [static_cast<long>(size)];
+                                f.seekg (0, std::ios::beg);
+                                f.read (image, size);
+                                f.close();
+
+                                send (client_fd, image, size, MSG_CONFIRM);
+                                
+                                std::cout << GREEN << "+++ FAVICON RESPONSE +++\n\n" << END << headers << image << std::endl;
+                                }
+							else {
                                 std::cout << GREEN << "+++ RESPONSE +++\n\n" << END << response << std::endl;
                             	send(client_fd, response, strlen(response), 0);
 							}
