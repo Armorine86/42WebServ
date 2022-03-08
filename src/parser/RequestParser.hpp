@@ -12,6 +12,9 @@ public:
 	RequestParser(const RequestParser& src) { *this = src; }
 	~RequestParser() {};
 
+	std::string getMethod(void) { return method; }
+	std::string getURL(void) { return url; }
+
 private:
 	std::string method; // Method
 	std::string url;	// URL

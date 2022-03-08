@@ -3,6 +3,7 @@
 #include "defines.hpp"
 #include "Socket.hpp"
 #include "RequestParser.hpp"
+#include "Response.hpp"
 #include <unistd.h>
 #include <fstream>
 #include <poll.h>

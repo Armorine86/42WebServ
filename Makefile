@@ -14,11 +14,11 @@ SRCS_FILES		=	main.cpp
 UTILS_FILES		=	utils.cpp string_utils.cpp
 UTILS_HDRS		=	utils.hpp
 
-PARSER_FILES	=	ConfigParser.cpp #RequestParser.cpp
-PARSER_HDRS		=	config_fields.hpp ConfigParser.hpp #RequestParser.hpp
+PARSER_FILES	=	ConfigParser.cpp RequestParser.cpp
+PARSER_HDRS		=	config_fields.hpp ConfigParser.hpp RequestParser.hpp
 				
-SERVER_FILES	= 	Server.cpp Socket.cpp
-SERVER_HDRS		= 	Server.hpp Socket.hpp
+SERVER_FILES	= 	Server.cpp Socket.cpp Response.cpp
+SERVER_HDRS		= 	Server.hpp Socket.hpp Response.hpp
 
 UTILS_PATH		= 	$(SRCS_PATH)utils
 SERVER_PATH		=	$(SRCS_PATH)server

@@ -68,7 +68,7 @@ void RequestParser::ParseFirstLine(StringIterator& line){
 		else if((*start).at(0) == '/')
 			url = *start;
 		else if((*start).find("HTTP") != std::string::npos) {
-			if ((*start) != "HTTP/1.1") {
+			if ((*start).find("HTTP/1.1") == std::string::npos) {
 				std::cerr << logEvent("[505] HTTP Version Not Supported") << END << std::endl;
 				return;
 			}
