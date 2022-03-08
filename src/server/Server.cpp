@@ -72,7 +72,6 @@ void Server::run(Sockets socket)
 					//if buf is bigger than max_body_size : error 416 Request Entity Too Large
 					// TODO Integrate RequestParser Class
 					std::string str_buffer = buffer;
-
 					std::cout << TEAL << str_buffer << END << std::endl;
 
 					int sender_fd = (*it).fd;
@@ -86,7 +85,8 @@ void Server::run(Sockets socket)
 					}
 					
 					// look on which server the request is suposed to go 
-					else {
+					else
+					{
 						RequestParser request(str_buffer);
 						Response response(request);
 						if ((*it).fd == sender_fd)

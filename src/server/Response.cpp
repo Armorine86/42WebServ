@@ -62,8 +62,8 @@ Response::Response(RequestParser& request)
 			responsePOST(request);
 			break;
 		case DELETE:
-			responseDELETE(request); */
-			break;
+			responseDELETE(request); 
+			break;*/
 		default:
 			std::cerr << logEvent("Response: [405] Method not Allowed") << END << std::endl;
 	}
@@ -106,10 +106,11 @@ void Response::responseGET(RequestParser& request)
 		</body>\n\
 		</html>";
 
-	if (request.getURL().find("Surfer_Girl") != std::string::npos) {
+	if (request.getURL().find("Surfer_Girl") != std::string::npos)
+	{
 		response << "HTTP/1.1 200 OK\r\nContent-type: image/jpeg \r\nContent-Length: 409059\r\n\r\n";
 
-		std::ifstream f("/home/biohazard/Documents/42_Cursus/HTTPWebServer/Surfer_Girl.jpg", std::ios::in|std::ios::binary|std::ios::ate);
+		std::ifstream f("Surfer_Girl.jpg", std::ios::in|std::ios::binary|std::ios::ate);
 		if(!f.is_open()) perror ("bloody file is nowhere to be found. Call the cops");
 		std::streampos ssize = f.tellg();
 		char* image = new char [static_cast<long>(ssize)];
@@ -117,16 +118,17 @@ void Response::responseGET(RequestParser& request)
 		f.read (image, ssize);
 		f.close();
 
-		response << image;
+		response.write(image, ssize);
 		size = ssize; 
 		
+		delete[] image;
 		std::cout << GREEN << "+++ IMAGE RESPONSE +++\n\n" << END << response.str() << std::endl;
-		} 
-	else if (request.getURL().find("favicon.ico") != std::string::npos) {
-
+	} 
+	else if (request.getURL().find("favicon.ico") != std::string::npos)
+	{
 		response << "HTTP/1.1 200 OK\r\nContent-type: image/* \r\nContent-Length: 67646\r\n\r\n";
 
-		std::ifstream f("/home/biohazard/Documents/42_Cursus/HTTPWebServer/favicon.ico", std::ios::in|std::ios::binary|std::ios::ate);
+		std::ifstream f("favicon.ico", std::ios::in|std::ios::binary|std::ios::ate);
 		if(!f.is_open()) perror ("bloody file is nowhere to be found. Call the cops");
 		std::streampos ssize = f.tellg();
 		char* image = new char [static_cast<long>(ssize)];
@@ -134,12 +136,14 @@ void Response::responseGET(RequestParser& request)
 		f.read (image, ssize);
 		f.close();
 
-		response << image;
-		size = ssize;
+		std::streamsize size = ssize;
+		response.write(image, size);
 		
+		delete[] image;
 		std::cout << GREEN << "+++ FAVICON RESPONSE +++\n\n" << END << response.str() << std::endl;
-		}
-	else {
+	}
+	else
+	{
 		std::cout << GREEN << "+++ RESPONSE +++\n\n" << END << hardcode << std::endl;
 		response << hardcode;
 		size = response.str().length();
