@@ -67,7 +67,8 @@ void Server::run(Sockets socket)
 						it = pfds.begin();
 					}
 				} 
-				else {
+				else 
+				{
 					int bytes = recv((*it).fd, buffer, sizeof(buffer), 0);
 					//if buf is bigger than max_body_size : error 416 Request Entity Too Large
 					// TODO Integrate RequestParser Class
@@ -82,53 +83,31 @@ void Server::run(Sockets socket)
 							std::cout << "pollserver: socket " << sender_fd << " hung up" << std::endl; 
 						else 
 							perror("recv");
+						close((*it).fd); // Bye!
+                   		pfds.erase(it);
+						it = pfds.begin();
 					}
-					
+
 					// look on which server the request is suposed to go 
 					else
 					{
+			//tout ce bout la peux etre une autre method ------------------------------------------
 						RequestParser request(str_buffer);
-						Response response(request);
 						if ((*it).fd == sender_fd)
 						{
-							send(client_fd, response.getResponse().c_str(), response.getSize(), 0);
-							// std::string request = buffer;
-							// if (request.find("Surfer_Girl") != std::string::npos) {
-							// 	std::string header = "HTTP/1.1 200 OK\r\nContent-type: image/jpeg \r\nContent-Length: 409059\r\n\r\n";
-							// 	send(client_fd, header.data(), header.length(), 0);
+							Response response(request);
+							char * buffer = new char[1000000];
+							std::string header = response.getResponseHeader();
+							std::string body = response.getResponseBody();
+							size_t headerSize = response.getHeaderSize();
+							size_t bodySize = response.getBodySize();
 
-							// 	std::ifstream f("Surfer_Girl.jpg", std::ios::in|std::ios::binary|std::ios::ate);
-                            //     if(!f.is_open()) perror ("bloody file is nowhere to be found. Call the cops");
-                            // 	std::streampos size = f.tellg();
-                            //     char* image = new char [static_cast<long>(size)];
-                            //     f.seekg (0, std::ios::beg);
-                            //     f.read (image, size);
-                            //     f.close();
-
-                            //     send (client_fd, image, size, 0);
-                                
-                            //     std::cout << GREEN << "+++ IMAGE RESPONSE +++\n\n" << END << header << image << std::endl;
-                            //     } 
-							// else if (request.find("favicon.ico") != std::string::npos) {
-
-                            //     std::string headers = "HTTP/1.1 200 OK\r\nContent-type: image/* \r\nContent-Length: 67646\r\n\r\n";
-                            //     send (client_fd, headers.data(), headers.length(), 0);
-
-                            //     std::ifstream f("favicon.ico", std::ios::in|std::ios::binary|std::ios::ate);
-                            //     if(!f.is_open()) perror ("bloody file is nowhere to be found. Call the cops");
-                            //     std::streampos size = f.tellg();
-                            //     char* image = new char [static_cast<long>(size)];
-                            //     f.seekg (0, std::ios::beg);
-                            //     f.read (image, size);
-                            //     f.close();
-
-                            //     send (client_fd, image, size, 0);
-                                
-                            //     std::cout << GREEN << "+++ FAVICON RESPONSE +++\n\n" << END << headers << image << std::endl;
-                            //     }
-							// else {
-                            //     std::cout << GREEN << "+++ RESPONSE +++\n\n" << END << response << std::endl;
-                            // 	send(client_fd, response, strlen(response), 0);
+							for (size_t i = 0; i < headerSize; ++i)
+								buffer[i] = header[i];
+							for (size_t i = headerSize; i < headerSize + bodySize && i < 1000000; ++i)
+								buffer[i] = body[i - headerSize];
+							send(client_fd, buffer, headerSize + bodySize, 0);
+			//----------------------------------------------------------------------------------------
 						}
 					}
 				}

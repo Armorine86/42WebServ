@@ -84,8 +84,7 @@ MethodType Response::getType(RequestParser& request)
 
 void Response::responseGET(RequestParser& request)
 {
-	response.str("");
-	const char *hardcode = "HTTP/1.1 200 OK\nContent-Type: text/html \nContent-Length: 700\n\n\
+	const char* hardcode = "HTTP/1.1 200 OK\nContent-Type: text/html \nContent-Length: 700\n\n\
 		<!DOCTYPE html>\n\
 		<html>\n\
 		<head>\n\
@@ -108,7 +107,7 @@ void Response::responseGET(RequestParser& request)
 
 	if (request.getURL().find("Surfer_Girl") != std::string::npos)
 	{
-		response << "HTTP/1.1 200 OK\r\nContent-type: image/jpeg \r\nContent-Length: 409059\r\n\r\n";
+		header = "HTTP/1.1 200 OK\r\nContent-type: image/jpeg \r\nContent-Length: 409059\r\n\r\n";
 
 		std::ifstream f("Surfer_Girl.jpg", std::ios::in|std::ios::binary|std::ios::ate);
 		if(!f.is_open()) perror ("bloody file is nowhere to be found. Call the cops");
@@ -118,15 +117,16 @@ void Response::responseGET(RequestParser& request)
 		f.read (image, ssize);
 		f.close();
 
-		response.write(image, ssize);
-		size = ssize; 
+		body.write(image, ssize);
+		bodySize = ssize;
+		headerSize = header.length();
 		
 		delete[] image;
-		std::cout << GREEN << "+++ IMAGE RESPONSE +++\n\n" << END << response.str() << std::endl;
+		std::cout << GREEN << "+++ IMAGE RESPONSE +++\n\n" << END << std::endl;
 	} 
 	else if (request.getURL().find("favicon.ico") != std::string::npos)
 	{
-		response << "HTTP/1.1 200 OK\r\nContent-type: image/* \r\nContent-Length: 67646\r\n\r\n";
+		header = "HTTP/1.1 200 OK\r\nContent-type: image/* \r\nContent-Length: 67646\r\n\r\n";
 
 		std::ifstream f("favicon.ico", std::ios::in|std::ios::binary|std::ios::ate);
 		if(!f.is_open()) perror ("bloody file is nowhere to be found. Call the cops");
@@ -136,17 +136,18 @@ void Response::responseGET(RequestParser& request)
 		f.read (image, ssize);
 		f.close();
 
-		std::streamsize size = ssize;
-		response.write(image, size);
+		body.write(image, ssize);
+		bodySize = ssize;
+		headerSize = header.length();
 		
 		delete[] image;
-		std::cout << GREEN << "+++ FAVICON RESPONSE +++\n\n" << END << response.str() << std::endl;
+		std::cout << GREEN << "+++ FAVICON RESPONSE +++\n\n" << END << std::endl;
 	}
 	else
 	{
 		std::cout << GREEN << "+++ RESPONSE +++\n\n" << END << hardcode << std::endl;
-		response << hardcode;
-		size = response.str().length();
+		header = const_cast<char*>(hardcode);
+		headerSize = strlen(hardcode);
 	}
 }
 

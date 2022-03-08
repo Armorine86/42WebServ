@@ -5,6 +5,8 @@
 #include <fstream>
 #include "RequestParser.hpp"
 
+#define MAX_IMAGESIZE 1000000
+
 typedef enum MethodType {
 	GET,
 	POST,
@@ -18,12 +20,16 @@ public:
 	Response(RequestParser& request);
 	~Response() {};
 
-	std::string getResponse() { return response.str(); }
-	size_t getSize() { return size; }
+	std::string getResponseHeader() { return header; }
+	std::string getResponseBody() { return body.str(); }
+	size_t getHeaderSize() { return headerSize; }
+	size_t getBodySize() { return bodySize; }
 
 private:
-	std::stringstream response;
-	size_t size;
+	std::string header;
+	std::stringstream body;
+	size_t headerSize;
+	size_t bodySize;
 
 	std::ifstream imgBin();
 	MethodType getType(RequestParser& request);
