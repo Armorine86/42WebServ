@@ -50,7 +50,8 @@ void RequestParser::ParseFirstLine(StringIterator& line){
 	start = vec_str.begin();
 	end = vec_str.end();
 
-	for (; start != end; start++) {
+	for (; start != end; start++)
+	{
 		if ((*start).find("GET") != std::string::npos
 			|| (*start).find("POST") != std::string::npos
 			|| (*start).find("DELETE") != std::string::npos){
@@ -65,8 +66,9 @@ void RequestParser::ParseFirstLine(StringIterator& line){
 				return;
 			}
 		}
-		else if((*start).at(0) == '/')
+		else if((*start).at(0) == '/') {
 			url = *start;
+		}
 		else if((*start).find("HTTP") != std::string::npos) {
 			if ((*start).find("HTTP/1.1") == std::string::npos) {
 				std::cerr << logEvent("[505] HTTP Version Not Supported") << END << std::endl;
