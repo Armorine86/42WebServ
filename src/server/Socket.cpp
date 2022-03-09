@@ -10,7 +10,7 @@ Sockets::Sockets(server_info& serv_info) : serv_info(serv_info)
 		
 		std::cerr << logEvent("[SOCKET] Invalid fd: ")
 				  << strerror(errno) << END << std::endl;
-		exit(INV_SOCKET);
+		throw std::runtime_error("Invalid Socket");
 	}
 	
 	// Sets socket to non-blocking
@@ -24,7 +24,7 @@ Sockets::Sockets(server_info& serv_info) : serv_info(serv_info)
 
 		std::cerr << logEvent("[SOCKET] Could not set Options: ")
 				  << strerror(errno) << END << std::endl;
-		exit(OPT_ERR);
+		throw std::runtime_error("Cannot set socket option");
 	}
 	
 	init_sockaddr(serv_info);
@@ -33,14 +33,14 @@ Sockets::Sockets(server_info& serv_info) : serv_info(serv_info)
 		
 		std::cerr << logEvent("[SOCKET] Binding Error: ")
 				  << strerror(errno) << END << std::endl;
-		exit(BINDING_ERR);
+		throw std::runtime_error("Cannot bind socket");
 	}
 
 	if (listen(socket_fd, BACKLOG) < 0) {
 		
 		std::cerr << logEvent("[SOCKET] Could not listen on port: ")
 				  << strerror(errno) << END << std::endl;
-		exit(LISTEN_ERR);
+		throw std::runtime_error("Cannot listen on socket");
 	}
 }
 
