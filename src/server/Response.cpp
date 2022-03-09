@@ -157,6 +157,7 @@ void Response::responseDELETE()
 	
 } */
 
+// Generates a Header for the Response
 void Response::makeHeader() 
 {
 	std::stringstream s_header;

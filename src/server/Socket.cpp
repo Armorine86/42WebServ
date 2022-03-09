@@ -1,7 +1,7 @@
 #include "Socket.hpp"
 
 // Creates a socket for the server with the infos gathered in the parser.
-// Makes the sockets Non-Blocking with fcntl(), and binds it to the port.
+// Makes the sockets Non-Blocking with fcntl(), and binds it to the port & IP.
 //
 // If an error occurs, the program exits with appropriate code.
 Sockets::Sockets(server_info& serv_info) : serv_info(serv_info)

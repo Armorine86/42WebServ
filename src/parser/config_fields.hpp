@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   config_fields.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gcollet <gcollet@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mmondell <mmondell@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 14:22:37 by mmondell          #+#    #+#             */
-/*   Updated: 2022/03/03 14:33:59 by gcollet          ###   ########.fr       */
+/*   Updated: 2022/03/09 18:48:58 by mmondell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,6 @@ struct server_info {
 
 // Used for the switch case function to build the server_info struct
 typedef enum server_fields {
-	//server,
 	listen_field,
 	server_name,
 	root,
@@ -57,7 +56,3 @@ typedef enum server_fields {
 	body_size,
 	none
 } server_fields;
-
-//enum location_fields {
-	
-// }

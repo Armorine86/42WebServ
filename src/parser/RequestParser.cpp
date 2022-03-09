@@ -12,6 +12,8 @@ RequestParser::RequestParser(std::string &request){
 	RequestInfo(content);
 }
 
+// Populate all the relevant variables while parsing the request header
+// line by line
 void RequestParser::RequestInfo(StringVector& content){
 	StringIterator start, end;
 
@@ -42,6 +44,7 @@ void RequestParser::RequestInfo(StringVector& content){
 	}
 }
 
+// Collect infos on the first line of the Request Header
 void RequestParser::ParseFirstLine(StringIterator& line){
 	StringVector vec_str;
 	StringIterator start, end;

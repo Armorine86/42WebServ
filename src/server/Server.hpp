@@ -27,15 +27,15 @@ public:
 private:
 
 	typedef std::vector<pollfd>::iterator PollIterator;
-	int		client_fd;
 
+	int		client_fd;
 	
 	server_info config;
 	RequestParser request;
 	sockaddr_storage client_addr;
+
 	char buffer[MAX_BODY_SIZE];
-	// int poll(struct pollfd fds[], nfds_t nfds, int timeout);
-	std::vector<pollfd> pfds;  //fd vectors to use with poll()
+	std::vector<pollfd> pfds;  //pollfd struct vector
 
 	void handleEvents(PollIterator& it);
 	void handleClient(PollIterator& it);

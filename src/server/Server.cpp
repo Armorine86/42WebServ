@@ -4,12 +4,11 @@
 Server::Server(server_info serv_info)
 {
 	Sockets socket(serv_info);
-	//_socket = socket;
-	//Sockets socket = Sockets(serv_info);
-	//socket = new Sockets(serv_info);
 	run(socket);
 }
 
+// Creates a new Pollfd, adds the new Client fd
+// and sets events to POLLIN
 pollfd Server::addToPollfd(int newfd) {
 	pollfd new_pfd;
 
@@ -19,7 +18,9 @@ pollfd Server::addToPollfd(int newfd) {
 	return new_pfd;
 }
 
-// If fd is the same as the server
+// Handle Events sent to the server socket. Accepts a connection
+// and receives a client FD. The FD is then pushed_back to the 
+// Pollfd struct vector.
 void Server::handleEvents(PollIterator& it)
 {
 	socklen_t addrlen = sizeof(client_addr);
@@ -32,10 +33,12 @@ void Server::handleEvents(PollIterator& it)
 	}
 }
 
+// Handles Client requests. If the FD in the pollfd vector is
+// the sender FD (client), we can send the response to the same FD
 void Server::handleClient(PollIterator& it)
 {
 	int bytes = recv((*it).fd, buffer, sizeof(buffer), 0);
-	//if buf is bigger than max_body_size : error 416 Request Entity Too Large
+	// TODO if buf is bigger than max_body_size : error 416 Request Entity Too Large
 
 	std::string str_buffer = buffer;
 
@@ -58,6 +61,8 @@ void Server::handleClient(PollIterator& it)
 		sendResponse(str_buffer, sender_fd);
 }
 
+// Parse the request sent by the client and builds a response.
+// Memcpy the Header and the Body into a buffer to use with send().
 void Server::sendResponse(std::string str_buffer, int sender_fd)
 {
 	RequestParser request(str_buffer);
@@ -80,6 +85,7 @@ void Server::sendResponse(std::string str_buffer, int sender_fd)
 	delete [] buffer;
 }
 
+// Server Main Loop. This is where the magic operates
 void Server::run(Sockets socket)
 {
 	pfds.push_back(addToPollfd(socket.getServFD()));
