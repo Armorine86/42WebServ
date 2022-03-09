@@ -65,16 +65,13 @@ void Server::sendResponse(std::string str_buffer, int sender_fd)
 	
 	std::string header = response.getResponseHeader();
 	std::string body = response.getResponseBody();
-	size_t headerSize = response.getHeaderSize();
-	size_t MAX_SEND = response.getBodySize() + headerSize + 1;
+	size_t MAX_SEND = response.getBodySize() + response.getHeaderSize() + 1;
 
 	char * buffer = new char[MAX_SEND];
 	bzero(buffer, MAX_SEND);
 
-	for (size_t i = 0; i < headerSize; ++i)
-		buffer[i] = header[i];
-	for (size_t i = headerSize; i < MAX_SEND; ++i)
-		buffer[i] = body[i - headerSize];
+	memcpy(buffer, header.data(), header.length());
+	memcpy(buffer + header.length(), body.data(), body.length());
 	
 	send(sender_fd, buffer, MAX_SEND, 0);
 	if (DEBUG)

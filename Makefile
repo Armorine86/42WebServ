@@ -62,7 +62,7 @@ linux :	$(OBJS_PATH) $(OBJS)
 	$(CC) $(OBJS) -o $(NAME)
 	@echo "\\n\033[32;1m WebServ IS READY \033[0m \\n"
 
-debug:	CFLAGS += -g -fstandalone-debug  -DDEBUG=1
+debug:	CFLAGS += -g -fstandalone-debug  -DDEBUG=1 -fno-limit-debug-info
 debug:	$(NAME)
 
 clean:
