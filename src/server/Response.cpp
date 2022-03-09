@@ -84,8 +84,7 @@ MethodType Response::getType(RequestParser& request)
 
 void Response::responseGET(RequestParser& request)
 {
-	const char* hardcode = "HTTP/1.1 200 OK\nContent-Type: text/html \nContent-Length: 700\n\n\
-		<!DOCTYPE html>\n\
+	const char* hardcode = "<!DOCTYPE html>\n\
 		<html>\n\
 		<head>\n\
 		<!-- HTML -->\n\
@@ -107,8 +106,6 @@ void Response::responseGET(RequestParser& request)
 
 	if (request.getURL().find("Surfer_Girl") != std::string::npos)
 	{
-		header = "HTTP/1.1 200 OK\r\nContent-type: image/jpeg \r\nContent-Length: 409059\r\n\r\n";
-
 		std::ifstream f("Surfer_Girl.jpg", std::ios::in|std::ios::binary|std::ios::ate);
 		if(!f.is_open()) perror ("bloody file is nowhere to be found. Call the cops");
 		std::streampos ssize = f.tellg();
@@ -119,16 +116,15 @@ void Response::responseGET(RequestParser& request)
 
 		body.write(image, ssize);
 		bodySize = ssize;
-		headerSize = header.length();
+
+		makeHeader(request);
 		
 		delete[] image;
-		if (DEBUG)
-			std::cout << GREEN << "+++ IMAGE RESPONSE +++\n\n" << END << std::endl;
+		// if (DEBUG)
+		// 	std::cout << GREEN << "+++ IMAGE RESPONSE +++\n\n" << END << std::endl;
 	} 
 	else if (request.getURL().find("favicon.ico") != std::string::npos)
 	{
-		header = "HTTP/1.1 200 OK\r\nContent-type: image/* \r\nContent-Length: 67646\r\n\r\n";
-
 		std::ifstream f("favicon.ico", std::ios::in|std::ios::binary|std::ios::ate);
 		if(!f.is_open()) perror ("bloody file is nowhere to be found. Call the cops");
 		std::streampos ssize = f.tellg();
@@ -138,19 +134,20 @@ void Response::responseGET(RequestParser& request)
 		f.close();
 
 		body.write(image, ssize);
-		bodySize = ssize;
-		headerSize = header.length();
+		makeHeader(request);
 		
 		delete[] image;
-		if (DEBUG)
-			std::cout << GREEN << "+++ FAVICON RESPONSE +++\n\n" << END << std::endl;
+		// if (DEBUG)
+		// 	std::cout << GREEN << "+++ FAVICON RESPONSE +++\n\n" << END << std::endl;
 	}
 	else
 	{
-		if (DEBUG)
-			std::cout << GREEN << "+++ RESPONSE +++\n\n" << END << hardcode << std::endl;
-		header = const_cast<char*>(hardcode);
-		headerSize = strlen(hardcode);
+		// if (DEBUG)
+		// 	std::cout << GREEN << "+++ RESPONSE +++\n\n" << END << hardcode << std::endl;
+
+		body << hardcode;
+		bodySize = body.str().length();
+		makeHeader(request);
 	}
 }
 
@@ -163,3 +160,21 @@ void Response::responseDELETE()
 {
 	
 } */
+
+
+//HTTP/1.1 200 OK\r\nContent-type: image/jpeg \r\nContent-Length: 409059\r\n\r\n
+void Response::makeHeader(RequestParser& request) 
+{
+	std::stringstream s_header;
+	StringVector accept = request.getAccept();
+
+	s_header << "HTTP/1.1 200 OK" << "\r\n";
+	s_header << "Content-type: ";
+	for (StringIterator it = accept.begin(); it != accept.end(); it++) 
+		s_header << *it;
+	s_header << " \r\n";
+	s_header << "Content-Length: " << bodySize << "\r\n\r\n";
+	
+	headerSize = s_header.str().length();
+	header = s_header.str();
+}
