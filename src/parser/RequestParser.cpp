@@ -3,7 +3,7 @@
 #include <string>
 
 RequestParser::RequestParser(std::string &request){
-	StringVector content = split(request, "\n");
+	StringVector content = split(request, "\r\n");
 
 	if (content.empty()) {
 		std::cerr << logEvent("[PARSE ERROR] Request is empty") << END << std::endl;

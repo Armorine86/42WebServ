@@ -30,6 +30,7 @@ private:
 	std::stringstream body;
 	size_t headerSize;
 	size_t bodySize;
+	std::string content_type;
 
 	std::ifstream imgBin();
 	MethodType getType(RequestParser& request);
@@ -37,7 +38,7 @@ private:
 	void responseGET(RequestParser& request);
 	//void responsePOST(RequestParser& const request);
 	//void responseDELETE(RequestParser& const request);
-	void makeHeader(RequestParser& request);
+	void makeHeader();
 };
 
 

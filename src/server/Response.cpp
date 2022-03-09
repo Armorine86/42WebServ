@@ -84,25 +84,25 @@ MethodType Response::getType(RequestParser& request)
 
 void Response::responseGET(RequestParser& request)
 {
-	const char* hardcode = "<!DOCTYPE html>\n\
-		<html>\n\
-		<head>\n\
-		<!-- HTML -->\n\
-		<title>\n\
-		Les surfeurs du web</title>\n\
-		<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n\
-		<style>\n\
-		body {background-color:#f55fff;background-image:url(/Surfer_Girl.jpg);background-repeat:repeat;background-position:top left;background-attachment:scroll;}\n\
-		h1{font-family:Impact, sans-serif;color:#000000;background-color:#ffffff;}\n\
-		p {font-family:Georgia, serif;font-size:14px;font-style:normal;font-weight:normal;color:#000000;background-color:#ffffff;}\n\
-		</style>\n\
-		</head>\n\
-		<body>\n\
-		<h1>Yo men bienvenue sur notre site trop swag!</h1>\n\
-		<p>Random text bla bla bla</p>\n\
-		<img src=\"Surfer_Girl.jpg\" alt=\"\">\n\
-		</body>\n\
-		</html>";
+	std::string hardcode = "<!DOCTYPE html>\
+<html>\
+<head>\
+<!-- HTML -->\
+<title>\
+Les surfeurs du web</title>\
+<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\
+<style>\
+body {background-color:#f55fff;background-image:url(/Surfer_Girl.jpg);background-repeat:repeat;background-position:top left;background-attachment:scroll;}\
+h1{font-family:Impact, sans-serif;color:#000000;background-color:#ffffff;}\
+p {font-family:Georgia, serif;font-size:14px;font-style:normal;font-weight:normal;color:#000000;background-color:#ffffff;}\
+</style>\
+</head>\
+<body>\
+<h1>Yo men bienvenue sur notre site trop swag!</h1>\
+<p>Random text bla bla bla</p>\
+<img src=\"Surfer_Girl.jpg\" alt=\"\">\
+</body>\
+</html>";
 
 	if (request.getURL().find("Surfer_Girl") != std::string::npos)
 	{
@@ -116,12 +116,10 @@ void Response::responseGET(RequestParser& request)
 
 		body.write(image, ssize);
 		bodySize = ssize;
-
-		makeHeader(request);
+		content_type = "image/*";
+		makeHeader();
 		
 		delete[] image;
-		// if (DEBUG)
-		// 	std::cout << GREEN << "+++ IMAGE RESPONSE +++\n\n" << END << std::endl;
 	} 
 	else if (request.getURL().find("favicon.ico") != std::string::npos)
 	{
@@ -134,20 +132,18 @@ void Response::responseGET(RequestParser& request)
 		f.close();
 
 		body.write(image, ssize);
-		makeHeader(request);
+		bodySize = ssize;
+		content_type = "image/*";
+		makeHeader();
 		
 		delete[] image;
-		// if (DEBUG)
-		// 	std::cout << GREEN << "+++ FAVICON RESPONSE +++\n\n" << END << std::endl;
 	}
 	else
 	{
-		// if (DEBUG)
-		// 	std::cout << GREEN << "+++ RESPONSE +++\n\n" << END << hardcode << std::endl;
-
 		body << hardcode;
 		bodySize = body.str().length();
-		makeHeader(request);
+		content_type = "text/html";
+		makeHeader();
 	}
 }
 
@@ -161,20 +157,14 @@ void Response::responseDELETE()
 	
 } */
 
-
-//HTTP/1.1 200 OK\r\nContent-type: image/jpeg \r\nContent-Length: 409059\r\n\r\n
-void Response::makeHeader(RequestParser& request) 
+void Response::makeHeader() 
 {
 	std::stringstream s_header;
-	StringVector accept = request.getAccept();
 
-	s_header << "HTTP/1.1 200 OK" << "\r\n";
-	s_header << "Content-type: ";
-	for (StringIterator it = accept.begin(); it != accept.end(); it++) 
-		s_header << *it;
-	s_header << " \r\n";
-	s_header << "Content-Length: " << bodySize << "\r\n\r\n";
-	
+	s_header << "HTTP/1.1 200 OK\r\n"
+	<< "Content-type: " << content_type
+	<< "\r\nContent-Length: " << bodySize << "\r\n\r\n";
+
 	headerSize = s_header.str().length();
 	header = s_header.str();
 }
