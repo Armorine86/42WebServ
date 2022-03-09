@@ -122,7 +122,8 @@ void Response::responseGET(RequestParser& request)
 		headerSize = header.length();
 		
 		delete[] image;
-		std::cout << GREEN << "+++ IMAGE RESPONSE +++\n\n" << END << std::endl;
+		if (DEBUG)
+			std::cout << GREEN << "+++ IMAGE RESPONSE +++\n\n" << END << std::endl;
 	} 
 	else if (request.getURL().find("favicon.ico") != std::string::npos)
 	{
@@ -141,11 +142,13 @@ void Response::responseGET(RequestParser& request)
 		headerSize = header.length();
 		
 		delete[] image;
-		std::cout << GREEN << "+++ FAVICON RESPONSE +++\n\n" << END << std::endl;
+		if (DEBUG)
+			std::cout << GREEN << "+++ FAVICON RESPONSE +++\n\n" << END << std::endl;
 	}
 	else
 	{
-		std::cout << GREEN << "+++ RESPONSE +++\n\n" << END << hardcode << std::endl;
+		if (DEBUG)
+			std::cout << GREEN << "+++ RESPONSE +++\n\n" << END << hardcode << std::endl;
 		header = const_cast<char*>(hardcode);
 		headerSize = strlen(hardcode);
 	}
