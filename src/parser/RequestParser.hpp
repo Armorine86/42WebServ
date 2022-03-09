@@ -15,6 +15,7 @@ public:
 
 	std::string getMethod(void) { return method; }
 	std::string getURL(void) { return url; }
+	StringVector getAccept(void) { return accept; }
 
 private:
 	std::string method; // Method

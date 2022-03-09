@@ -4,7 +4,7 @@ INC_PATH		=	includes/
 OBJS_PATH 		=	obj/
 SRCS_PATH 		=	src/
 CC 				=	clang++
-CFLAGS			=	-std=c++98 -Wall -Werror -Wextra -Wpedantic -fstandalone-debug
+CFLAGS			=	-Wall -Werror -Wextra -Wpedantic -std=c++98
 RM				=	rm -rf
 
 INC_FILES 		=	colors.hpp defines.hpp
@@ -45,7 +45,6 @@ ALL_INCLUDES	= 	-I$(INC_PATH)\
 $(OBJS_PATH)%.o: %.cpp
 	@$(CC) $(CFLAGS) $(ALL_INCLUDES) -c $< -o $@
 
-all:	CFLAGS += -O2
 all:	$(NAME)
 
 $(NAME):	$(OBJS_PATH) $(OBJS)
@@ -63,7 +62,7 @@ linux :	$(OBJS_PATH) $(OBJS)
 	$(CC) $(OBJS) -o $(NAME)
 	@echo "\\n\033[32;1m WebServ IS READY \033[0m \\n"
 
-debug:	CFLAGS += -g
+debug:	CFLAGS += -g -fstandalone-debug  -DDEBUG=1
 debug:	$(NAME)
 
 clean:

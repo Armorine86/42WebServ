@@ -37,6 +37,7 @@ private:
 	void responseGET(RequestParser& request);
 	//void responsePOST(RequestParser& const request);
 	//void responseDELETE(RequestParser& const request);
+	void makeHeader(RequestParser& request);
 };
 
 
