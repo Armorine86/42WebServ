@@ -14,8 +14,7 @@ class Sockets;
 
 // **Server class
 //
-// **This is where the infinite loop occurs, with the poll() function to
-// manage multiple socket fd.
+// **This is where the infinite loop occurs
 class Server {
 public:
 	Server() {}

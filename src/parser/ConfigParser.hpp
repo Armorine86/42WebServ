@@ -32,20 +32,22 @@ private:
 
 
 	// Parser Functions
+	
 	std::string parseLine(std::string line);
 	void parseConfig(StringVector &content);
 	void parseFile(const std::string &file_path);
 	bool isInServerScope(const std::string &line);
 	bool validLine(std::string &line);
 
-	// Switch
-	server_fields type;
+	// Switch case
+
+	void fillServerFields(StringVector vec, server_info &serv_info, server_fields type);
 	server_fields getFieldType(std::string& line);
+	server_fields type;
 
 	// Will fill Servers_Infos private member vector with all the information
 	// found in the config file to relevant fields
-	void fillVector(ParserIterator start, ParserIterator end);
-	void fillServerFields(StringVector vec, server_info &serv_info, server_fields type);
+	void fillConfigVector(ParserIterator start, ParserIterator end);
 	
 	
 };

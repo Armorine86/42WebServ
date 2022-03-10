@@ -7,7 +7,7 @@ RequestParser::RequestParser(std::string &request){
 
 	if (content.empty()) {
 		std::cerr << logEvent("[PARSE ERROR] Request is empty") << END << std::endl;
-		exit(PARSING_ERROR);
+		throw std::runtime_error("Empty Request");
 	}
 	RequestInfo(content);
 }

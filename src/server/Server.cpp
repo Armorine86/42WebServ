@@ -19,8 +19,9 @@ pollfd Server::addToPollfd(int newfd) {
 }
 
 // Handle Events sent to the server socket. Accepts a connection
-// and receives a client FD. The FD is then pushed_back to the 
-// Pollfd struct vector.
+// and receives a client FD.
+//
+//The FD is then pushed_back to the Pollfd struct vector.
 void Server::handleEvents(PollIterator& it)
 {
 	socklen_t addrlen = sizeof(client_addr);
