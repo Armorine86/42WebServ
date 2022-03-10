@@ -7,7 +7,7 @@ CC 				=	clang++
 CFLAGS			=	-Wall -Werror -Wextra -Wpedantic -std=c++98
 RM				=	rm -rf
 
-INC_FILES 		=	colors.hpp defines.hpp
+INC_FILES 		=	colors.hpp defines.hpp status_codes.hpp
 
 SRCS_FILES		=	main.cpp 
 

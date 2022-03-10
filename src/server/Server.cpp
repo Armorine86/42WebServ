@@ -4,6 +4,10 @@
 Server::Server(server_info serv_info)
 {
 	Sockets socket(serv_info);
+
+	pfds.push_back(addToPollfd(socket.getServFD()));
+	pfds[0].events = POLLIN;
+
 	run(socket);
 }
 
@@ -34,17 +38,32 @@ void Server::handleEvents(PollIterator& it)
 	}
 }
 
+// Checks if buffer size exceeded max body size permitted
+bool Server::checkBufferSize(const char* buffer)
+{
+	for (size_t i = 0; buffer[i]; ++i) {
+		if (i > MAX_BODY_SIZE)
+			return true;
+	}
+	return false;
+}
+
 // Handles Client requests. If the FD in the pollfd vector is
 // the sender FD (client), we can send the response to the same FD
 void Server::handleClient(PollIterator& it)
 {
 	int bytes = recv((*it).fd, buffer, sizeof(buffer), 0);
-	// TODO if buf is bigger than max_body_size : error 416 Request Entity Too Large
+	
+	if (checkBufferSize(buffer))
+		; // TODO if buf is bigger than max_body_size : error 416 Request Entity Too Large
 
-	std::string str_buffer = buffer;
-
-	if (DEBUG)
-		std::cout << TEAL << str_buffer << END << std::endl;
+	if (DEBUG) {
+		std::string str_buffer = buffer;
+		std::cout	<< TEAL << "\n+++ REQUEST HEADER +++\n\n"
+					<< END << YELLOW << "client fd: " << (*it).fd
+					<< END << "\n"
+					<< TEAL << str_buffer << END << std::endl;
+	}
 
 	int sender_fd = (*it).fd;
 
@@ -54,12 +73,14 @@ void Server::handleClient(PollIterator& it)
 			std::cout << "pollserver: socket " << sender_fd << " hung up" << std::endl; 
 		else 
 			perror("recv");
-		close((*it).fd); // Client request resolved
+		close((*it).fd); // Bye !
 		pfds.erase(it);
 		it = pfds.begin();
 	}
-	else if ((*it).fd == sender_fd)
-		sendResponse(str_buffer, sender_fd);
+	else if ((*it).fd == sender_fd){
+		std::string str_buffer(buffer);
+		sendResponse(buffer, sender_fd);
+	}
 }
 
 // Parse the request sent by the client and builds a response.
@@ -105,10 +126,7 @@ void Server::sendResponse(std::string str_buffer, int sender_fd)
 // 7. Rince and Repeat
 void Server::run(Sockets socket)
 {
-	pfds.push_back(addToPollfd(socket.getServFD()));
-	pfds[0].events = POLLIN;
-
-	std::cout << YELLOW << "Server is listening on: " << socket.getHostName() << END << std::endl;
+	std::cout << YELLOW << "\nServer is listening on: " << socket.getHostName() << "\n" << END << std::endl;
 
 	while(true) {
 		if (poll(&(pfds.front()), pfds.size(), 60000) < 0) {

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "status_codes.hpp"
 #include "defines.hpp"
 #include "Socket.hpp"
 #include "RequestParser.hpp"
@@ -8,13 +9,13 @@
 #include <fstream>
 #include <poll.h>
 
-#define MAX_BODY_SIZE 1024
+#define MAX_BODY_SIZE 2000000
 
 class Sockets;
 
-// **Server class
+// Server class
 //
-// **This is where the infinite loop occurs
+// This is where the infinite loop occurs
 class Server {
 public:
 	Server() {}
@@ -32,6 +33,7 @@ private:
 	server_info config;
 	RequestParser request;
 	sockaddr_storage client_addr;
+	StatusCode status;
 
 	char buffer[MAX_BODY_SIZE];
 	std::vector<pollfd> pfds;  //pollfd struct vector
@@ -40,5 +42,6 @@ private:
 	void handleClient(PollIterator& it);
 	void sendResponse(std::string str_buffer, int sender_fd);
 
+	bool checkBufferSize(const char* buffer);
 	pollfd addToPollfd(int newfd);
 };

@@ -21,7 +21,7 @@ private:
 	std::string method; // Method
 	std::string url;	// URL
 	std::string host;	// DNS of the Server. In our case: LOCALHOST
-	// std::string protocol; // HTTP/1.1
+	// std::string version; // HTTP/1.1
 	std::string user_agent; // Browser
 	StringVector accept;	// type of request.  i.e: text/html
 	StringVector language;	// en-US || en-CA || etc.

@@ -6,7 +6,7 @@
 // If an error occurs, the program exits with appropriate code.
 Sockets::Sockets(server_info& serv_info) : serv_info(serv_info)
 {
-	if ((socket_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+	if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
 		
 		std::cerr << logEvent("[SOCKET] Invalid fd: ")
 				  << strerror(errno) << END << std::endl;
@@ -14,13 +14,13 @@ Sockets::Sockets(server_info& serv_info) : serv_info(serv_info)
 	}
 	
 	// Sets socket to non-blocking
-	fcntl(socket_fd, F_SETFL, O_NONBLOCK);
+	fcntl(server_fd, F_SETFL, O_NONBLOCK);
 	
 	int yes = 1;
 	
 	// Makes the port reusable if a socket lingers in the Kernel
 	// Gets rid of the "Address already in use" message
-	if (setsockopt(socket_fd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes))) {
+	if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes))) {
 
 		std::cerr << logEvent("[SOCKET] Could not set Options: ")
 				  << strerror(errno) << END << std::endl;
@@ -29,14 +29,14 @@ Sockets::Sockets(server_info& serv_info) : serv_info(serv_info)
 	
 	init_sockaddr(serv_info);
 	
-	if (bind(socket_fd, (struct sockaddr *)&address, sizeof(address)) < 0) {
+	if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0) {
 		
 		std::cerr << logEvent("[SOCKET] Binding Error: ")
 				  << strerror(errno) << END << std::endl;
 		throw std::runtime_error("Cannot bind socket");
 	}
 
-	if (listen(socket_fd, BACKLOG) < 0) {
+	if (listen(server_fd, BACKLOG) < 0) {
 		
 		std::cerr << logEvent("[SOCKET] Could not listen on port: ")
 				  << strerror(errno) << END << std::endl;
@@ -57,11 +57,6 @@ void Sockets::init_sockaddr(const server_info& serv_info)
 	address.sin_family = AF_INET; //IPv4
 	address.sin_port = htons(serv_info.listen_port);
 	address.sin_addr.s_addr = inet_addr(serv_info.host.c_str());
-}
-
-int Sockets::getServFD()
-{
-	return socket_fd;
 }
 
 std::string Sockets::getHostName() 

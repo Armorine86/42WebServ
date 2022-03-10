@@ -25,12 +25,12 @@ public:
 	~Sockets() {}
 
 	void init_sockaddr(const server_info& serv_info);
-	int getServFD(); // returns socket_fd
+	int getServFD() { return server_fd; }
 	std::string getHostName(); //return IP, and port#
 	sockaddr_in& getAddress() { return address; }
 
 private:
-	int socket_fd;
+	int server_fd;
 	//int addrlen;
 	struct sockaddr_in address;
 	server_info serv_info;  // Contain server infos from Config file
