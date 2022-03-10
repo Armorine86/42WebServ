@@ -87,6 +87,22 @@ void Server::sendResponse(std::string str_buffer, int sender_fd)
 }
 
 // Server Main Loop. This is where the magic operates
+//
+// 1. Push_back the binded server socket to the Pollfd vector and sets events to POLLIN.
+//
+// 2. Wait for an incoming connection from a client.
+//
+// 3. accept() the incoming connection, opens a FD for the client and adds it to the Pollfd vector.
+//
+// 4. Handle the client request. recv() the request header and puts it in a buffer. If recv() return 0
+// the resquest has been resolved and the client FD is closed and removed from the vector. 
+//
+// 5. Parse the request header and build a response relevent to the information received.
+//
+// 6. Allocate a char* type buffer (handling image binary) the size of the response header + body. Copy the header AND the body
+// to the buffer. send() the response to the sender (client fd).
+//
+// 7. Rince and Repeat
 void Server::run(Sockets socket)
 {
 	pfds.push_back(addToPollfd(socket.getServFD()));
