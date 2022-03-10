@@ -1,7 +1,9 @@
 #pragma once
 
 #include "defines.hpp"
+#include "utils.hpp"
 #include <iostream>
+#include <string>
 
 // Header containing all the information of the Client Request to the Server
 class RequestParser

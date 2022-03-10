@@ -44,4 +44,5 @@ private:
 
 	bool checkBufferSize(const char* buffer);
 	pollfd addToPollfd(int newfd);
+
 };

@@ -1,5 +1,4 @@
 #include "Server.hpp"
-#include "Response.hpp"
 
 Server::Server(server_info serv_info)
 {
@@ -79,7 +78,8 @@ void Server::handleClient(PollIterator& it)
 	}
 	else if ((*it).fd == sender_fd){
 		std::string str_buffer(buffer);
-		sendResponse(buffer, sender_fd);
+		bzero(buffer, sizeof(buffer));
+		sendResponse(str_buffer, sender_fd);
 	}
 }
 
@@ -120,8 +120,8 @@ void Server::sendResponse(std::string str_buffer, int sender_fd)
 //
 // 5. Parse the request header and build a response relevent to the information received.
 //
-// 6. Allocate a char* type buffer (handling image binary) the size of the response header + body. Copy the header AND the body
-// to the buffer. send() the response to the sender (client fd).
+// 6. Allocate a char* type buffer (handling image binary) the size of the response header + body.
+// Copy the header AND the body to the buffer. send() the response to the sender (client fd).
 //
 // 7. Rince and Repeat
 void Server::run(Sockets socket)

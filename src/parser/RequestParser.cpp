@@ -1,6 +1,4 @@
 #include "RequestParser.hpp"
-#include "utils.hpp"
-#include <string>
 
 RequestParser::RequestParser(std::string &request){
 	StringVector content = split(request, "\r\n");

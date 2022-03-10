@@ -26,6 +26,7 @@ public:
 	size_t getBodySize() { return bodySize; }
 
 private:
+
 	std::string header;
 	std::stringstream body;
 	size_t headerSize;
@@ -39,6 +40,9 @@ private:
 	//void responsePOST(RequestParser& const request);
 	//void responseDELETE(RequestParser& const request);
 	void makeHeader();
+	void makeFavicon();
+	void makeImage(RequestParser& request);
+	void readHTML(std::string filepath);
 };
 
 
