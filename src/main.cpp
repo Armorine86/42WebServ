@@ -3,12 +3,13 @@
 #include "ConfigParser.hpp"
 #include "Server.hpp"
 #include "RequestParser.hpp"
+#include <exception>
 
 void close_serv(int sig)
 {
 	(void)sig;
 	std::cout << YELLOW << "Closing Server...." << END << std::endl;
-	exit(SIG_EXIT);
+	throw std::runtime_error("");
 }
 
 int main(int argc, char** argv)

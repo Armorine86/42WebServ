@@ -3,7 +3,7 @@
 #include <map>
 #include <string>
 
-#define INSERT_CODE codes.insert(std::make_pair<std::string, std::string>
+#define INSERT_CODE codes.insert(std::pair<std::string, std::string>
 
 typedef struct StatusCode {
 

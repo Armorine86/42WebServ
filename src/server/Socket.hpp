@@ -31,7 +31,7 @@ public:
 
 private:
 	int server_fd;
-	//int addrlen;
+
 	struct sockaddr_in address;
 	server_info serv_info;  // Contain server infos from Config file
 };

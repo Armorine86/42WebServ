@@ -1,10 +1,11 @@
 #include "Server.hpp"
 
-Server::Server(server_info serv_info)
+Server::Server(server_info serv_info) : client_fd(0)
 {
 	Sockets socket(serv_info);
 
-	pfds.push_back(addToPollfd(socket.getServFD()));
+	pollfd newfd = addToPollfd(socket.getServFD());
+	pfds.push_back(newfd);
 	pfds[0].events = POLLIN;
 
 	run(socket);
@@ -12,11 +13,13 @@ Server::Server(server_info serv_info)
 
 // Creates a new Pollfd, adds the new Client fd
 // and sets events to POLLIN
-pollfd Server::addToPollfd(int newfd) {
+pollfd Server::addToPollfd(int newfd)
+{
 	pollfd new_pfd;
 
 	new_pfd.fd = newfd;
 	new_pfd.events = POLLIN;
+	new_pfd.revents = 0;
 
 	return new_pfd;
 }

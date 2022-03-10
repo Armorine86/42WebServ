@@ -205,18 +205,14 @@ void ConfigParser::fillServerFields(StringVector vec, server_info &serv_info, se
 		case body_size:
 		{
 			serv_info.client_max_body_size = atoi(right_trim(vec[1], ";").c_str());
+			break;
 		}
 
 		case error:
 		{
-			if (vec.size() < 3)
-			{
-				vec = split(vec[1], ",");
-				serv_info.error_pages.insert(std::pair<int, std::string>(atoi(vec[1].c_str()), vec[0]));
-			}
-			else
-			{
-				serv_info.error_pages.insert(std::pair<int, std::string>(atoi(vec[2].c_str()), vec[1]));
+			if (vec.size() == 3){
+				vec[2].erase(vec[2].end() - 1);
+				serv_info.error_pages.insert(std::pair<std::string, std::string>(vec[1], vec[2]));
 			}
 			break;
 			// TODO parseServerDirective(serv_info);

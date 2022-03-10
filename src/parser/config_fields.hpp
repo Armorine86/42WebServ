@@ -6,7 +6,7 @@
 /*   By: mmondell <mmondell@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 14:22:37 by mmondell          #+#    #+#             */
-/*   Updated: 2022/03/09 18:48:58 by mmondell         ###   ########.fr       */
+/*   Updated: 2022/03/10 15:46:04 by mmondell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ struct location_directive {
 	StringVector	methods;
 	StringVector	redirections;
 	StringVector	cgi_extensions;
+	StringVector	allowed_request;
 };
 
 typedef std::vector<location_directive> LocationVector;
@@ -41,7 +42,7 @@ struct server_info {
 	std::string		root;
 	std::string 	host; 	//either 127.0.0.1 || localhost
 	std::string 	server_names;
-	std::map<int, std::string> 	error_pages;
+	std::map<std::string, std::string> 	error_pages;
 	LocationVector	locations;
 	int listen_port;
 	int	client_max_body_size;
