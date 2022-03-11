@@ -1,4 +1,5 @@
 #include "ConfigParser.hpp"
+#include "ConfigParser_utils.cpp"
 
 ConfigParser::ConfigParser() : default_config_file(DEFAULT_CONFIG_FILE)
 {
@@ -38,6 +39,7 @@ void ConfigParser::parseFile(const std::string &file_path)
 	}
 	parseConfig(content);
 }
+
 
 // Declare two iterators that will encapsulate a Serve scope
 // including all it's location field
@@ -84,30 +86,6 @@ void ConfigParser::parseConfig(StringVector &content)
 	}
 }
 
-bool ConfigParser::validLine(std::string &line)
-{
-	(void)line;
-	return true;
-}
-
-// Return Enum type depending on the Server field
-server_fields ConfigParser::getFieldType(std::string &line)
-{
-	if (line.find("listen") != std::string::npos)
-		return listen_field;
-	// else if (line.find("host") != std::string::npos)
-	// 	return host;
-	else if (line.find("server_name") != std::string::npos)
-		return server_name;
-	else if (line.find("root") != std::string::npos)
-		return root;
-	else if (line.find("body_size") != std::string::npos)
-		return body_size;
-	else if (line.find("error") != std::string::npos)
-		return error;
-	return none;
-}
-
 // Receives a Server Scope delimited by two iterators
 // Builds the serv_info structs and the location_directive structs
 //
@@ -122,24 +100,25 @@ void ConfigParser::fillConfigVector(ParserIterator start, ParserIterator end)
 	for (; start != end; start++)
 	{
 		if ((*start).find("server") != std::string::npos)
-		{
 			start++;
-			while ((*start).find("location") == std::string::npos)
-			{
-				if (!(*start).empty())
-				{
-					fillServerFields(split(*start, " "), serv_info, getFieldType(*start));
-					start++;
-				}
-				else
-				{
-					start++;
-				}
-			}
-		}
-		else
+		while ((*start).find("location") == std::string::npos)
 		{
-			; // TODO fillLocationFields(serv_info.location)
+			if (!(*start).empty() && (*start).find("}") == std::string::npos)
+			{
+				fillServerFields(split(*start, " "), serv_info, getFieldType(*start));
+				start++;
+			}
+			else
+				break;
+
+		}
+		if ((*start).find("location") != std::string::npos){
+			location_info fields;
+			while ((*start).find("}") == std::string::npos){
+				fillLocationFields(split(*start, " "), fields, getLocationType(*start));
+				start++;
+			}
+			serv_info.locations.push_back(fields);
 		}
 	}
 	servers_config.push_back(serv_info);
@@ -226,18 +205,68 @@ void ConfigParser::fillServerFields(StringVector vec, server_info &serv_info, se
 	}
 }
 
-// Checks if at beginning of a server block
-bool ConfigParser::isInServerScope(const std::string &line)
+void ConfigParser::fillLocationFields(StringVector vec, location_info &fields, location_fields loc_type) 
 {
-	if (line.find("server") == std::string::npos)
-	{
-		std::cerr << logEvent("[PARSE ERROR] Invalid Server Scope") << END << std::endl;
-		return false;
+	switch (loc_type) {
+		case name:
+		{
+			if (vec[1].find('{') != std::string::npos)
+				vec[1].erase(vec[1].size() - 1);
+			fields.name = vec[1];
+			break;
+		}
+		case loc_root:
+		{
+			fields.root = vec[1].erase(vec[1].size() - 1);
+			break;
+		}
+		case loc_index:
+		{
+			fields.index = vec[1].erase(vec[1].size() - 1);
+			break;
+		}
+		case cgi_extensions:
+		{
+			fields.cgi_extensions[vec[1]] = vec[2].erase(vec[2].size() - 1);
+			break;
+		}
+		case autoindex:
+		{
+			if (vec[1].find("on") != std::string::npos)
+				fields.autoindex = true;
+			break;
+		}
+		case upload_directory:
+		{
+			fields.upload_directory = vec[1].erase(vec[1].size() - 1);
+			break;
+		}
+		case upload_max_size:
+		{
+			fields.upload_max_size = atoi(vec[1].erase(vec[1].size() - 1).c_str());
+			break;
+		}
+		case allowed_request:
+		{
+			for (StringIterator it = vec.begin() + 1; it < vec.end(); ++it){
+				if (it == vec.end()){
+					std::string& str = *it; 
+					str.erase(str.size() - 1);
+				}
+       			fields.allowed_request.push_back(*it);
+			}
+			break;
+		}
+		case redirections:
+		{
+			fields.redirections = atoi(vec[1].c_str());
+			break;
+		}
+		case loc_none:
+		{
+			std::cerr << logEvent("[PARSE ERROR] Unrecognized Server Location Directive") << END << std::endl;
+			throw std::runtime_error("Parse error: Unrecognized Server Location Field");
+		}
 	}
-	if (line.find("{") == std::string::npos)
-	{
-		std::cerr << logEvent("[PARSE ERROR] Missing Opening Bracket") << END << std::endl;
-		return false;
-	}
-	return true;
+	//TODO set default value if none
 }

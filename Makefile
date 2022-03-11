@@ -75,4 +75,6 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re linux debug
+redebug: fclean debug
+
+.PHONY: all clean fclean re linux debug redebug

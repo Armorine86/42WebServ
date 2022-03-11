@@ -10,6 +10,7 @@
 #include "config_fields.hpp"
 #include "utils.hpp"
 #include "defines.hpp"
+#include "status_codes.hpp"
 
 // **This class will parse the config file and build a vector with
 // **all the infos of each server blocks found in the file passed as parameter	 
@@ -42,8 +43,11 @@ private:
 	// Switch case
 
 	void fillServerFields(StringVector vec, server_info &serv_info, server_fields type);
+	void fillLocationFields(StringVector vec, location_info &fields, location_fields type);
 	server_fields getFieldType(std::string& line);
 	server_fields type;
+	location_fields getLocationType(std::string &line);
+	location_fields loc_type;
 
 	// Will fill Servers_Infos private member vector with all the information
 	// found in the config file to relevant fields

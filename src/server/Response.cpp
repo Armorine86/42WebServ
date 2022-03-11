@@ -37,9 +37,9 @@ void Response::responseGET(RequestParser& request)
 	//if it's got a dot in the url FOR NOW it will think it's a image
 	if (request.getURL().find(".") != std::string::npos)
 	{
-		if (request.getURL().find("favicon") != std::string::npos)
+		/* if (request.getURL().find("favicon") != std::string::npos)
 			makeFavicon();
-		else
+		else */
 			makeImage(request);
 	}
 	else
