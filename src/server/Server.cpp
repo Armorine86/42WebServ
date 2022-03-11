@@ -129,7 +129,8 @@ void Server::sendResponse(std::string str_buffer, int sender_fd)
 // 7. Rince and Repeat
 void Server::run(Sockets socket)
 {
-	std::cout << YELLOW << "\nServer is listening on: " << socket.getHostName() << "\n" << END << std::endl;
+
+	std::cout << YELLOW << logEvent("Server is listening on: " + socket.getHostName() + "\n") << END << std::endl;
 
 	while(true) {
 		if (poll(&(pfds.front()), pfds.size(), 60000) < 0) {

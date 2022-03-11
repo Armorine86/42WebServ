@@ -2,7 +2,6 @@
 
 Response::Response(RequestParser& request) 
 {
-
 	MethodType type = getType(request);
 
 	switch(type){
@@ -45,13 +44,13 @@ void Response::responseGET(RequestParser& request)
 	}
 	else
 	{
-		//va falloir que le pathfile soit adapte selon la request... o_O
+		// TODO va falloir que le pathfile soit adapte selon la request... o_O
 		readHTML("resources/index.html");
 		//readHTML("resources/error/error403.html");
 		bodySize = body.str().length();
 		content_type = "text/html";
 	}
-	makeHeader();
+	makeHeader("200");
 }
 
 /* void Response::responsePOST()
@@ -64,12 +63,15 @@ void Response::responseDELETE()
 	
 } */
 
-// Generates a Header for the Response
-void Response::makeHeader() 
+// Generates a Header for the Response matching the parameter to
+// the wanted code in StatusCode map
+void Response::makeHeader(const std::string& code) 
 {
+	MapIterator it = status.code.find(code);
 	std::stringstream s_header;
 
-	s_header << "HTTP/1.1 200 OK\r\n"
+	s_header << "HTTP/1.1 " << (*it).first << (*it).second << "\r\n"
+	//s_header << "HTTP/1.1 200 OK\r\n"
 	<< "Content-type: " << content_type
 	<< "\r\nContent-Length: " << bodySize << "\r\n\r\n";
 
@@ -77,6 +79,7 @@ void Response::makeHeader()
 	header = s_header.str();
 }
 
+//! ***** MAY NOT BE REQUIRED, FAVICON DISPLAYS WITH ALL IMAGE MIME TYPES *****
 void Response::makeFavicon() 
 {
 	std::ifstream f("resources/favicon.ico", std::ios::in|std::ios::binary|std::ios::ate);
@@ -94,13 +97,15 @@ void Response::makeFavicon()
 
 	body.write(image, ssize);
 	bodySize = ssize;
-	content_type = "image/x-icon";		
+	content_type = "image/*";		
 	delete[] image;
 }
 
+// Retrieves the image binary
 void Response::makeImage(RequestParser& request) 
 {
-	std::ifstream f(request.getURL().erase(0,1).c_str(), std::ios::in|std::ios::binary|std::ios::ate);
+	std::ifstream f(request.getURL().erase(0,1).c_str(),
+					std::ios::in|std::ios::binary|std::ios::ate);
 
 	if(!f.is_open()){
 		perror ("bloody file is nowhere to be found. Call the cops");
@@ -119,13 +124,17 @@ void Response::makeImage(RequestParser& request)
 	delete[] image;
 }
 
+// Used to respond with passed HTML file 
 void Response::readHTML(std::string filepath) 
 {
 	std::string line;
 	std::fstream myfile;
+	
 	myfile.open(filepath.c_str(), std::ios::in);
+	
 	if (!myfile.good())
 		std::cout << "file cannot open!";
+
 	while (getline(myfile, line))
 		body << line << '\n';
 }

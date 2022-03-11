@@ -3,11 +3,11 @@
 #include <map>
 #include <string>
 
-#define INSERT_CODE codes.insert(std::pair<std::string, std::string>
+#define INSERT_CODE code.insert(std::pair<std::string, std::string>
 
 typedef struct StatusCode {
-
-	std::map<std::string, std::string> codes;
+	
+	std::map<std::string, std::string> code;
 
 	StatusCode() {
 		INSERT_CODE("100", " Continue"));

@@ -4,6 +4,7 @@
 #include <sstream>
 #include <fstream>
 #include "RequestParser.hpp"
+#include "status_codes.hpp"
 
 #define MAX_IMAGESIZE 1000000
 
@@ -27,11 +28,14 @@ public:
 
 private:
 
-	std::string header;
-	std::stringstream body;
 	size_t headerSize;
 	size_t bodySize;
+	std::string header;
 	std::string content_type;
+	std::stringstream body;
+
+	typedef std::map<std::string, std::string>::iterator MapIterator;
+	StatusCode status;
 
 	std::ifstream imgBin();
 	MethodType getType(RequestParser& request);
@@ -39,7 +43,7 @@ private:
 	void responseGET(RequestParser& request);
 	//void responsePOST(RequestParser& const request);
 	//void responseDELETE(RequestParser& const request);
-	void makeHeader();
+	void makeHeader(const std::string& code);
 	void makeFavicon();
 	void makeImage(RequestParser& request);
 	void readHTML(std::string filepath);

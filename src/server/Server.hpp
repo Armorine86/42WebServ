@@ -1,6 +1,5 @@
 #pragma once
 
-#include "status_codes.hpp"
 #include "defines.hpp"
 #include "Socket.hpp"
 #include "RequestParser.hpp"
@@ -33,7 +32,6 @@ private:
 	server_info config;
 	RequestParser request;
 	sockaddr_storage client_addr;
-	StatusCode status;
 
 	char buffer[MAX_BODY_SIZE];
 	std::vector<pollfd> pfds;  //pollfd struct vector
