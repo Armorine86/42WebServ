@@ -8,7 +8,7 @@
 void close_serv(int sig)
 {
 	(void)sig;
-	std::cout << YELLOW << "Closing Server...." << END << std::endl;
+	std::cout << YELLOW << logEvent("Closing Server....\n") << END << std::endl;
 	throw std::runtime_error("");
 }
 

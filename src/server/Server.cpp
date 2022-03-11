@@ -24,6 +24,19 @@ pollfd Server::addToPollfd(int newfd)
 	return new_pfd;
 }
 
+// Retrieves the Client IP for the logger
+std::string clientIP(const int& client_fd, socklen_t addrlen) {
+
+	char myIP[16];
+	struct sockaddr_in client_ip;
+
+	getsockname(client_fd, (struct sockaddr *)&client_ip, &addrlen);
+	inet_ntop(AF_INET, &client_ip.sin_addr, myIP, sizeof(myIP));
+	std::string ip = myIP;
+	
+	return ip;
+}
+
 // Handle Events sent to the server socket. Accepts a connection
 // and receives a client FD.
 //
@@ -34,9 +47,11 @@ void Server::handleEvents(PollIterator& it)
 
 	if ((client_fd = accept(pfds[0].fd, (struct sockaddr*)&client_addr, &addrlen)) == -1)
 		perror("accept");
+	
 	else {
 		pfds.push_back(addToPollfd(client_fd));
 		it = pfds.begin();
+		std::cout << YELLOW << logEvent("Accepted Connection from: " + clientIP(client_fd, addrlen) + "\n") << END << std::endl;
 	}
 }
 

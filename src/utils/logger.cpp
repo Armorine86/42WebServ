@@ -3,31 +3,46 @@
 /*                                                        :::      ::::::::   */
 /*   logger.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmondell <mmondell@student.42quebec.com    +#+  +:+       +#+        */
+/*   By: gcollet <gcollet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/18 09:55:33 by mmondell          #+#    #+#             */
-/*   Updated: 2022/03/10 20:55:25 by mmondell         ###   ########.fr       */
+/*   Updated: 2022/03/10 21:51:03 by gcollet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "utils.hpp"
 #include <ostream>
 #include <fstream>
+#include <sys/stat.h>
+#include <sys/types.h>
+
+bool checkDir(const char* folderPath)
+{
+    struct stat sb;
+
+    if (stat(folderPath, &sb) == 0 && S_ISDIR(sb.st_mode))
+        return true;
+    return false;
+}
 
 void logToFile(time_t& t, std::stringstream& ss) {
-	
+
 	struct tm * now = localtime(&t);
 
 	char buffer [80];
 	strftime (buffer,80,"%Y-%m-%d.",now);
 
-	std::string path("log/log[");
-	
+	if (!checkDir("/log"))
+		mkdir("log", ACCESSPERMS);
+		
+	std::string path("log/log_file[");
+
 	path.append(buffer);
 	path.append("].txt");
 	
 	std::ofstream myfile;
-	myfile.open(path.c_str());
+	myfile.open(path.c_str(), std::ios_base::app);
+	if (!myfile.good()) {perror("Max a dit qu'il s'en fou... mais ya une erreur avec le log_file"); }
 
 	myfile << ss.rdbuf();
 	myfile.close();
