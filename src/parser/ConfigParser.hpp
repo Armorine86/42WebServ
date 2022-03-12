@@ -38,15 +38,14 @@ private:
 	void parseConfig(StringVector &content);
 	void parseFile(const std::string &file_path);
 	bool isInServerScope(const std::string &line);
-	bool validLine(std::string &line);
 
 	// Switch case
 
 	void fillServerFields(StringVector vec, server_info &serv_info, server_fields type);
 	void fillLocationFields(StringVector vec, location_info &fields, location_fields type);
 	server_fields getFieldType(std::string& line);
-	server_fields type;
 	location_fields getLocationType(std::string &line);
+	server_fields type;
 	location_fields loc_type;
 
 	// Will fill Servers_Infos private member vector with all the information

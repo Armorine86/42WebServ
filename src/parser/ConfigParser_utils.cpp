@@ -1,11 +1,5 @@
 #include "ConfigParser.hpp"
 
-bool ConfigParser::validLine(std::string &line)
-{
-	(void)line;
-	return true;
-}
-
 // Return Enum type depending on the Server field
 server_fields ConfigParser::getFieldType(std::string &line)
 {

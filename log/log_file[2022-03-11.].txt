@@ -1,9 +1,0 @@
-[Fri Mar 11 13:32:11 2022] Server is listening on: 127.0.0.1:8081
-[Fri Mar 11 13:32:14 2022] Accepted Connection from: 127.0.0.1
-[Fri Mar 11 13:32:29 2022] Accepted Connection from: 127.0.0.1
-[Fri Mar 11 13:32:35 2022] Closing Server....
-[Fri Mar 11 13:33:26 2022] Server is listening on: 192.168.1.92:8081
-[Fri Mar 11 13:33:32 2022] Accepted Connection from: 192.168.1.92
-[Fri Mar 11 13:34:58 2022] Closing Server....
-[Fri Mar 11 13:55:42 2022] Server is listening on: 127.0.0.1:8081
-[Fri Mar 11 15:11:45 2022] [PARSE ERROR] Unrecognized Server Location Directive[Fri Mar 11 15:12:31 2022] [PARSE ERROR] Unrecognized Server Location Directive[Fri Mar 11 15:20:30 2022] [PARSE ERROR] Unrecognized Server Location Directive[Fri Mar 11 15:20:42 2022] [PARSE ERROR] Unrecognized Server Location Directive[Fri Mar 11 15:20:54 2022] [PARSE ERROR] Unrecognized Server Location Directive[Fri Mar 11 16:42:36 2022] [PARSE ERROR] Unrecognized Server Location Directive[Fri Mar 11 16:48:40 2022] [PARSE ERROR] Unrecognized Server Location Directive[Fri Mar 11 16:50:34 2022] [PARSE ERROR] Unrecognized Server Directive[Fri Mar 11 16:52:57 2022] [PARSE ERROR] Unrecognized Server Directive[Fri Mar 11 16:53:05 2022] [PARSE ERROR] Unrecognized Server Directive[Fri Mar 11 16:56:59 2022] Server is listening on: 127.0.0.1:8081
