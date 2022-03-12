@@ -43,13 +43,13 @@ ALL_INCLUDES	= 	-I$(INC_PATH)\
 					-I$(SERVER_PATH)\
 
 $(OBJS_PATH)%.o: %.cpp
-	$(CC) $(CFLAGS) $(ALL_INCLUDES) -c $< -o $@
+	@$(CC) $(CFLAGS) $(ALL_INCLUDES) -c $< -o $@
 
 all:	$(NAME)
 
 $(NAME):	$(OBJS_PATH) $(OBJS)
 	@echo "\n\033[96m Compiling WebServ \033[0m\n"
-	$(CC) $(OBJS) -o $(NAME)
+	@$(CC) $(OBJS) -o $(NAME)
 	@echo "\\n\033[32;1m WebServ IS READY \033[0m \\n"
 
 $(OBJS_PATH):

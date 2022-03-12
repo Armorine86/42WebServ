@@ -29,8 +29,8 @@ void ConfigParser::parseFile(const std::string &file_path)
 	}
 
 	while (std::getline(file, line))
-		// TODO MAYBE add the validate line here with the format function.
 		content.push_back(format_line(line));
+		
 	if (content.empty())
 	{
 		std::cerr << logEvent("[PARSE ERROR] File is empty") << END << std::endl;
@@ -38,7 +38,6 @@ void ConfigParser::parseFile(const std::string &file_path)
 	}
 	parseConfig(content);
 }
-
 
 // Declare two iterators that will encapsulate a Serve scope
 // including all it's location field
@@ -61,7 +60,7 @@ void ConfigParser::parseConfig(StringVector &content)
 			int scopeLevel = 1;
 			scopeEnd++;
 			i++;
-			while (validLine(*scopeEnd) && scopeLevel > 0)
+			while (scopeLevel > 0)
 			{
 				if ((*scopeEnd).find('{') != std::string::npos)
 					scopeLevel++;
@@ -127,13 +126,6 @@ void ConfigParser::fillConfigVector(ParserIterator start, ParserIterator end)
 // parsed from the config file.
 void ConfigParser::fillServerFields(StringVector vec, server_info &serv_info, server_fields type)
 {
-
-	// ** Temporary setup **
-
-	// TODO	Find a better way of splitting the lines to easily retrieve field values
-	// TODO	When arriving here, lines should've already been validated
-	// TODO Make a Parse Directive function
-
 	switch (type) {
 		case listen_field:
 		{
@@ -193,7 +185,6 @@ void ConfigParser::fillServerFields(StringVector vec, server_info &serv_info, se
 				serv_info.error_pages.insert(std::pair<std::string, std::string>(vec[1], vec[2]));
 			}
 			break;
-			// TODO parseServerDirective(serv_info);
 		}
 
 		case none:
