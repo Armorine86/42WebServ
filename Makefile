@@ -14,7 +14,7 @@ SRCS_FILES		=	main.cpp
 UTILS_FILES		=	logger.cpp string_utils.cpp
 UTILS_HDRS		=	utils.hpp
 
-PARSER_FILES	=	ConfigParser.cpp RequestParser.cpp
+PARSER_FILES	=	ConfigParser.cpp ConfigParser_utils.cpp RequestParser.cpp
 PARSER_HDRS		=	config_fields.hpp ConfigParser.hpp RequestParser.hpp
 				
 SERVER_FILES	= 	Server.cpp Socket.cpp Response.cpp
@@ -43,7 +43,7 @@ ALL_INCLUDES	= 	-I$(INC_PATH)\
 					-I$(SERVER_PATH)\
 
 $(OBJS_PATH)%.o: %.cpp
-	@$(CC) $(CFLAGS) $(ALL_INCLUDES) -c $< -o $@
+	$(CC) $(CFLAGS) $(ALL_INCLUDES) -c $< -o $@
 
 all:	$(NAME)
 

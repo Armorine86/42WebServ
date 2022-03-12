@@ -1,5 +1,4 @@
 #include "ConfigParser.hpp"
-#include "ConfigParser_utils.cpp"
 
 ConfigParser::ConfigParser() : default_config_file(DEFAULT_CONFIG_FILE)
 {
