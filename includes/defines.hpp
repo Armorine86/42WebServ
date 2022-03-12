@@ -6,7 +6,7 @@
 /*   By: gcollet <gcollet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 14:52:27 by mmondell          #+#    #+#             */
-/*   Updated: 2022/03/12 14:23:25 by gcollet          ###   ########.fr       */
+/*   Updated: 2022/03/12 15:21:18 by gcollet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@
 #define WHITESPACES " \t\n\v\f\r"
 #define CONFIG_BLOCKS_DELIMITERS "{};"
 #define LOCALHOST "127.0.0.1"
+#define LISTENPORT 8080
 
 // Error codes
 #define FILESTREAM_ERROR 1

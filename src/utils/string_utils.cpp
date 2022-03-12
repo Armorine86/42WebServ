@@ -1,21 +1,26 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   string_utils.cpp                                   :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mmondell <mmondell@student.42quebec.com    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/01/20 09:26:11 by mmondell          #+#    #+#             */
-/*   Updated: 2022/01/20 13:24:23 by mmondell         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "utils.hpp"
 #include "defines.hpp"
 
+void validEndline(std::string& line)
+{
+	static int line_num;
+	line_num++;
+	if (line.find(";") == std::string::npos)
+		if ((line.find("server") == std::string::npos
+			&& line.find("location") == std::string::npos
+			&& line.find("}") == std::string::npos)
+			&& line != "") {
+				std::stringstream p_str;
+				p_str << line_num;
+				throw std::runtime_error(logEvent("[PARSE ERROR] Missing `;' on line: " + p_str.str()));
+			} 
+}
+
 // Cleans whitespaces and gives back a formatted string
 std::string format_line(std::string &line) {
-	
+
+	validEndline(line);
+
 	std::string new_string;
 	size_t i = 0;
 
@@ -46,6 +51,8 @@ std::string& left_trim(std::string &line, const char* delimiters) {
 
 std::string& right_trim(std::string &line, const char* delimiters) {
 	
+	if (line.find(delimiters) == std::string::npos)
+		return line;
 	line.erase(line.find_last_not_of(delimiters) + 1);
 
 	return line;

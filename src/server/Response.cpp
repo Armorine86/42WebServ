@@ -34,14 +34,25 @@ MethodType Response::getType(RequestParser& request)
 
 void Response::responseGET(RequestParser& request, server_info& config)
 {
-	//if it's got a dot in the url FOR NOW it will think it's a image
+	//if it's got a dot in the url FOR NOW it will think it's an image
 	if (request.getURL().find(".") != std::string::npos)
 		makeImage(request, config);
 	else
 	{
-		// TODO va falloir que le pathfile soit adapte selon la request... o_O
-		readHTML("resources/index.html");
-		//readHTML("resources/error/error403.html");
+		LocationVector location = config.locations;
+		std::string path;
+	
+		for (size_t i = 0; i < location.size(); i++){
+			if (location.at(i).name == request.getURL()) {
+				path = location.at(i).root;
+				break;
+			}
+		}
+		if (request.getURL() ==  "/")
+			path.append("/index.html");
+		else
+			path.append(request.getURL());
+		readHTML(path);
 		bodySize = body.str().length();
 		content_type = "text/html";
 	}

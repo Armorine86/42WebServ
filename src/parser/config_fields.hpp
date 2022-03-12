@@ -6,7 +6,7 @@
 /*   By: gcollet <gcollet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 14:22:37 by mmondell          #+#    #+#             */
-/*   Updated: 2022/03/12 14:03:36 by gcollet          ###   ########.fr       */
+/*   Updated: 2022/03/12 15:46:37 by gcollet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,11 @@ struct server_info {
 	LocationVector	locations;
 	int listen_port;
 	int	client_max_body_size;
+
+	server_info() {
+		listen_port = 0;
+		client_max_body_size = 0;
+	}
 };
 
 // Used for the switch case function to build the server_info struct

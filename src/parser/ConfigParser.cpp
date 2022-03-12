@@ -30,8 +30,7 @@ void ConfigParser::parseFile(const std::string &file_path)
 
 	while (std::getline(file, line))
 		content.push_back(format_line(line));
-	
-	//TODO if (!validLine(content))
+
 	if (content.empty())
 	{
 		std::cerr << logEvent("[PARSE ERROR] File is empty") << END << std::endl;
@@ -109,7 +108,6 @@ void ConfigParser::fillConfigVector(ParserIterator start, ParserIterator end)
 			}
 			else
 				break;
-
 		}
 		if ((*start).find("location") != std::string::npos){
 			location_info fields;
@@ -134,25 +132,16 @@ void ConfigParser::fillServerFields(StringVector vec, server_info &serv_info, se
 			if (vec.size() == 2)
 			{
 				StringVector tmp = split(vec[1], ":");
-				serv_info.host = tmp[0];
-				serv_info.listen_port = atoi(right_trim(tmp[1], ";").c_str());
-				break;
-			}
-			// if the listen and host are splitted in the conf file
-			else if (vec.size() == 3)
-			{
-				if (vec[2] == "localhost" || vec[1] == LOCALHOST)
-				{
-					serv_info.host = vec[1];
-					serv_info.listen_port = atoi(vec[2].c_str());
-					break;
+				for (size_t i = 0; i < tmp.size(); i++){
+					if (tmp[i].size() > 5)
+						serv_info.host = right_trim(tmp[i], ";");
+					else
+						serv_info.listen_port = atoi(right_trim(tmp[i], ";").c_str());
 				}
-				else
-				{
-					serv_info.host = vec[2];
-					serv_info.listen_port = atoi(vec[1].c_str());
-					break;
-				}
+				if (serv_info.host.empty())
+					serv_info.host = LOCALHOST;
+				if (serv_info.listen_port == 0)
+					serv_info.listen_port = LISTENPORT;
 			}
 			else
 			{

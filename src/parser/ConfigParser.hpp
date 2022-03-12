@@ -52,5 +52,4 @@ private:
 	// found in the config file to relevant fields
 	void fillConfigVector(ParserIterator start, ParserIterator end);
 	
-	
 };
