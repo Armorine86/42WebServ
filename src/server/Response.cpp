@@ -1,12 +1,12 @@
 #include "Response.hpp"
 
-Response::Response(RequestParser& request) 
+Response::Response(RequestParser& request, server_info& config) 
 {
 	MethodType type = getType(request);
 
 	switch(type){
 		case GET:
-			responseGET(request);
+			responseGET(request, config);
 			break;
 		/* case POST:
 			responsePOST(request);
@@ -32,16 +32,11 @@ MethodType Response::getType(RequestParser& request)
 	return NONE;
 }
 
-void Response::responseGET(RequestParser& request)
+void Response::responseGET(RequestParser& request, server_info& config)
 {
 	//if it's got a dot in the url FOR NOW it will think it's a image
 	if (request.getURL().find(".") != std::string::npos)
-	{
-		/* if (request.getURL().find("favicon") != std::string::npos)
-			makeFavicon();
-		else */
-			makeImage(request);
-	}
+		makeImage(request, config);
 	else
 	{
 		// TODO va falloir que le pathfile soit adapte selon la request... o_O
@@ -79,33 +74,20 @@ void Response::makeHeader(const std::string& code)
 	header = s_header.str();
 }
 
-//! ***** MAY NOT BE REQUIRED, FAVICON DISPLAYS WITH ALL IMAGE MIME TYPES *****
-void Response::makeFavicon() 
-{
-	std::ifstream f("resources/favicon.ico", std::ios::in|std::ios::binary|std::ios::ate);
-
-	if(!f.is_open()){
-		perror ("bloody file is nowhere to be found. Call the cops");
-		return;
-	} 
-
-	std::streampos ssize = f.tellg();
-	char* image = new char [static_cast<long>(ssize)];
-	f.seekg (0, std::ios::beg);
-	f.read (image, ssize);
-	f.close();
-
-	body.write(image, ssize);
-	bodySize = ssize;
-	content_type = "image/*";		
-	delete[] image;
-}
-
 // Retrieves the image binary
-void Response::makeImage(RequestParser& request) 
+void Response::makeImage(RequestParser& request, server_info& config) 
 {
-	std::ifstream f(request.getURL().erase(0,1).c_str(),
-					std::ios::in|std::ios::binary|std::ios::ate);
+	LocationVector location = config.locations;
+	std::string path;
+	
+	for (size_t i = 0; i < location.size(); i++){
+		if (location.at(i).name.find("/image") != std::string::npos){
+			path = location.at(i).root;
+			break;
+		}
+	}
+	path.append(request.getURL());
+	std::ifstream f(path.c_str(), std::ios::in|std::ios::binary|std::ios::ate);
 
 	if(!f.is_open()){
 		perror ("bloody file is nowhere to be found. Call the cops");

@@ -1,6 +1,6 @@
 #include "Server.hpp"
 
-Server::Server(server_info serv_info) : client_fd(0)
+Server::Server(server_info serv_info) : client_fd(0), config(serv_info)
 {
 	Sockets socket(serv_info);
 
@@ -106,7 +106,7 @@ void Server::handleClient(PollIterator& it)
 void Server::sendResponse(std::string str_buffer, int sender_fd)
 {
 	RequestParser request(str_buffer);
-	Response response(request);
+	Response response(request, config);
 	
 	std::string header = response.getResponseHeader();
 	std::string body = response.getResponseBody();

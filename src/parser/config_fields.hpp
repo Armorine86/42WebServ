@@ -6,7 +6,7 @@
 /*   By: gcollet <gcollet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 14:22:37 by mmondell          #+#    #+#             */
-/*   Updated: 2022/03/11 16:25:27 by gcollet          ###   ########.fr       */
+/*   Updated: 2022/03/12 14:03:36 by gcollet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,16 +22,16 @@ typedef std::map<std::string, std::string> cgiMap;
 
 // All the parameters contained in the different Location blocks in the config file
 struct location_info {
+	cgiMap			cgi_extensions;
+	StringVector	allowed_request;
 	std::string		name;
 	std::string		index;
 	std::string		root;
-	cgiMap			cgi_extensions;
-	bool			autoindex;
-	bool			upload;
-	int				upload_max_size;
 	std::string		upload_directory;
-	StringVector	allowed_request;
-	int				redirections;
+	std::string		redirections;
+	int				upload_max_size;
+	bool			upload;
+	bool			autoindex;
 };
 
 typedef std::vector<location_info> LocationVector;

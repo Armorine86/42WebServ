@@ -30,7 +30,8 @@ void ConfigParser::parseFile(const std::string &file_path)
 
 	while (std::getline(file, line))
 		content.push_back(format_line(line));
-		
+	
+	//TODO if (!validLine(content))
 	if (content.empty())
 	{
 		std::cerr << logEvent("[PARSE ERROR] File is empty") << END << std::endl;
@@ -249,7 +250,7 @@ void ConfigParser::fillLocationFields(StringVector vec, location_info &fields, l
 		}
 		case redirections:
 		{
-			fields.redirections = atoi(vec[1].c_str());
+			fields.redirections = vec[1];
 			break;
 		}
 		case loc_none:
