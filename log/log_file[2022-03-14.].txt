@@ -1,0 +1,138 @@
+[Mon Mar 14 11:01:30 2022] [PARSE ERROR] Missing `;' on line: 20[Mon Mar 14 11:01:34 2022] [PARSE ERROR] Missing `;' on line: 20[Mon Mar 14 11:01:47 2022] [PARSE ERROR] Missing `;' on line: 20[Mon Mar 14 11:02:23 2022] [PARSE ERROR] Missing `;' on line: 20[Mon Mar 14 11:03:16 2022] [PARSE ERROR] Missing `;' on line: 20[Mon Mar 14 11:03:32 2022] [PARSE ERROR] Missing `;' on line: 20[Mon Mar 14 11:35:16 2022] Server is listening on: 127.0.0.1:8081
+[Mon Mar 14 11:35:16 2022] Server is listening on: 127.0.0.1:4242
+[Mon Mar 14 11:35:25 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 14 11:45:55 2022] Server is listening on: 127.0.0.1:8081
+[Mon Mar 14 11:45:55 2022] Server is listening on: 127.0.0.1:4242
+[Mon Mar 14 11:46:04 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 14 11:56:39 2022] Server is listening on: 127.0.0.1:8081
+[Mon Mar 14 11:56:39 2022] Server is listening on: 127.0.0.1:4242
+[Mon Mar 14 12:00:00 2022] Server is listening on: 127.0.0.1:8081
+[Mon Mar 14 12:00:00 2022] Server is listening on: 127.0.0.1:4242
+[Mon Mar 14 12:00:36 2022] Server is listening on: 127.0.0.1:8081
+[Mon Mar 14 12:00:36 2022] Server is listening on: 127.0.0.1:4242
+[Mon Mar 14 12:04:46 2022] Server is listening on: 127.0.0.1:8081
+[Mon Mar 14 12:04:46 2022] Server is listening on: 127.0.0.1:4242
+[Mon Mar 14 12:06:32 2022] Server is listening on: 127.0.0.1:8081
+[Mon Mar 14 12:06:32 2022] Server is listening on: 127.0.0.1:4242
+[Mon Mar 14 12:12:39 2022] Server is listening on: 127.0.0.1:8081
+[Mon Mar 14 12:12:39 2022] Server is listening on: 127.0.0.1:4242
+[Mon Mar 14 12:13:15 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 14 12:16:46 2022] Server is listening on: 127.0.0.1:8081
+[Mon Mar 14 12:16:46 2022] Server is listening on: 127.0.0.1:4242
+[Mon Mar 14 12:21:49 2022] Server is listening on: 127.0.0.1:8081
+[Mon Mar 14 12:21:49 2022] Server is listening on: 127.0.0.1:4242
+[Mon Mar 14 12:22:12 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 14 12:27:38 2022] Server is listening on: 127.0.0.1:8081
+[Mon Mar 14 12:27:38 2022] Server is listening on: 127.0.0.1:4242
+[Mon Mar 14 12:33:38 2022] Server is listening on: 127.0.0.1:8081
+[Mon Mar 14 12:33:38 2022] Server is listening on: 127.0.0.1:4242
+[Mon Mar 14 12:34:03 2022] Server is listening on: 127.0.0.1:8081
+[Mon Mar 14 12:34:41 2022] Server is listening on: 127.0.0.1:8081
+[Mon Mar 14 12:36:55 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 14 12:42:27 2022] Server is listening on: 127.0.0.1:8081
+[Mon Mar 14 12:42:50 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 14 12:52:37 2022] Server is listening on: 127.0.0.1:8081
+[Mon Mar 14 12:53:06 2022] Server is listening on: 127.0.0.1:8081
+[Mon Mar 14 12:53:06 2022] Server is listening on: 127.0.0.1:4242
+[Mon Mar 14 12:53:56 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 14 12:56:17 2022] Server is listening on: 127.0.0.1:8081
+[Mon Mar 14 12:56:17 2022] Server is listening on: 127.0.0.1:4242
+[Mon Mar 14 12:56:35 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 14 13:01:46 2022] Server is listening on: 127.0.0.1:8081
+[Mon Mar 14 13:01:46 2022] Server is listening on: 127.0.0.1:4242
+[Mon Mar 14 13:01:56 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 14 13:12:12 2022] Server is listening on: 127.0.0.1:8081
+[Mon Mar 14 13:12:12 2022] Server is listening on: 127.0.0.1:4242
+[Mon Mar 14 13:12:20 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 14 13:14:24 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 14 13:21:58 2022] Server is listening on: 127.0.0.1:8081
+[Mon Mar 14 13:21:58 2022] Server is listening on: 127.0.0.1:4242
+[Mon Mar 14 13:22:06 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 14 13:22:59 2022] Server is listening on: 127.0.0.1:8081
+[Mon Mar 14 13:22:59 2022] Server is listening on: 127.0.0.1:4242
+[Mon Mar 14 13:23:05 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 14 13:26:03 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 14 13:30:10 2022] Server is listening on: 127.0.0.1:8081
+[Mon Mar 14 13:30:10 2022] Server is listening on: 127.0.0.1:4242
+[Mon Mar 14 13:30:26 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 14 13:30:50 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 14 13:37:30 2022] Server is listening on: 127.0.0.1:8081
+[Mon Mar 14 13:37:30 2022] Server is listening on: 127.0.0.1:4242
+[Mon Mar 14 13:37:32 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 14 13:38:11 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 14 13:38:43 2022] Closing Server....
+[Mon Mar 14 13:39:39 2022] [PARSE ERROR] Missing `;' on line: 62[Mon Mar 14 13:39:58 2022] Server is listening on: 127.0.0.1:8081
+[Mon Mar 14 13:39:58 2022] Server is listening on: 127.0.0.1:4242
+[Mon Mar 14 13:40:01 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 14 13:40:03 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 14 13:40:19 2022] Closing Server....
+[Mon Mar 14 13:40:54 2022] Server is listening on: 127.0.0.1:8081
+[Mon Mar 14 13:40:54 2022] Server is listening on: 127.0.0.1:4242
+[Mon Mar 14 13:41:20 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 14 13:48:16 2022] Server is listening on: 127.0.0.1:8081
+[Mon Mar 14 13:48:16 2022] Server is listening on: 127.0.0.1:4242
+[Mon Mar 14 13:48:18 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 14 13:48:25 2022] Closing Server....
+[Mon Mar 14 13:48:32 2022] Server is listening on: 127.0.0.1:8081
+[Mon Mar 14 13:48:32 2022] Server is listening on: 127.0.0.1:4242
+[Mon Mar 14 13:48:39 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 14 13:49:56 2022] Server is listening on: 127.0.0.1:8081
+[Mon Mar 14 13:49:56 2022] Server is listening on: 127.0.0.1:4242
+[Mon Mar 14 13:49:58 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 14 13:50:05 2022] [SOCKET] Binding Error: [Mon Mar 14 13:50:56 2022] Server is listening on: 127.0.0.1:8081
+[Mon Mar 14 13:50:56 2022] Server is listening on: 127.0.0.1:4242
+[Mon Mar 14 13:50:58 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 14 13:52:06 2022] Server is listening on: 127.0.0.1:8081
+[Mon Mar 14 13:52:06 2022] Server is listening on: 127.0.0.1:4242
+[Mon Mar 14 13:52:08 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 14 13:52:16 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 14 13:53:22 2022] Closing Server....
+[Mon Mar 14 13:53:26 2022] Server is listening on: 127.0.0.1:8081
+[Mon Mar 14 13:53:26 2022] Server is listening on: 127.0.0.1:4242
+[Mon Mar 14 13:53:28 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 14 13:53:35 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 14 13:53:45 2022] Closing Server....
+[Mon Mar 14 13:54:24 2022] Server is listening on: 127.0.0.1:8081
+[Mon Mar 14 13:54:24 2022] Server is listening on: 127.0.0.1:4242
+[Mon Mar 14 13:54:30 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 14 13:54:35 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 14 13:55:16 2022] Closing Server....
+[Mon Mar 14 14:08:43 2022] Server is listening on: 127.0.0.1:8081
+[Mon Mar 14 14:08:43 2022] Server is listening on: 127.0.0.1:4242
+[Mon Mar 14 14:08:44 2022] Closing Server....
+[Mon Mar 14 14:08:55 2022] Server is listening on: 127.0.0.1:8081
+[Mon Mar 14 14:08:55 2022] Server is listening on: 127.0.0.1:4242
+[Mon Mar 14 14:09:05 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 14 14:09:37 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 14 14:09:54 2022] Server is listening on: 127.0.0.1:8081
+[Mon Mar 14 14:09:54 2022] Server is listening on: 127.0.0.1:4242
+[Mon Mar 14 14:09:57 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 14 14:10:01 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 14 14:10:05 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 14 14:10:08 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 14 14:10:12 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 14 14:10:24 2022] Closing Server....
+[Mon Mar 14 14:11:02 2022] Server is listening on: 127.0.0.1:8081
+[Mon Mar 14 14:11:02 2022] Server is listening on: 127.0.0.1:4242
+[Mon Mar 14 14:11:26 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 14 14:12:00 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 14 14:13:07 2022] Server is listening on: 127.0.0.1:8081
+[Mon Mar 14 14:13:07 2022] Server is listening on: 127.0.0.1:4242
+[Mon Mar 14 14:13:09 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 14 14:13:13 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 14 14:13:18 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 14 14:14:18 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 14 14:14:44 2022] Closing Server....
+[Mon Mar 14 14:16:35 2022] Server is listening on: 127.0.0.1:8081
+[Mon Mar 14 14:16:35 2022] Server is listening on: 127.0.0.1:4242
+[Mon Mar 14 14:16:39 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 14 14:16:44 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 14 14:16:50 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 14 14:17:04 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 14 14:17:17 2022] Closing Server....
+[Mon Mar 14 14:17:22 2022] Server is listening on: 127.0.0.1:8081
+[Mon Mar 14 14:17:22 2022] Server is listening on: 127.0.0.1:4242
+[Mon Mar 14 14:17:24 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 14 14:17:27 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 14 14:17:34 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 14 14:17:39 2022] Closing Server....

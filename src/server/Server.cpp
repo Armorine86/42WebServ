@@ -1,14 +1,14 @@
 #include "Server.hpp"
 
-Server::Server(server_info serv_info) : client_fd(0), config(serv_info)
+Server::Server(SocketsVector sockvector) : client_fd(0), sockets(sockvector)
 {
-	Sockets socket(serv_info);
+	for (size_t i = 0; i < sockets.size(); i++){
+		pollfd newfd = addToPollfd(sockets.at(i).getServFD());
+		pfds.push_back(newfd);
+		pfds[i].events = POLLIN;
+	}
 
-	pollfd newfd = addToPollfd(socket.getServFD());
-	pfds.push_back(newfd);
-	pfds[0].events = POLLIN;
-
-	run(socket);
+	run(sockvector);
 }
 
 // Creates a new Pollfd, adds the new Client fd
@@ -41,18 +41,21 @@ std::string clientIP(const int& client_fd, socklen_t addrlen) {
 // and receives a client FD.
 //
 //The FD is then pushed_back to the Pollfd struct vector.
-void Server::handleEvents(PollIterator& it)
+void Server::handleEvents(PollIterator& it, size_t i)
 {
 	socklen_t addrlen = sizeof(client_addr);
 
-	if ((client_fd = accept(pfds[0].fd, (struct sockaddr*)&client_addr, &addrlen)) == -1)
+	if ((client_fd = accept(pfds[i].fd, (struct sockaddr*)&client_addr, &addrlen)) == -1)
 		perror("accept");
-	
 	else {
 		pfds.push_back(addToPollfd(client_fd));
 		it = pfds.begin();
+		while (it->fd != pfds[i].fd)
+			it++;
 		std::cout << YELLOW << logEvent("Accepted Connection from: " + clientIP(client_fd, addrlen) + "\n") << END << std::endl;
 	}
+	
+	server_index.insert(std::pair<size_t, size_t>(client_fd, i));
 }
 
 // Checks if buffer size exceeded max body size permitted
@@ -67,7 +70,7 @@ bool Server::checkBufferSize(const char* buffer)
 
 // Handles Client requests. If the FD in the pollfd vector is
 // the sender FD (client), we can send the response to the same FD
-void Server::handleClient(PollIterator& it)
+void Server::handleClient(PollIterator& it, server_info serv_info)
 {
 	int bytes = recv((*it).fd, buffer, sizeof(buffer), 0);
 	
@@ -96,17 +99,18 @@ void Server::handleClient(PollIterator& it)
 	}
 	else if ((*it).fd == sender_fd){
 		std::string str_buffer(buffer);
+
 		bzero(buffer, sizeof(buffer));
-		sendResponse(str_buffer, sender_fd);
+		sendResponse(str_buffer, sender_fd, serv_info);
 	}
 }
 
 // Parse the request sent by the client and builds a response.
 // Memcpy the Header and the Body into a buffer to use with send().
-void Server::sendResponse(std::string str_buffer, int sender_fd)
+void Server::sendResponse(std::string str_buffer, int sender_fd, server_info serv_info)
 {
 	RequestParser request(str_buffer);
-	Response response(request, config);
+	Response response(request, serv_info);
 	
 	std::string header = response.getResponseHeader();
 	std::string body = response.getResponseBody();
@@ -142,10 +146,10 @@ void Server::sendResponse(std::string str_buffer, int sender_fd)
 // Copy the header AND the body to the buffer. send() the response to the sender (client fd).
 //
 // 7. Rince and Repeat
-void Server::run(Sockets socket)
+void Server::run(SocketsVector sockets)
 {
-
-	std::cout << YELLOW << logEvent("Server is listening on: " + socket.getHostName() + "\n") << END << std::endl;
+	for (size_t i = 0; i < sockets.size(); i++)
+		std::cout << YELLOW << logEvent("Server is listening on: " + sockets.at(i).getHostName() + "\n") << END << std::endl;
 
 	while(true) {
 		if (poll(&(pfds.front()), pfds.size(), 60000) < 0) {
@@ -154,11 +158,19 @@ void Server::run(Sockets socket)
 		}
 
 		for (PollIterator it = pfds.begin(); it != pfds.end(); it++) {
-			if ((*it).revents & POLLIN) {
-				if ((*it).fd == socket.getServFD())
-					handleEvents(it);	
-				else
-					handleClient(it);
+			if ((*it).revents & POLLIN) 
+			{
+				for (size_t i = 0; i < pfds.size(); i++){
+					if ((*it).fd == pfds.at(i).fd && (*it).fd != client_fd && i < sockets.size()){
+						handleEvents(it, i);
+						break;
+					}
+					if ((*it).fd == pfds.at(i).fd){
+						int server_i = server_index.at(it->fd);
+						handleClient(it, sockets.at(server_i).getServInfo());
+						break;
+					}
+				}
 			}
 		}
 	}
