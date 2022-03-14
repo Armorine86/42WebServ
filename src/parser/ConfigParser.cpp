@@ -115,6 +115,7 @@ void ConfigParser::fillConfigVector(ParserIterator start, ParserIterator end)
 				fillLocationFields(split(*start, " "), fields, getLocationType(*start));
 				start++;
 			}
+			validLocation(fields, serv_info);
 			serv_info.locations.push_back(fields);
 		}
 	}
@@ -158,7 +159,7 @@ void ConfigParser::fillServerFields(StringVector vec, server_info &serv_info, se
 
 		case root:
 		{
-			serv_info.root = vec[1];
+			serv_info.root = vec[1].erase(vec[1].size() - 1);
 			break;
 		}
 
@@ -248,5 +249,15 @@ void ConfigParser::fillLocationFields(StringVector vec, location_info &fields, l
 			throw std::runtime_error("Parse error: Unrecognized Server Location Field");
 		}
 	}
-	//TODO set default value if none
+}
+
+void ConfigParser::validLocation(location_info &fields, server_info &serv_info)
+{
+	//TODO function to set default value if none
+	if (fields.root == "" && fields.name != "/redirection"){
+		if (serv_info.root != "")
+			fields.root = serv_info.root;
+		else
+			throw std::runtime_error(logEvent("[PARSE ERROR] Location doesn't have a root path"));
+	}
 }

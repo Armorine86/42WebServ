@@ -44,6 +44,7 @@ private:
 
 	void fillServerFields(StringVector vec, server_info &serv_info, server_fields type);
 	void fillLocationFields(StringVector vec, location_info &fields, location_fields type);
+	void validLocation(location_info &fields, server_info &serv_info);
 	server_fields getFieldType(std::string& line);
 	location_fields getLocationType(std::string &line);
 	server_fields type;

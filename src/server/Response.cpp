@@ -34,20 +34,21 @@ MethodType Response::getType(RequestParser& request)
 
 void Response::responseGET(RequestParser& request, server_info& config)
 {
-	//if it's got a dot in the url FOR NOW it will think it's an image
-	if (request.getURL().find(".") != std::string::npos)
+	if (request.getURL().find("/images") != std::string::npos)
 		makeImage(request, config);
 	else
 	{
 		LocationVector location = config.locations;
 		std::string path;
 	
+		// Look for the exact path
 		for (size_t i = 0; i < location.size(); i++){
 			if (location.at(i).name == request.getURL()) {
 				path = location.at(i).root;
 				break;
 			}
 		}
+		// Then look if its looking for the index
 		if (request.getURL() ==  "/")
 		{
 			for (size_t i = 0; i < location.size(); i++){
@@ -58,11 +59,12 @@ void Response::responseGET(RequestParser& request, server_info& config)
 				}
 			}
 		}
+		// Then take the given path
 		else
-			path.append(request.getURL());
+			path.append(config.root + request.getURL());
 		readHTML(path);
 		bodySize = body.str().length();
-		content_type = "text/html";
+		content_type = "*/*";
 	}
 	makeHeader("200");
 }

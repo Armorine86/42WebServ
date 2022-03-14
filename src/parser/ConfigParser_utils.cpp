@@ -5,8 +5,6 @@ server_fields ConfigParser::getFieldType(std::string &line)
 {
 	if (line.find("listen") != std::string::npos)
 		return listen_field;
-	// else if (line.find("host") != std::string::npos)
-	// 	return host;
 	else if (line.find("server_name") != std::string::npos)
 		return server_name;
 	else if (line.find("root") != std::string::npos)
