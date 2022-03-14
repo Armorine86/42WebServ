@@ -28,10 +28,14 @@ public:
 	int getServFD() { return server_fd; }
 	std::string getHostName(); //return IP, and port#
 	sockaddr_in& getAddress() { return address; }
+	server_info getServInfo() { return serv_info; }
 
 private:
 	int server_fd;
 
 	struct sockaddr_in address;
 	server_info serv_info;  // Contain server infos from Config file
+
 };
+
+typedef std::vector<Sockets> SocketsVector;

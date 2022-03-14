@@ -18,27 +18,28 @@ class Sockets;
 class Server {
 public:
 	Server() {}
-	Server(server_info serv_info);
+	Server(SocketsVector sockvector);
 	~Server() {}
 	
-	void run(Sockets socket);
+	void run(SocketsVector sockets);
 	
 private:
 
 	typedef std::vector<pollfd>::iterator PollIterator;
 
 	int		client_fd;
-	
-	server_info config;
+	std::map<size_t, size_t> server_index; //client_index : server_index
+
+	SocketsVector sockets;
 	RequestParser request;
 	sockaddr_storage client_addr;
 
 	char buffer[MAX_BODY_SIZE];
 	std::vector<pollfd> pfds;  //pollfd struct vector
 
-	void handleEvents(PollIterator& it);
-	void handleClient(PollIterator& it);
-	void sendResponse(std::string str_buffer, int sender_fd);
+	void handleEvents(PollIterator& it, size_t i);
+	void handleClient(PollIterator& it, server_info serv_info);
+	void sendResponse(std::string str_buffer, int sender_fd, server_info serv_info);
 
 	bool checkBufferSize(const char* buffer);
 	pollfd addToPollfd(int newfd);

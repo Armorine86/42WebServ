@@ -21,6 +21,7 @@ public:
 	~ConfigParser() {}
 	
 	server_info getServersInfos(const int& index);
+	int getServersSize() { return servers_config.size(); }
 
 private:
 	// iterator for the config file content

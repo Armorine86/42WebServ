@@ -49,7 +49,15 @@ void Response::responseGET(RequestParser& request, server_info& config)
 			}
 		}
 		if (request.getURL() ==  "/")
-			path.append("/index.html");
+		{
+			for (size_t i = 0; i < location.size(); i++){
+				if (location.at(i).name == "/"){
+					path.append("/");
+					path.append(location.at(i).index);
+					break;
+				}
+			}
+		}
 		else
 			path.append(request.getURL());
 		readHTML(path);
@@ -77,7 +85,6 @@ void Response::makeHeader(const std::string& code)
 	std::stringstream s_header;
 
 	s_header << "HTTP/1.1 " << (*it).first << (*it).second << "\r\n"
-	//s_header << "HTTP/1.1 200 OK\r\n"
 	<< "Content-type: " << content_type
 	<< "\r\nContent-Length: " << bodySize << "\r\n\r\n";
 
