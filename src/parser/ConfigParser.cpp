@@ -246,7 +246,7 @@ void ConfigParser::fillLocationFields(StringVector vec, location_info &fields, l
 		case loc_none:
 		{
 			std::cerr << logEvent("[PARSE ERROR] Unrecognized Server Location Directive\n") << END << std::endl;
-			throw std::runtime_error("Parse error: Unrecognized Server Location Field");
+			throw std::runtime_error("Parse error: Unrecognized Server Location Field\n");
 		}
 	}
 }
@@ -258,6 +258,9 @@ void ConfigParser::validLocation(location_info &fields, server_info &serv_info)
 		if (serv_info.root != "")
 			fields.root = serv_info.root;
 		else
-			throw std::runtime_error(logEvent("[PARSE ERROR] Location doesn't have a root path\n"));
+		{
+			std::cerr << logEvent("[PARSE ERROR] Unrecognized Server Location Directive\n") << END << std::endl;
+			throw std::runtime_error("Parse error: Location doesn't have a root path\n");
+		}
 	}
 }

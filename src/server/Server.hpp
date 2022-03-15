@@ -28,7 +28,7 @@ private:
 	typedef std::vector<pollfd>::iterator PollIterator;
 
 	int		client_fd;
-	std::map<size_t, size_t> server_index; //client_index : server_index
+	std::map<int, size_t> server_index; //client_index : server_index
 
 	SocketsVector sockets;
 	RequestParser request;

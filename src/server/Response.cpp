@@ -34,7 +34,8 @@ MethodType Response::getType(RequestParser& request)
 
 void Response::responseGET(RequestParser& request, server_info& config)
 {
-	if (request.getURL().find("/images") != std::string::npos)
+	if (request.getURL().find("/images") != std::string::npos ||
+		request.getURL().find("favicon.ico") != std::string::npos)
 		makeImage(request, config);
 	else
 	{
@@ -106,9 +107,11 @@ void Response::makeImage(RequestParser& request, server_info& config)
 			break;
 		}
 	}
+	if (request.getURL().find("favicon.ico") != std::string::npos)
+		path.append("/images");
 	path.append(request.getURL());
 	std::ifstream f(path.c_str(), std::ios::in|std::ios::binary|std::ios::ate);
-
+	//std::cout << path << std::endl;
 	if(!f.is_open()){
 		perror ("bloody file is nowhere to be found. Call the cops");
 		return;

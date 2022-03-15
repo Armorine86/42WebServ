@@ -6,8 +6,6 @@
 #include "Socket.hpp"
 #include <exception>
 
-// typedef std::vector<Sockets> SocketsVector;
-
 void close_serv(int sig)
 {
 	(void)sig;

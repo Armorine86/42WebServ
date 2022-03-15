@@ -54,8 +54,8 @@ void Server::handleEvents(PollIterator& it, size_t i)
 			it++;
 		std::cout << YELLOW << logEvent("Accepted Connection from: " + clientIP(client_fd, addrlen) + "\n") << END << std::endl;
 	}
-	
-	server_index.insert(std::pair<size_t, size_t>(client_fd, i));
+	std::pair<int, size_t> p1(client_fd, i);
+	server_index[p1.first] = p1.second;
 }
 
 // Checks if buffer size exceeded max body size permitted
@@ -95,6 +95,7 @@ void Server::handleClient(PollIterator& it, server_info serv_info)
 			perror("recv");
 		close((*it).fd); // Bye !
 		pfds.erase(it);
+		//server_index.erase((*it).fd);
 		it = pfds.begin();
 	}
 	else if ((*it).fd == sender_fd){
