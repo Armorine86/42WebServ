@@ -38,7 +38,7 @@ private:
 	typedef std::map<std::string, std::string>::iterator MapIterator;
 	typedef std::vector<location_info>::iterator LocIterator;
 
-	StatusCode status;
+	StatusCode status; // Status Code map
 
 	std::ifstream imgBin();
 	MethodType getType(RequestParser& request);

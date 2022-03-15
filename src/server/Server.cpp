@@ -100,7 +100,6 @@ void Server::handleClient(PollIterator& it, server_info serv_info)
 			perror("recv");
 		close((*it).fd); // Bye !
 		pfds.erase(it);
-		//server_index.erase((*it).fd);
 		it = pfds.begin();
 	}
 	else if ((*it).fd == sender_fd){
