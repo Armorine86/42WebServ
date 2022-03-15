@@ -12,7 +12,7 @@ void validEndline(std::string& line)
 			&& line != "") {
 				std::stringstream p_str;
 				p_str << line_num;
-				throw std::runtime_error(logEvent("[PARSE ERROR] Missing `;' on line: " + p_str.str()));
+				throw std::runtime_error(logEvent("[PARSE ERROR] Missing `;' on line: " + p_str.str() + "\n"));
 			} 
 }
 

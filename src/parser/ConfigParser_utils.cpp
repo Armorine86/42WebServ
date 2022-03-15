@@ -45,12 +45,12 @@ bool ConfigParser::isInServerScope(const std::string &line)
 {
 	if (line.find("server") == std::string::npos)
 	{
-		std::cerr << logEvent("[PARSE ERROR] Invalid Server Scope") << END << std::endl;
+		std::cerr << logEvent("[PARSE ERROR] Invalid Server Scope\n") << END << std::endl;
 		return false;
 	}
 	if (line.find("{") == std::string::npos)
 	{
-		std::cerr << logEvent("[PARSE ERROR] Missing Opening Bracket") << END << std::endl;
+		std::cerr << logEvent("[PARSE ERROR] Missing Opening Bracket\n") << END << std::endl;
 		return false;
 	}
 	return true;

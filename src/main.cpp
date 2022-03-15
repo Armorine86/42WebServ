@@ -12,7 +12,7 @@ void close_serv(int sig)
 {
 	(void)sig;
 	std::cout << YELLOW << logEvent("Closing Server....\n") << END << std::endl;
-	throw std::runtime_error("");
+	throw std::runtime_error("Server Terminated by User");
 }
 
 int main(int argc, char** argv)

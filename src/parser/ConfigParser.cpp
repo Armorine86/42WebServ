@@ -24,7 +24,7 @@ void ConfigParser::parseFile(const std::string &file_path)
 
 	if (!(file.is_open() && file.good()))
 	{
-		std::cerr << logEvent("[PARSE ERROR] Cannot open file") << END << std::endl;
+		std::cerr << logEvent("[PARSE ERROR] Cannot open file\n") << END << std::endl;
 		throw std::runtime_error("Filestream error: Cannot open file");
 	}
 
@@ -33,7 +33,7 @@ void ConfigParser::parseFile(const std::string &file_path)
 
 	if (content.empty())
 	{
-		std::cerr << logEvent("[PARSE ERROR] File is empty") << END << std::endl;
+		std::cerr << logEvent("[PARSE ERROR] File is empty\n") << END << std::endl;
 		throw std::runtime_error("File is empty");
 	}
 	parseConfig(content);
@@ -75,7 +75,7 @@ void ConfigParser::parseConfig(StringVector &content)
 				fillConfigVector(scopeStart, scopeEnd);
 			else
 			{
-				std::cerr << logEvent("[PARSE ERROR] Scope isn't closed... Missing `}`") << END << std::endl;
+				std::cerr << logEvent("[PARSE ERROR] Scope isn't closed... Missing `}`\n") << END << std::endl;
 				throw std::runtime_error("Parse Error: Bad Config File Syntax");
 			}
 		}
@@ -146,7 +146,7 @@ void ConfigParser::fillServerFields(StringVector vec, server_info &serv_info, se
 			}
 			else
 			{
-				std::cerr << logEvent("[PARSE ERROR] Missing Listen Directive Value...") << END << std::endl;
+				std::cerr << logEvent("[PARSE ERROR] Missing Listen Directive Value...\n") << END << std::endl;
 				throw std::runtime_error("Parse error: Missing Listen Field");
 			}
 		}
@@ -180,7 +180,7 @@ void ConfigParser::fillServerFields(StringVector vec, server_info &serv_info, se
 
 		case none:
 		{
-			std::cerr << logEvent("[PARSE ERROR] Unrecognized Server Directive") << END << std::endl;
+			std::cerr << logEvent("[PARSE ERROR] Unrecognized Server Directive\n") << END << std::endl;
 			throw std::runtime_error("Parse error: Unrecognized Server Field");
 		}
 	}
@@ -245,7 +245,7 @@ void ConfigParser::fillLocationFields(StringVector vec, location_info &fields, l
 		}
 		case loc_none:
 		{
-			std::cerr << logEvent("[PARSE ERROR] Unrecognized Server Location Directive") << END << std::endl;
+			std::cerr << logEvent("[PARSE ERROR] Unrecognized Server Location Directive\n") << END << std::endl;
 			throw std::runtime_error("Parse error: Unrecognized Server Location Field");
 		}
 	}
@@ -258,6 +258,6 @@ void ConfigParser::validLocation(location_info &fields, server_info &serv_info)
 		if (serv_info.root != "")
 			fields.root = serv_info.root;
 		else
-			throw std::runtime_error(logEvent("[PARSE ERROR] Location doesn't have a root path"));
+			throw std::runtime_error(logEvent("[PARSE ERROR] Location doesn't have a root path\n"));
 	}
 }

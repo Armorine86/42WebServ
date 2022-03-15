@@ -9,7 +9,7 @@ Sockets::Sockets(server_info& serv_info) : server_fd(0), serv_info(serv_info)
 	if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
 		
 		std::cerr << logEvent("[SOCKET] Invalid fd: ")
-				  << strerror(errno) << END << std::endl;
+				  << strerror(errno) << "\n" << END << std::endl;
 		throw std::runtime_error("Invalid Socket");
 	}
 	
@@ -23,7 +23,7 @@ Sockets::Sockets(server_info& serv_info) : server_fd(0), serv_info(serv_info)
 	if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes))) {
 
 		std::cerr << logEvent("[SOCKET] Could not set Options: ")
-				  << strerror(errno) << END << std::endl;
+				  << strerror(errno) << "\n" << END << std::endl;
 		throw std::runtime_error("Cannot set socket option");
 	}
 	
@@ -32,14 +32,14 @@ Sockets::Sockets(server_info& serv_info) : server_fd(0), serv_info(serv_info)
 	if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0) {
 		
 		std::cerr << logEvent("[SOCKET] Binding Error: ")
-				  << strerror(errno) << END << std::endl;
+				  << strerror(errno) << "\n" << END << std::endl;
 		throw std::runtime_error("Cannot bind socket");
 	}
 
 	if (listen(server_fd, BACKLOG) < 0) {
 		
 		std::cerr << logEvent("[SOCKET] Could not listen on port: ")
-				  << strerror(errno) << END << std::endl;
+				  << strerror(errno) << "\n" << END << std::endl;
 		throw std::runtime_error("Cannot listen on socket");
 	}
 }

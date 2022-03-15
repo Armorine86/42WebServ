@@ -15,7 +15,7 @@ Response::Response(RequestParser& request, server_info& config)
 			responseDELETE(request); 
 			break;*/
 		default:
-			std::cerr << logEvent("Response: [405] Method not Allowed") << END << std::endl;
+			std::cerr << logEvent("Response: [405] Method not Allowed\n") << END << std::endl;
 	}
 }
 
@@ -135,7 +135,7 @@ void Response::readHTML(std::string filepath)
 	myfile.open(filepath.c_str(), std::ios::in);
 	
 	if (!myfile.good())
-		std::cout << "file cannot open!";
+		std::cout << logEvent("file cannot open!\n") << std::endl;
 
 	while (getline(myfile, line))
 		body << line << '\n';

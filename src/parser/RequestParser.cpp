@@ -4,7 +4,7 @@ RequestParser::RequestParser(std::string &request){
 	StringVector content = split(request, "\r\n");
 
 	if (content.empty()) {
-		std::cerr << logEvent("[PARSE ERROR] Request is empty") << END << std::endl;
+		std::cerr << logEvent("[PARSE ERROR] Request is empty\n") << END << std::endl;
 		throw std::runtime_error("Empty Request");
 	}
 	RequestInfo(content);
@@ -63,7 +63,7 @@ void RequestParser::ParseFirstLine(StringIterator& line){
 			else if((*start).find("DELETE") != std::string::npos)
 				method = "DELETE";
 			else{
-				std::cerr << logEvent("[405] Method not Allowed") << END << std::endl;
+				std::cerr << logEvent("[405] Method not Allowed\n") << END << std::endl;
 				return;
 			}
 		}
@@ -72,12 +72,12 @@ void RequestParser::ParseFirstLine(StringIterator& line){
 		}
 		else if((*start).find("HTTP") != std::string::npos) {
 			if ((*start).find("HTTP/1.1") == std::string::npos) {
-				std::cerr << logEvent("[505] HTTP Version Not Supported") << END << std::endl;
+				std::cerr << logEvent("[505] HTTP Version Not Supported\n") << END << std::endl;
 				return;
 			}
 		} 
 		else{
-			std::cerr << logEvent("[400] Bad Request") << END << std::endl;
+			std::cerr << logEvent("[400] Bad Request\n") << END << std::endl;
 			return;
 		}
 	}
