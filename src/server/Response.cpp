@@ -67,7 +67,7 @@ void Response::responseGET(RequestParser& request, server_info& config)
 		bodySize = body.str().length();
 		content_type = "*/*";
 	}
-	makeHeader("200");
+	makeHeader(200);
 }
 
 /* void Response::responsePOST()
