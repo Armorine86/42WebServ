@@ -8,7 +8,7 @@
 #include <fstream>
 #include <poll.h>
 
-#define MAX_BODY_SIZE 3500000
+#define MAX_BODY_SIZE 200000
 
 class Sockets;
 

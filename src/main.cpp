@@ -17,26 +17,17 @@ void close_serv(int sig)
 
 int main(int argc, char** argv)
 {
-	std::string config_path;
-	
 	signal(SIGINT, close_serv);
 	signal(SIGQUIT, close_serv);
-
-	std::vector<Server> servers;
 	
 	if (argc <= 2){
-		// No arguments = default file
-		config_path = (argc == 2) ? argv[1] : DEFAULT_CONFIG_FILE;
 
-		// for (int i = 0; i < config.server)
-		// config.getServersInfos();
-		
-		// Allume le sockets pour chaque serveur du config file pour receive request (port unique)
-		// Parse Request
-		// Exec le bon serveur avec la bonne method
-		// Create Respond
+		// No arguments = default file
+		std::string config_path = (argc == 2) ? argv[1] : DEFAULT_CONFIG_FILE;
+
 		try {
 			ConfigParser config(config_path);
+
 			SocketsVector sockvector;
 		
 			for (int i = 0; i < config.getServersSize(); i++) {
@@ -47,9 +38,8 @@ int main(int argc, char** argv)
 
 			Server server(sockvector);
 
-			//server.run();
 		} catch (std::exception &e) {
-			std::cout << BRED << e.what() << END << std::endl;
+			std::cerr << BRED << e.what() << END << std::endl;
 			return (EXIT_FAILURE);
 		}
 	} 
