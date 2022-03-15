@@ -35,7 +35,7 @@ private:
 	std::string content_type;
 	std::stringstream body;
 
-	typedef std::map<std::string, std::string>::iterator MapIterator;
+	typedef std::map<short, std::string>::iterator MapIterator;
 	typedef std::vector<location_info>::iterator LocIterator;
 
 	StatusCode status; // Status Code map
@@ -46,7 +46,7 @@ private:
 	void responseGET(RequestParser& request, server_info& config);
 	//void responsePOST(RequestParser& const request);
 	//void responseDELETE(RequestParser& const request);
-	void makeHeader(const std::string& code);
+	void makeHeader(const short& code);
 	void makeFavicon();
 	void makeImage(RequestParser& request, server_info& config);
 	void readHTML(std::string filepath);

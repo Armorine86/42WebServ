@@ -82,7 +82,7 @@ void Response::responseDELETE()
 
 // Generates a Header for the Response matching the parameter to
 // the wanted code in StatusCode map
-void Response::makeHeader(const std::string& code) 
+void Response::makeHeader(const short& code) 
 {
 	MapIterator it = status.code.find(code);
 	std::stringstream s_header;
