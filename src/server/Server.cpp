@@ -1,5 +1,6 @@
 #include "Server.hpp"
 
+// Builds the pollfd vector with the server sockets and runs the servers
 Server::Server(SocketsVector sockvector) : client_fd(0), sockets(sockvector)
 {
 	for (size_t i = 0; i < sockets.size(); i++){
@@ -40,7 +41,8 @@ std::string clientIP(const int& client_fd, socklen_t addrlen) {
 // Handle Events sent to the server socket. Accepts a connection
 // and receives a client FD.
 //
-//The FD is then pushed_back to the Pollfd struct vector.
+// The FD is then pushed_back to the Pollfd struct vector.
+// A map keeps track of the client fd and which server got the client request
 void Server::handleEvents(PollIterator& it, size_t i)
 {
 	socklen_t addrlen = sizeof(client_addr);
@@ -50,12 +52,15 @@ void Server::handleEvents(PollIterator& it, size_t i)
 	else {
 		pfds.push_back(addToPollfd(client_fd));
 		it = pfds.begin();
+
 		while (it->fd != pfds[i].fd)
 			it++;
+
+		std::pair<int, size_t> p1(client_fd, i);
+		server_index[p1.first] = p1.second;
+
 		std::cout << YELLOW << logEvent("Accepted Connection from: " + clientIP(client_fd, addrlen) + "\n") << END << std::endl;
 	}
-	std::pair<int, size_t> p1(client_fd, i);
-	server_index[p1.first] = p1.second;
 }
 
 // Checks if buffer size exceeded max body size permitted
@@ -75,7 +80,7 @@ void Server::handleClient(PollIterator& it, server_info serv_info)
 	int bytes = recv((*it).fd, buffer, sizeof(buffer), 0);
 	
 	if (checkBufferSize(buffer))
-		; // TODO if buf is bigger than max_body_size : error 416 Request Entity Too Large
+		; // TODO if buf is bigger than max_body_size : error [416] Request Entity Too Large
 
 	if (DEBUG) {
 		std::string str_buffer = buffer;

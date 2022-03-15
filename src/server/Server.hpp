@@ -28,7 +28,8 @@ private:
 	typedef std::vector<pollfd>::iterator PollIterator;
 
 	int		client_fd;
-	std::map<int, size_t> server_index; //client_index : server_index
+
+	std::map<int, size_t> server_index; //client_fd : server_index
 
 	SocketsVector sockets;
 	RequestParser request;
@@ -42,6 +43,7 @@ private:
 	void sendResponse(std::string str_buffer, int sender_fd, server_info serv_info);
 
 	bool checkBufferSize(const char* buffer);
+
 	pollfd addToPollfd(int newfd);
 
 };
