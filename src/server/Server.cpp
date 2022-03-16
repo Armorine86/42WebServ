@@ -67,7 +67,7 @@ void Server::handleEvents(PollIterator& it, size_t i)
 // the sender FD (client), we can send the response to the same FD
 void Server::handleClient(PollIterator& it, server_info serv_info)
 {
-	char buffer[serv_info.client_max_body_size];
+	char buffer[200000];
 	int bytes = recv((*it).fd, buffer, sizeof(buffer), 0);
 
 	if (DEBUG) {

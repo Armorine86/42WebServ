@@ -4,7 +4,7 @@
 // Makes the sockets Non-Blocking with fcntl(), and binds it to the port & IP.
 //
 // If an error occurs, the program exits with appropriate code.
-Sockets::Sockets(server_info& serv_info) : server_fd(0), serv_info(serv_info)
+Sockets::Sockets(server_info& serv_info, bool& canBind) : server_fd(0), canBind(canBind), serv_info(serv_info)
 {
 	if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
 		

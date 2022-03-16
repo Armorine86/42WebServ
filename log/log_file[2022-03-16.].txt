@@ -211,3 +211,12 @@
 [Wed Mar 16 11:24:14 2022] Accepted Connection from: 127.0.0.1
 [Wed Mar 16 11:24:14 2022] Accepted Connection from: 127.0.0.1
 [Wed Mar 16 11:24:52 2022] Closing Server....
+[Wed Mar 16 16:51:17 2022] Server is listening on: 127.0.0.1:8081
+[Wed Mar 16 16:51:17 2022] Server is listening on: 127.0.0.1:4242
+[Wed Mar 16 16:51:22 2022] Accepted Connection from: 127.0.0.1
+[Wed Mar 16 16:51:28 2022] Accepted Connection from: 127.0.0.1
+[Wed Mar 16 16:51:52 2022] Closing Server....
+[Wed Mar 16 16:57:00 2022] Server is listening on: 127.0.0.1:8081
+[Wed Mar 16 16:57:00 2022] Server is listening on: 127.0.0.1:4242
+[Wed Mar 16 16:57:04 2022] Accepted Connection from: 127.0.0.1
+[Wed Mar 16 16:57:12 2022] Closing Server....

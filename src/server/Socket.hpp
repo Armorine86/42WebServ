@@ -20,7 +20,7 @@
 class Sockets {
 public:
 	Sockets();
-	Sockets(server_info& serv_info);
+	Sockets(server_info& serv_info, bool& canBind);
 	Sockets(const Sockets& src) { *this = src; }
 	~Sockets() {}
 
@@ -34,6 +34,7 @@ private:
 	int server_fd;
 
 	struct sockaddr_in address;
+	bool canBind;
 	server_info serv_info;  // Contain server infos from Config file
 
 };

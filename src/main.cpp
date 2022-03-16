@@ -6,6 +6,17 @@
 #include "Socket.hpp"
 #include <exception>
 
+bool duplicateBind(SocketsVector& sockvector, int size, server_info& info)
+{
+    if (sockvector.size() == 0)
+        return false;
+    for (int i = 0; i < size; i++) {
+        if (sockvector[i].getServInfo().listen_port == info.listen_port)
+            return true;
+    }
+    return false;
+}
+
 void close_serv(int sig)
 {
 	(void)sig;
@@ -29,10 +40,14 @@ int main(int argc, char** argv)
 			SocketsVector sockvector;
 		
 			for (int i = 0; i < config.getServersSize(); i++) {
-				server_info serv_info = config.getServersInfos(i);
-				Sockets socket(serv_info);
-				sockvector.push_back(socket);
-			}
+                bool canBind = true;
+                server_info serv_info = config.getServersInfos(i);
+                int size = sockvector.size();
+                if (duplicateBind(sockvector, size, serv_info))
+                    canBind = false;
+                Sockets socket(serv_info, canBind);
+                sockvector.push_back(socket);
+            }
 
 			Server server(sockvector);
 
