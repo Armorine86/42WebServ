@@ -1,9 +1,8 @@
 #include "utils.hpp"
 #include "defines.hpp"
 
-void validEndline(std::string& line)
+void validEndline(std::string& line, int& line_num)
 {
-	static int line_num;
 	line_num++;
 	if (line.find(";") == std::string::npos)
 		if ((line.find("server") == std::string::npos
@@ -17,9 +16,9 @@ void validEndline(std::string& line)
 }
 
 // Cleans whitespaces and gives back a formatted string
-std::string format_line(std::string &line) {
+std::string format_line(std::string &line, int& line_num) {
 
-	validEndline(line);
+	validEndline(line, line_num);
 
 	std::string new_string;
 	size_t i = 0;

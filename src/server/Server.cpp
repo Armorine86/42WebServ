@@ -1,7 +1,7 @@
 #include "Server.hpp"
 
 // Builds the pollfd vector with the server sockets and runs the servers
-Server::Server(SocketsVector sockvector) : client_fd(0), sockets(sockvector)
+Server::Server(SocketsVector sockvector) : client_fd(0), status_code(200), sockets(sockvector)
 {
 	for (size_t i = 0; i < sockets.size(); i++){
 		pollfd newfd = addToPollfd(sockets.at(i).getServFD());
@@ -63,7 +63,7 @@ void Server::handleEvents(PollIterator& it, size_t i)
 	}
 }
 
-// Checks if buffer size exceeded max body size permitted
+// Checks if buffer size exceeded permitted max body size 
 bool Server::checkBufferSize(const char* buffer)
 {
 	for (size_t i = 0; buffer[i]; ++i) {
@@ -80,7 +80,7 @@ void Server::handleClient(PollIterator& it, server_info serv_info)
 	int bytes = recv((*it).fd, buffer, sizeof(buffer), 0);
 	
 	if (checkBufferSize(buffer))
-		; // TODO if buf is bigger than max_body_size : error [416] Request Entity Too Large
+		status_code = 413;
 
 	if (DEBUG) {
 		std::string str_buffer = buffer;
@@ -115,7 +115,7 @@ void Server::handleClient(PollIterator& it, server_info serv_info)
 void Server::sendResponse(std::string str_buffer, int sender_fd, server_info serv_info)
 {
 	RequestParser request(str_buffer);
-	Response response(request, serv_info);
+	Response response(request, serv_info, status_code);
 	
 	std::string header = response.getResponseHeader();
 	std::string body = response.getResponseBody();
@@ -132,6 +132,7 @@ void Server::sendResponse(std::string str_buffer, int sender_fd, server_info ser
 		std::cout << GREEN << "+++ RESPONSE +++\n\n" << END << buffer << std::endl;
 
 	delete [] buffer;
+	status_code = 200;
 }
 
 // Server Main Loop. This is where the magic operates
@@ -157,9 +158,9 @@ void Server::run(SocketsVector sockets)
 		std::cout << YELLOW << logEvent("Server is listening on: " + sockets.at(i).getHostName() + "\n") << END << std::endl;
 
 	while(true) {
-		if (poll(&(pfds.front()), pfds.size(), 60000) < 0) {
-			perror("poll"); 
-			exit(1);
+		int ret = 0;
+		if ((ret = poll(&(pfds.front()), pfds.size(), 10000)) <= 0) {
+			(ret == -1) ? status_code = 500 : status_code = 408;
 		}
 
 		for (PollIterator it = pfds.begin(); it != pfds.end(); it++) {

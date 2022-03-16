@@ -28,8 +28,10 @@ void ConfigParser::parseFile(const std::string &file_path)
 		throw std::runtime_error("Filestream error: Cannot open file");
 	}
 
+	int line_num = 0;
+	
 	while (std::getline(file, line))
-		content.push_back(format_line(line));
+		content.push_back(format_line(line, line_num));
 
 	if (content.empty())
 	{
@@ -153,7 +155,6 @@ void ConfigParser::fillServerFields(StringVector vec, server_info &serv_info, se
 		case server_name:
 		{
 			serv_info.server_names = vec[1];
-			// TODO serv_info.server_names.push_back(vec[1]);
 			break;
 		}
 

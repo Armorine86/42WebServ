@@ -1,6 +1,6 @@
 #include "Response.hpp"
 
-Response::Response(RequestParser& request, server_info& config) 
+Response::Response(RequestParser& request, server_info& config, short& status_code) : status_code(status_code)
 {
 	MethodType type = getType(request);
 
@@ -34,7 +34,7 @@ MethodType Response::getType(RequestParser& request)
 
 void Response::responseGET(RequestParser& request, server_info& config)
 {
-	if (request.getURL().find("/images") != std::string::npos ||
+	if (request.getURL().find("/image") != std::string::npos ||
 		request.getURL().find("favicon.ico") != std::string::npos)
 		makeImage(request, config);
 	else
@@ -49,7 +49,7 @@ void Response::responseGET(RequestParser& request, server_info& config)
 				break;
 			}
 		}
-		// Then look if its looking for the index
+		// Then check if its looking for the index
 		if (request.getURL() ==  "/")
 		{
 			for (size_t i = 0; i < location.size(); i++){
@@ -67,7 +67,8 @@ void Response::responseGET(RequestParser& request, server_info& config)
 		bodySize = body.str().length();
 		content_type = "*/*";
 	}
-	makeHeader(200);
+	makeHeader(status_code);
+
 }
 
 /* void Response::responsePOST()
@@ -95,38 +96,64 @@ void Response::makeHeader(const short& code)
 	header = s_header.str();
 }
 
-// Retrieves the image binary
-void Response::makeImage(RequestParser& request, server_info& config) 
+// Retrieves the requested image binary and sets the informations in a pair
+std::pair<char *, std::streampos> Response::getImageBinary(const char* path)
 {
-	LocationVector location = config.locations;
-	std::string path;
+	ImgInfo img_info;
+	std::ifstream f(path, std::ios::in|std::ios::binary|std::ios::ate);
 	
+	if (!f.is_open()) { // if file not found
+		status_code = 404;
+		img_info.first = NULL;
+		return img_info;
+	}
+
+	img_info.second = f.tellg();
+
+	img_info.first = new char [static_cast<long>(img_info.second)];
+
+	f.seekg (0, std::ios::beg);
+	f.read (img_info.first, img_info.second);
+	f.close();
+
+	return img_info;
+}
+
+std::string Response::findImagePath(LocationVector& location, RequestParser& request)
+{
+	std::string path;
+
 	for (size_t i = 0; i < location.size(); i++){
 		if (location.at(i).name.find("/image") != std::string::npos){
 			path = location.at(i).root;
 			break;
 		}
 	}
+
 	if (request.getURL().find("favicon.ico") != std::string::npos)
 		path.append("/images");
+
 	path.append(request.getURL());
-	std::ifstream f(path.c_str(), std::ios::in|std::ios::binary|std::ios::ate);
-	//std::cout << path << std::endl;
-	if(!f.is_open()){
-		perror ("bloody file is nowhere to be found. Call the cops");
-		return;
-	}
 
-	std::streampos ssize = f.tellg();
-	char* image = new char [static_cast<long>(ssize)];
-	f.seekg (0, std::ios::beg);
-	f.read (image, ssize);
-	f.close();
+	return path;
+}
 
-	body.write(image, ssize);
-	bodySize = ssize;
+// Find the location of the requested image
+// Gets the Binary
+// Writes the content to the Response body
+void Response::makeImage(RequestParser& request, server_info& config) 
+{
+	LocationVector location = config.locations;
+
+	std::string img_path(findImagePath(location, request));
+
+	ImgInfo img = getImageBinary(img_path.c_str());
+
+	body.write(img.first, img.second);
+	bodySize = img.second;
 	content_type = "image/*";
-	delete[] image;
+
+	delete[] img.first;
 }
 
 // Used to respond with passed HTML file 
