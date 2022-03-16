@@ -167,3 +167,47 @@
 [Wed Mar 16 11:04:24 2022] Accepted Connection from: 127.0.0.1
 [Wed Mar 16 11:04:24 2022] Accepted Connection from: 127.0.0.1
 [Wed Mar 16 11:04:34 2022] Closing Server....
+[Wed Mar 16 11:18:51 2022] [SOCKET] Binding Error: [Wed Mar 16 11:19:18 2022] [SOCKET] Binding Error: [Wed Mar 16 11:19:40 2022] Server is listening on: 127.0.0.1:8081
+[Wed Mar 16 11:19:43 2022] Accepted Connection from: 127.0.0.1
+[Wed Mar 16 11:19:43 2022] Accepted Connection from: 127.0.0.1
+[Wed Mar 16 11:19:43 2022] Accepted Connection from: 127.0.0.1
+[Wed Mar 16 11:19:43 2022] Accepted Connection from: 127.0.0.1
+[Wed Mar 16 11:19:43 2022] Accepted Connection from: 127.0.0.1
+[Wed Mar 16 11:19:43 2022] Accepted Connection from: 127.0.0.1
+[Wed Mar 16 11:19:43 2022] Accepted Connection from: 127.0.0.1
+[Wed Mar 16 11:19:43 2022] Accepted Connection from: 127.0.0.1
+[Wed Mar 16 11:19:43 2022] Accepted Connection from: 127.0.0.1
+[Wed Mar 16 11:19:43 2022] Accepted Connection from: 127.0.0.1
+[Wed Mar 16 11:19:44 2022] Accepted Connection from: 127.0.0.1
+[Wed Mar 16 11:20:01 2022] Accepted Connection from: 127.0.0.1
+[Wed Mar 16 11:20:01 2022] Accepted Connection from: 127.0.0.1
+[Wed Mar 16 11:20:01 2022] Accepted Connection from: 127.0.0.1
+[Wed Mar 16 11:20:01 2022] Accepted Connection from: 127.0.0.1
+[Wed Mar 16 11:20:01 2022] Accepted Connection from: 127.0.0.1
+[Wed Mar 16 11:20:01 2022] Accepted Connection from: 127.0.0.1
+[Wed Mar 16 11:20:01 2022] Accepted Connection from: 127.0.0.1
+[Wed Mar 16 11:21:10 2022] Closing Server....
+[Wed Mar 16 11:21:40 2022] Server is listening on: 127.0.0.1:8081
+[Wed Mar 16 11:21:44 2022] Accepted Connection from: 127.0.0.1
+[Wed Mar 16 11:21:44 2022] Accepted Connection from: 127.0.0.1
+[Wed Mar 16 11:21:44 2022] Accepted Connection from: 127.0.0.1
+[Wed Mar 16 11:21:47 2022] Accepted Connection from: 127.0.0.1
+[Wed Mar 16 11:21:48 2022] Accepted Connection from: 127.0.0.1
+[Wed Mar 16 11:21:48 2022] Accepted Connection from: 127.0.0.1
+[Wed Mar 16 11:21:48 2022] Accepted Connection from: 127.0.0.1
+[Wed Mar 16 11:21:48 2022] Accepted Connection from: 127.0.0.1
+[Wed Mar 16 11:21:48 2022] Accepted Connection from: 127.0.0.1
+[Wed Mar 16 11:23:19 2022] Closing Server....
+[Wed Mar 16 11:23:23 2022] Server is listening on: 127.0.0.1:8081
+[Wed Mar 16 11:23:27 2022] Accepted Connection from: 127.0.0.1
+[Wed Mar 16 11:23:27 2022] Accepted Connection from: 127.0.0.1
+[Wed Mar 16 11:23:27 2022] Accepted Connection from: 127.0.0.1
+[Wed Mar 16 11:23:27 2022] Accepted Connection from: 127.0.0.1
+[Wed Mar 16 11:23:27 2022] Accepted Connection from: 127.0.0.1
+[Wed Mar 16 11:23:27 2022] Accepted Connection from: 127.0.0.1
+[Wed Mar 16 11:24:10 2022] Closing Server....
+[Wed Mar 16 11:24:11 2022] Server is listening on: 127.0.0.1:8081
+[Wed Mar 16 11:24:14 2022] Accepted Connection from: 127.0.0.1
+[Wed Mar 16 11:24:14 2022] Accepted Connection from: 127.0.0.1
+[Wed Mar 16 11:24:14 2022] Accepted Connection from: 127.0.0.1
+[Wed Mar 16 11:24:52 2022] Closing Server....

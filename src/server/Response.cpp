@@ -67,8 +67,9 @@ void Response::responseGET(RequestParser& request, server_info& config)
 		bodySize = body.str().length();
 		content_type = "*/*";
 	}
+	if (bodySize > config.client_max_body_size)
+		status_code = 413;
 	makeHeader(status_code);
-
 }
 
 /* void Response::responsePOST()

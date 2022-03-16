@@ -167,6 +167,7 @@ void ConfigParser::fillServerFields(StringVector vec, server_info &serv_info, se
 		case body_size:
 		{
 			serv_info.client_max_body_size = atoi(right_trim(vec[1], ";").c_str());
+			serv_info.client_max_body_size *= 1000000;
 			break;
 		}
 

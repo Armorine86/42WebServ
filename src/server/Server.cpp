@@ -63,24 +63,12 @@ void Server::handleEvents(PollIterator& it, size_t i)
 	}
 }
 
-// Checks if buffer size exceeded permitted max body size 
-bool Server::checkBufferSize(const char* buffer)
-{
-	for (size_t i = 0; buffer[i]; ++i) {
-		if (i > MAX_BODY_SIZE)
-			return true;
-	}
-	return false;
-}
-
 // Handles Client requests. If the FD in the pollfd vector is
 // the sender FD (client), we can send the response to the same FD
 void Server::handleClient(PollIterator& it, server_info serv_info)
 {
+	char buffer[serv_info.client_max_body_size];
 	int bytes = recv((*it).fd, buffer, sizeof(buffer), 0);
-	
-	if (checkBufferSize(buffer))
-		status_code = 413;
 
 	if (DEBUG) {
 		std::string str_buffer = buffer;
@@ -101,6 +89,9 @@ void Server::handleClient(PollIterator& it, server_info serv_info)
 		close((*it).fd); // Bye !
 		pfds.erase(it);
 		it = pfds.begin();
+
+		// reset status code to OK by default for subsequent requests.
+		status_code = 200;
 	}
 	else if ((*it).fd == sender_fd){
 		std::string str_buffer(buffer);
@@ -119,6 +110,7 @@ void Server::sendResponse(std::string str_buffer, int sender_fd, server_info ser
 	
 	std::string header = response.getResponseHeader();
 	std::string body = response.getResponseBody();
+
 	size_t MAX_SEND = response.getBodySize() + response.getHeaderSize() + 1;
 
 	char * buffer = new char[MAX_SEND];

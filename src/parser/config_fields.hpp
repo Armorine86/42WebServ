@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   config_fields.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gcollet <gcollet@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mmondell <mmondell@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 14:22:37 by mmondell          #+#    #+#             */
-/*   Updated: 2022/03/12 15:46:37 by gcollet          ###   ########.fr       */
+/*   Updated: 2022/03/16 11:50:10 by mmondell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ struct server_info {
 	std::map<std::string, std::string> 	error_pages;
 	LocationVector	locations;
 	int listen_port;
-	int	client_max_body_size;
+	unsigned int	client_max_body_size; //in megabyte
 
 	server_info() {
 		listen_port = 0;
