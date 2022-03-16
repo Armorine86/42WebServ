@@ -30,7 +30,6 @@ public:
 
 private:
 
-	typedef std::pair<char *, std::streampos> ImgInfo;
 
 	size_t headerSize;
 	size_t bodySize;
@@ -56,6 +55,7 @@ private:
 	void readHTML(std::string filepath);
 
 	// Image Methods
+	typedef std::pair<char *, std::streampos> ImgInfo;
 	std::pair<char *, std::streampos> getImageBinary(const char* path);
 	std::string findImagePath(LocationVector& location, RequestParser& request);
 };

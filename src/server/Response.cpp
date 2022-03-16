@@ -119,6 +119,7 @@ std::pair<char *, std::streampos> Response::getImageBinary(const char* path)
 	return img_info;
 }
 
+// Retrieves the requested image path in the directories
 std::string Response::findImagePath(LocationVector& location, RequestParser& request)
 {
 	std::string path;
