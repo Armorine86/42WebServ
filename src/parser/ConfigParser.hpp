@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __CONFIGPARSER_H__
+#define __CONFIGPARSER_H__
 
 #include <fstream>
 #include <iterator>
@@ -55,3 +56,5 @@ private:
 	void fillConfigVector(ParserIterator start, ParserIterator end);
 	
 };
+
+#endif // __CONFIGPARSER_H__

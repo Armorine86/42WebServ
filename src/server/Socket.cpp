@@ -29,12 +29,15 @@ Sockets::Sockets(server_info& serv_info, bool& canBind) : server_fd(0), canBind(
 	
 	init_sockaddr(serv_info);
 	
-	if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0) {
-		
-		std::cerr << logEvent("[SOCKET] Binding Error: ")
-				  << strerror(errno) << "\n" << END << std::endl;
-		throw std::runtime_error("Cannot bind socket");
-	}
+	// in case we have multiple servers listening on the same socket
+	// you cannot bind a socket twice on the same Port/IP
+	if (canBind == true)
+		if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0) {
+			
+			std::cerr << logEvent("[SOCKET] Binding Error: ")
+					<< strerror(errno) << "\n" << END << std::endl;
+			throw std::runtime_error("Cannot bind socket");
+		}
 
 	if (listen(server_fd, BACKLOG) < 0) {
 		

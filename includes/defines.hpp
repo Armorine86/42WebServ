@@ -1,22 +1,13 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   defines.hpp                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: gcollet <gcollet@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/01/19 14:52:27 by mmondell          #+#    #+#             */
-/*   Updated: 2022/03/14 12:52:59 by gcollet          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-#pragma once
+#ifndef __DEFINES_H__
+#define __DEFINES_H__
 
 #include <cstdlib>
 #include <signal.h>
 #include <vector>
-#include <string>
+#include <map>
 #include <cstring>
+#include <string>
+#include <iostream>
 
 #include "colors.hpp"
 #include "utils.hpp"
@@ -45,7 +36,10 @@
 // Other Macros
 #define SIG_EXIT 0
 
-// Vector typedefs  (cuz writing std::vector<blablabla> is tedious)
+// Various Typedefs
 typedef std::vector<std::string> StringVector;
 typedef std::vector<std::string>::iterator StringIterator;
 
+typedef std::map<int, size_t> ServerIndex;
+
+#endif // __DEFINES_H__

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __SOCKET_H__
+#define __SOCKET_H__
 
 #include <sys/socket.h>
 #include <arpa/inet.h>
@@ -40,3 +41,5 @@ private:
 };
 
 typedef std::vector<Sockets> SocketsVector;
+
+#endif // __SOCKET_H__

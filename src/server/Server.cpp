@@ -1,4 +1,5 @@
 #include "Server.hpp"
+#include "Response.hpp"
 
 // Builds the pollfd vector with the server sockets and runs the servers
 Server::Server(SocketsVector sockvector) : client_fd(0), status_code(200), sockets(sockvector)
@@ -9,7 +10,7 @@ Server::Server(SocketsVector sockvector) : client_fd(0), status_code(200), socke
 		pfds[i].events = POLLIN;
 	}
 
-	run(sockvector);
+	run();
 }
 
 // Creates a new Pollfd, adds the new Client fd
@@ -56,7 +57,7 @@ void Server::handleEvents(PollIterator& it, size_t i)
 		while (it->fd != pfds[i].fd)
 			it++;
 
-		std::pair<int, size_t> p1(client_fd, i);
+		std::pair<int, size_t>p1(client_fd, i);
 		server_index[p1.first] = p1.second;
 
 		std::cout << YELLOW << logEvent("Accepted Connection from: " + clientIP(client_fd, addrlen) + "\n") << END << std::endl;
@@ -106,7 +107,7 @@ void Server::handleClient(PollIterator& it, server_info serv_info)
 void Server::sendResponse(std::string str_buffer, int sender_fd, server_info serv_info)
 {
 	RequestParser request(str_buffer);
-	Response response(request, serv_info, status_code);
+	Response response(request, serv_info, this);
 	
 	std::string header = response.getResponseHeader();
 	std::string body = response.getResponseBody();
@@ -144,7 +145,7 @@ void Server::sendResponse(std::string str_buffer, int sender_fd, server_info ser
 // Copy the header AND the body to the buffer. send() the response to the sender (client fd).
 //
 // 7. Rince and Repeat
-void Server::run(SocketsVector sockets)
+void Server::run()
 {
 	for (size_t i = 0; i < sockets.size(); i++)
 		std::cout << YELLOW << logEvent("Server is listening on: " + sockets.at(i).getHostName() + "\n") << END << std::endl;
@@ -154,12 +155,11 @@ void Server::run(SocketsVector sockets)
 		if ((ret = poll(&(pfds.front()), pfds.size(), 10000)) <= 0) {
 			(ret == -1) ? status_code = 500 : status_code = 408;
 		}
-
 		for (PollIterator it = pfds.begin(); it != pfds.end(); it++) {
 			if ((*it).revents & POLLIN) 
 			{
-				for (size_t i = 0; i < pfds.size(); i++){
-					if ((*it).fd == pfds.at(i).fd && (*it).fd != client_fd && i < sockets.size()){
+				for (size_t i = 0; i < pfds.size(); i++) {
+					if ((*it).fd == pfds.at(i).fd && (*it).fd != client_fd && i < sockets.size()) {
 						handleEvents(it, i);
 						break;
 					}

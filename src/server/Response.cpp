@@ -1,12 +1,12 @@
 #include "Response.hpp"
 
-Response::Response(RequestParser& request, server_info& config, short& status_code) : status_code(status_code)
+Response::Response( RequestParser& request, server_info& config, Server* server) : config(config), server(server)
 {
 	MethodType type = getType(request);
 
 	switch(type){
 		case GET:
-			responseGET(request, config);
+			responseGET(request);
 			break;
 		/* case POST:
 			responsePOST(request);
@@ -32,44 +32,40 @@ MethodType Response::getType(RequestParser& request)
 	return NONE;
 }
 
-void Response::responseGET(RequestParser& request, server_info& config)
+void Response::responseGET(RequestParser& request)
 {
 	if (request.getURL().find("/image") != std::string::npos ||
 		request.getURL().find("favicon.ico") != std::string::npos)
-		makeImage(request, config);
+		makeImage(request);
 	else
 	{
 		LocationVector location = config.locations;
 		std::string path;
 	
-		// Look for the exact path
-		for (size_t i = 0; i < location.size(); i++){
-			if (location.at(i).name == request.getURL()) {
-				path = location.at(i).root;
-				break;
-			}
-		}
-		// Then check if its looking for the index
-		if (request.getURL() ==  "/")
-		{
-			for (size_t i = 0; i < location.size(); i++){
-				if (location.at(i).name == "/"){
-					path.append("/");
-					path.append(location.at(i).index);
+		path = lookForRoot(location, request);
+	
+		if (path == "") {
+			for (size_t i = 0; i < server->sockets.size(); i++) {
+				if (config.listen_port == server->sockets.at(i).getServInfo().listen_port
+					&& config.server_names != server->sockets.at(i).getServInfo().server_names) {
+					LocationVector tmp_location = server->sockets.at(i).getServInfo().locations;
+					path = lookForRoot(tmp_location, request);
+
+					std::pair<int, size_t>p1(server->client_fd, i);
+					server->server_index[p1.first] = p1.second;
 					break;
 				}
+				if (i == server->sockets.size())
+					path.append(config.root + request.getURL());
 			}
 		}
-		// Then take the given path
-		else
-			path.append(config.root + request.getURL());
 		readHTML(path);
 		bodySize = body.str().length();
 		content_type = "*/*";
 	}
 	if (bodySize > config.client_max_body_size)
-		status_code = 413;
-	makeHeader(status_code);
+		server->status_code = 413;
+	makeHeader(server->status_code);
 }
 
 /* void Response::responsePOST()
@@ -84,7 +80,7 @@ void Response::responseDELETE()
 
 // Generates a Header for the Response matching the parameter to
 // the wanted code in StatusCode map
-void Response::makeHeader(const short& code) 
+void Response::makeHeader(const short& code) //pas besoin de passer code
 {
 	MapIterator it = status.code.find(code);
 	std::stringstream s_header;
@@ -143,7 +139,7 @@ std::string Response::findImagePath(LocationVector& location, RequestParser& req
 // Find the location of the requested image
 // Gets the Binary
 // Writes the content to the Response body
-void Response::makeImage(RequestParser& request, server_info& config) 
+void Response::makeImage(RequestParser& request) 
 {
 	LocationVector location = config.locations;
 
@@ -171,4 +167,19 @@ void Response::readHTML(std::string filepath)
 
 	while (getline(myfile, line))
 		body << line << '\n';
+}
+
+std::string Response::lookForRoot(LocationVector& location, RequestParser& request) 
+{
+	std::string path = "";
+
+	for (size_t i = 0; i < location.size(); i++){
+		if (location.at(i).name == request.getURL()) {
+			path = location.at(i).root;
+			if (location.at(i).index != "")
+				path.append("/" + location.at(i).index);
+			break;
+		}
+	}
+	return path;
 }

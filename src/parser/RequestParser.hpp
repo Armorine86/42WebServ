@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __REQUESTPARSER_H__
+#define __REQUESTPARSER_H__
 
 #include "defines.hpp"
 #include "utils.hpp"
@@ -37,3 +38,5 @@ private:
 	void RequestInfo(StringVector &content);
 	void ParseFirstLine(StringIterator &line); // Method, URL, Protocol
 };
+
+#endif // __REQUESTPARSER_H__

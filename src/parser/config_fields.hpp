@@ -1,16 +1,5 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   config_fields.hpp                                  :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mmondell <mmondell@student.42quebec.com    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/01/19 14:22:37 by mmondell          #+#    #+#             */
-/*   Updated: 2022/03/16 11:50:10 by mmondell         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-#pragma once
+#ifndef __CONFIG_FIELDS_H__
+#define __CONFIG_FIELDS_H__
 
 #include <string>
 #include <vector>
@@ -74,3 +63,5 @@ typedef enum location_fields {
 	redirections,
 	loc_none
 } location_fields;
+
+#endif // __CONFIG_FIELDS_H__

@@ -1,12 +1,12 @@
-#pragma once
+#ifndef __RESPONSE_H__
+#define __RESPONSE_H__
 
-#include <string>
+#include "defines.hpp"
 #include <sstream>
 #include <fstream>
-#include <map>
 #include "RequestParser.hpp"
-#include "Server.hpp"
 #include "status_codes.hpp"
+#include "Server.hpp"
 
 #define MAX_IMAGESIZE 1000000
 
@@ -17,10 +17,13 @@ typedef enum MethodType {
 	NONE
 } MethodType;
 
-class Response {
+class Server;
+
+class Response : public Server{
+
 public:
 	Response() {}
-	Response(RequestParser& request, server_info& config, short& status_code);
+	Response(RequestParser& request, server_info& config, Server* server);
 	~Response() {};
 
 	std::string getResponseHeader() { return header; }
@@ -29,30 +32,29 @@ public:
 	size_t getBodySize() { return bodySize; }
 
 private:
-
-
+	server_info config;
+	Server *server;
 	size_t headerSize;
 	size_t bodySize;
 	std::string header;
 	std::string content_type;
 	std::stringstream body;
-
-	short status_code;
+	// ServerIndex server_index;
+	StatusCode status; // Status Code map
 
 	typedef std::map<short, std::string>::iterator MapIterator;
 	typedef std::vector<location_info>::iterator LocIterator;
 
-	StatusCode status; // Status Code map
-
 	MethodType getType(RequestParser& request);
 
-	void responseGET(RequestParser& request, server_info& config);
+	void responseGET(RequestParser& request);
 	//void responsePOST(RequestParser& const request);
 	//void responseDELETE(RequestParser& const request);
 	void makeHeader(const short& code);
 	void makeFavicon();
-	void makeImage(RequestParser& request, server_info& config);
+	void makeImage(RequestParser& request);
 	void readHTML(std::string filepath);
+	std::string lookForRoot(LocationVector& location, RequestParser& request);
 
 	// Image Methods
 	typedef std::pair<char *, std::streampos> ImgInfo;
@@ -60,3 +62,5 @@ private:
 	std::string findImagePath(LocationVector& location, RequestParser& request);
 };
 
+
+#endif // __RESPONSE_H__
