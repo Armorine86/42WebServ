@@ -23,7 +23,7 @@ Credits:
 		Unsplash (unsplash.com)
 
 	Icons:
-		Font Awesome (fontawesome.io)
+		Font Awesome (fontawesome-webfont.io)
 
 	Other:
 		jQuery (jquery.com)

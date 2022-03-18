@@ -55,6 +55,7 @@ private:
 	void makeImage(RequestParser& request);
 	void readHTML(std::string filepath);
 	std::string lookForRoot(LocationVector& location, RequestParser& request);
+	std::string lookForContent(LocationVector& location, RequestParser& request);
 
 	// Image Methods
 	typedef std::pair<char *, std::streampos> ImgInfo;

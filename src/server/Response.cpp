@@ -43,6 +43,8 @@ void Response::responseGET(RequestParser& request)
 		std::string path;
 	
 		path = lookForRoot(location, request);
+		if (path == "")
+			path = lookForContent(location, request);
 	
 		if (path == "") {
 			for (size_t i = 0; i < server->sockets.size(); i++) {
@@ -50,15 +52,17 @@ void Response::responseGET(RequestParser& request)
 					&& config.server_names != server->sockets.at(i).getServInfo().server_names) {
 					LocationVector tmp_location = server->sockets.at(i).getServInfo().locations;
 					path = lookForRoot(tmp_location, request);
-
 					std::pair<int, size_t>p1(server->client_fd, i);
 					server->server_index[p1.first] = p1.second;
+					if (path == "")
+						path = lookForContent(tmp_location, request);
 					break;
 				}
 				if (i == server->sockets.size())
 					path.append(config.root + request.getURL());
 			}
 		}
+		std::cout << BRED << path << END << std::endl;
 		readHTML(path);
 		bodySize = body.str().length();
 		content_type = "*/*";
@@ -178,6 +182,22 @@ std::string Response::lookForRoot(LocationVector& location, RequestParser& reque
 			path = location.at(i).root;
 			if (location.at(i).index != "")
 				path.append("/" + location.at(i).index);
+			break;
+		}
+	}
+	return path;
+}
+
+std::string Response::lookForContent(LocationVector& location, RequestParser& request) 
+{
+	std::string path = "";
+	StringVector tmp = split(request.getURL(), "/");
+
+	for (size_t i = 0; i < location.size(); i++){
+		//if (request.getURL().find(location.at(i).name) != std::string::npos) {
+		if (location.at(i).name.find(tmp[0]) != std::string::npos){
+			path = location.at(i).root;
+			path.append(request.getURL());
 			break;
 		}
 	}
