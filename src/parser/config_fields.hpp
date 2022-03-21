@@ -30,7 +30,7 @@ struct server_info {
 	std::string		root;	//root of the server
 	std::string 	host; 	//either 127.0.0.1 || localhost
 	std::string 	server_names;
-	std::map<std::string, std::string> 	error_pages;
+	std::map<std::string, std::string> 	error_pages; //
 	LocationVector	locations;
 	int listen_port;
 	unsigned int	client_max_body_size; //in megabyte
