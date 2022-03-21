@@ -1,0 +1,42 @@
+[Mon Mar 21 08:49:35 2022] Server is listening on: 127.0.0.1:8081
+[Mon Mar 21 08:49:35 2022] Server is listening on: 127.0.0.1:4242
+[Mon Mar 21 08:49:35 2022] Server is listening on: 127.0.0.1:8081
+[Mon Mar 21 08:49:56 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 21 08:50:02 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 21 08:50:02 2022] file cannot open!
+[Mon Mar 21 08:50:03 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 21 08:50:03 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 21 08:50:03 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 21 08:50:03 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 21 08:50:03 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 21 08:50:45 2022] Response: [405] Method not Allowed
+[Mon Mar 21 08:52:15 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 21 08:52:15 2022] Response: [405] Method not Allowed
+[Mon Mar 21 08:52:18 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 21 08:52:18 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 21 08:52:18 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 21 08:52:18 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 21 08:52:18 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 21 08:52:18 2022] file cannot open!
+[Mon Mar 21 08:52:18 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 21 08:52:37 2022] Closing Server....
+[Mon Mar 21 08:52:46 2022] Server is listening on: 127.0.0.1:8081
+[Mon Mar 21 08:52:46 2022] Server is listening on: 127.0.0.1:4242
+[Mon Mar 21 08:52:46 2022] Server is listening on: 127.0.0.1:8081
+[Mon Mar 21 08:52:49 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 21 08:52:49 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 21 08:52:49 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 21 08:52:49 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 21 08:52:49 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 21 08:52:49 2022] file cannot open!
+[Mon Mar 21 08:55:43 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 21 08:55:49 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 21 08:56:06 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 21 08:58:47 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 21 08:58:47 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 21 08:58:47 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 21 08:58:47 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 21 08:58:47 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 21 08:58:47 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 21 08:58:47 2022] Accepted Connection from: 127.0.0.1
+[Mon Mar 21 08:59:26 2022] Closing Server....
