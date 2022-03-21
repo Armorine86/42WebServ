@@ -34,6 +34,7 @@ MethodType Response::getType(RequestParser& request)
 
 void Response::responseGET(RequestParser& request)
 {
+	// TODO Implement CGI scripting for Get Method
 	if (request.getURL().find("/image") != std::string::npos ||
 		request.getURL().find("favicon.ico") != std::string::npos)
 		makeImage(request);
@@ -74,7 +75,7 @@ void Response::responseGET(RequestParser& request)
 
 void Response::responsePOST(RequestParser &request)
 {
-	(void) request;
+	CGI cgi(request, config);
 }
 
 /*void Response::responseDELETE() 

@@ -25,7 +25,7 @@ struct location_info {
 
 typedef std::vector<location_info> LocationVector;
 
-// All the parameters contained in the server portion of the config file
+// All the parameters contained in the server block of the config file
 struct server_info {
 	std::string		root;	//root of the server
 	std::string 	host; 	//either 127.0.0.1 || localhost

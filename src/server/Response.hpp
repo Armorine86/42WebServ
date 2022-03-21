@@ -7,6 +7,7 @@
 #include "RequestParser.hpp"
 #include "status_codes.hpp"
 #include "Server.hpp"
+#include "CGI.hpp"
 
 #define MAX_IMAGESIZE 1000000
 
