@@ -48,7 +48,7 @@ private:
 	MethodType getType(RequestParser& request);
 
 	void responseGET(RequestParser& request);
-	//void responsePOST(RequestParser& const request);
+	void responsePOST(RequestParser& request);
 	//void responseDELETE(RequestParser& const request);
 	void makeHeader(const short& code);
 	void makeFavicon();

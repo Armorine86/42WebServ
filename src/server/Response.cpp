@@ -8,10 +8,10 @@ Response::Response( RequestParser& request, server_info& config, Server* server)
 		case GET:
 			responseGET(request);
 			break;
-		/* case POST:
+		case POST:
 			responsePOST(request);
 			break;
-		case DELETE:
+		/*case DELETE:
 			responseDELETE(request); 
 			break;*/
 		default:
@@ -72,12 +72,12 @@ void Response::responseGET(RequestParser& request)
 	makeHeader(server->status_code);
 }
 
-/* void Response::responsePOST()
+void Response::responsePOST(RequestParser &request)
 {
-	
+	(void) request;
 }
 
-void Response::responseDELETE() 
+/*void Response::responseDELETE() 
 {
 	
 } */
