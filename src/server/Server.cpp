@@ -9,7 +9,7 @@ Server::Server(SocketsVector sockvector) : client_fd(0), status_code("200"), soc
 		pfds.push_back(newfd);
 		pfds[i].events = POLLIN;
 	}
-
+	server_index.clear();
 	run();
 }
 
@@ -89,7 +89,6 @@ void Server::handleClient(PollIterator& it, server_info serv_info)
 			perror("recv");
 		close((*it).fd); // Bye !
 		pfds.erase(it);
-		//server_index.erase(sender_fd);
 		it = pfds.begin();
 
 		// reset status code to OK by default for subsequent requests.
@@ -156,6 +155,10 @@ void Server::run()
 		if ((ret = poll(&(pfds.front()), pfds.size(), 10000)) <= 0) {
 			(ret == -1) ? status_code = "500" : status_code = "408";
 		}
+		if (status_code == "408")
+			std::cout << ORANGE << "Server is waiting..." << END << std::endl;
+		if (status_code == "500")
+			std::cout << BRED << "INTERNAL SERVER ERROR [500]" << END << std::endl;
 		for (PollIterator it = pfds.begin(); it != pfds.end(); it++) {
 			if ((*it).revents & POLLIN) 
 			{

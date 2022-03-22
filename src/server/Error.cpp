@@ -31,3 +31,5 @@ void Response::errorBody(std::string& code)
 		bodySize = body.str().length();
 	}
 }
+
+
