@@ -170,7 +170,8 @@ void Response::readHTML(std::string filepath)
 		if (DEBUG)
 			std::cout << logEvent("file cannot open!\n") << std::endl;
 	}
-	server->status_code = "200";
+	else
+		server->status_code = "200";
 	while (getline(myfile, line))
 		body << line << '\n';
 	bodySize = body.str().length();

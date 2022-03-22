@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __CGI_H__
+#define __CGI_H__
 
 #include "defines.hpp"
 #include "RequestParser.hpp"
@@ -23,3 +24,5 @@ class CGI {
 		void convToCharPtr();
 
 }; // CGI
+
+#endif
