@@ -7,6 +7,7 @@
 #include "RequestParser.hpp"
 #include "status_codes.hpp"
 #include "Server.hpp"
+#include "CGI.hpp"
 
 #define MAX_IMAGESIZE 1000000
 
@@ -48,7 +49,7 @@ private:
 	MethodType getType(RequestParser& request);
 
 	void responseGET(RequestParser& request);
-	//void responsePOST(RequestParser& const request);
+	void responsePOST(RequestParser& request);
 	//void responseDELETE(RequestParser& const request);
 	void makeHeader(std::string& code);
 	void makeFavicon();

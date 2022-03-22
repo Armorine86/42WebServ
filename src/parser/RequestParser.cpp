@@ -40,6 +40,8 @@ void RequestParser::RequestInfo(StringVector& content){
 				connection = false; }
 		}
 	}
+	if (method == "POST")
+		body = split(*(start - 1), "&");
 }
 
 // Collect infos on the first line of the Request Header

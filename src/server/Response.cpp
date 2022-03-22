@@ -8,10 +8,10 @@ Response::Response( RequestParser& request, server_info& config, Server* server)
 		case GET:
 			responseGET(request);
 			break;
-		/* case POST:
+		case POST:
 			responsePOST(request);
 			break;
-		case DELETE:
+		/*case DELETE:
 			responseDELETE(request); 
 			break;*/
 		default:
@@ -34,6 +34,7 @@ MethodType Response::getType(RequestParser& request)
 
 void Response::responseGET(RequestParser& request)
 {
+	// TODO Implement CGI scripting for Get Method
 	if (request.getURL().find("/image") != std::string::npos ||
 		request.getURL().find("favicon.ico") != std::string::npos)
 		makeImage(request);
@@ -67,12 +68,12 @@ void Response::responseGET(RequestParser& request)
 	makeHeader(server->status_code);
 }
 
-/* void Response::responsePOST()
+void Response::responsePOST(RequestParser &request)
 {
-	
+	CGI cgi(request, config);
 }
 
-void Response::responseDELETE() 
+/*void Response::responseDELETE() 
 {
 	
 } */
