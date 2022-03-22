@@ -45,7 +45,7 @@ void Response::responseGET(RequestParser& request)
 	
 		path = lookForRoot(location, request);
 		if (path == "")
-			if((i = findSocket())){
+			if((i = findSocket()) >= 0){
 				LocationVector tmp_location = server->sockets.at(i).getServInfo().locations;
 				path = lookForRoot(tmp_location, request);
 				
@@ -182,7 +182,7 @@ int Response::findSocket()
 			&& config.server_names != server->sockets.at(i).getServInfo().server_names)
 			return i;
 	}
-	return 0;
+	return -1;
 }
 
 std::string Response::lookForRoot(LocationVector& location, RequestParser& request) 
@@ -207,11 +207,13 @@ std::string Response::lookForContent(LocationVector& location, RequestParser& re
 	std::string path = "";
 	StringVector tmp = split(request.getURL(), "/");
 
-	for (size_t i = 0; i < location.size(); i++){
-		if (location.at(i).name.find(tmp[0]) != std::string::npos){
-			path = location.at(i).root;
-			path.append(request.getURL());
-			break;
+	if (!tmp.empty()){
+		for (size_t i = 0; i < location.size(); i++){
+			if (location.at(i).name.find(tmp[0]) != std::string::npos){
+				path = location.at(i).root;
+				path.append(request.getURL());
+				break;
+			}
 		}
 	}
 	return path;
