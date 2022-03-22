@@ -8,6 +8,7 @@
 #include "status_codes.hpp"
 #include "Server.hpp"
 #include "CGI.hpp"
+#include "dirent.h"
 
 #define MAX_IMAGESIZE 1000000
 
@@ -40,6 +41,7 @@ private:
 	std::string header;
 	std::string content_type;
 	std::stringstream body;
+	bool	autoindex;
 	// ServerIndex server_index;
 	StatusCode status; // Status Code map
 
@@ -54,6 +56,7 @@ private:
 	void makeHeader(std::string& code);
 	void makeFavicon();
 	void makeImage(RequestParser& request);
+	void makeAutoindex(std::string filepath);
 	void readHTML(std::string filepath);
 	int findSocket();
 	std::string lookForRoot(LocationVector& location, RequestParser& request);
