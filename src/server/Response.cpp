@@ -42,34 +42,29 @@ void Response::responseGET(RequestParser& request)
 	{
 		LocationVector location = config.locations;
 		std::string path;
+		int i = 0;
 	
 		path = lookForRoot(location, request);
 		if (path == "")
-			path = lookForContent(location, request);
-	
-		if (path == "") {
-			for (size_t i = 0; i < server->sockets.size(); i++) {
-				if (config.listen_port == server->sockets.at(i).getServInfo().listen_port
-					&& config.server_names != server->sockets.at(i).getServInfo().server_names) {
-					LocationVector tmp_location = server->sockets.at(i).getServInfo().locations;
-					path = lookForRoot(tmp_location, request);
-					std::pair<int, size_t>p1(server->client_fd, i);
+			if((i = findSocket()) >= 0){
+				LocationVector tmp_location = server->sockets.at(i).getServInfo().locations;
+				path = lookForRoot(tmp_location, request);
+				
+				if (path != ""){
+					std::pair<int, size_t>p1(server->sender_fd, i);
 					server->server_index[p1.first] = p1.second;
-					if (path == "")
-						path = lookForContent(tmp_location, request);
-					break;
 				}
-				if (i == server->sockets.size())
-					path.append(config.root + request.getURL());
+				// if (i == server->sockets.size())
+				// 	path.append(config.root + request.getURL());
 			}
-		}
-		std::cout << BRED << path << END << std::endl;
+
+		if (DEBUG)
+			std::cout << BRED << path << END << std::endl;
 		readHTML(path);
-		bodySize = body.str().length();
 		content_type = "*/*";
 	}
 	if (bodySize > config.client_max_body_size)
-		server->status_code = 413;
+		server->status_code = "413";
 	makeHeader(server->status_code);
 }
 
@@ -85,11 +80,14 @@ void Response::responsePOST(RequestParser &request)
 
 // Generates a Header for the Response matching the parameter to
 // the wanted code in StatusCode map
-void Response::makeHeader(const short& code) //pas besoin de passer code
+void Response::makeHeader(std::string& code_status)
 {
-	MapIterator it = status.code.find(code);
+	MapIterator it = status.code.find(code_status);
 	std::stringstream s_header;
 
+	if (code_status != "200"){
+		errorBody(code_status);
+	}
 	s_header << "HTTP/1.1 " << (*it).first << (*it).second << "\r\n"
 	<< "Content-type: " << content_type
 	<< "\r\nContent-Length: " << bodySize << "\r\n\r\n";
@@ -105,7 +103,7 @@ std::pair<char *, std::streampos> Response::getImageBinary(const char* path)
 	std::ifstream f(path, std::ios::in|std::ios::binary|std::ios::ate);
 	
 	if (!f.is_open()) { // if file not found
-		status_code = 404;
+		server->status_code = "404";
 		img_info.first = NULL;
 		return img_info;
 	}
@@ -167,11 +165,25 @@ void Response::readHTML(std::string filepath)
 	
 	myfile.open(filepath.c_str(), std::ios::in);
 	
-	if (!myfile.good())
-		std::cout << logEvent("file cannot open!\n") << std::endl;
-
+	if (!myfile.good()){
+		server->status_code = "404";
+		if (DEBUG)
+			std::cout << logEvent("file cannot open!\n") << std::endl;
+	}
+	server->status_code = "200";
 	while (getline(myfile, line))
 		body << line << '\n';
+	bodySize = body.str().length();
+}
+
+int Response::findSocket()
+{
+	for (size_t i = 0; i < server->sockets.size(); i++) {
+		if (config.listen_port == server->sockets.at(i).getServInfo().listen_port
+			&& config.server_names != server->sockets.at(i).getServInfo().server_names)
+			return i;
+	}
+	return -1;
 }
 
 std::string Response::lookForRoot(LocationVector& location, RequestParser& request) 
@@ -186,6 +198,8 @@ std::string Response::lookForRoot(LocationVector& location, RequestParser& reque
 			break;
 		}
 	}
+	if (path == "")
+			path = lookForContent(location, request);
 	return path;
 }
 
@@ -194,12 +208,13 @@ std::string Response::lookForContent(LocationVector& location, RequestParser& re
 	std::string path = "";
 	StringVector tmp = split(request.getURL(), "/");
 
-	for (size_t i = 0; i < location.size(); i++){
-		//if (request.getURL().find(location.at(i).name) != std::string::npos) {
-		if (location.at(i).name.find(tmp[0]) != std::string::npos){
-			path = location.at(i).root;
-			path.append(request.getURL());
-			break;
+	if (!tmp.empty()){
+		for (size_t i = 0; i < location.size(); i++){
+			if (location.at(i).name.find(tmp[0]) != std::string::npos){
+				path = location.at(i).root;
+				path.append(request.getURL());
+				break;
+			}
 		}
 	}
 	return path;

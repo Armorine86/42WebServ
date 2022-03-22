@@ -43,7 +43,7 @@ private:
 	// ServerIndex server_index;
 	StatusCode status; // Status Code map
 
-	typedef std::map<short, std::string>::iterator MapIterator;
+	typedef std::map<std::string, std::string>::iterator MapIterator;
 	typedef std::vector<location_info>::iterator LocIterator;
 
 	MethodType getType(RequestParser& request);
@@ -51,10 +51,11 @@ private:
 	void responseGET(RequestParser& request);
 	void responsePOST(RequestParser& request);
 	//void responseDELETE(RequestParser& const request);
-	void makeHeader(const short& code);
+	void makeHeader(std::string& code);
 	void makeFavicon();
 	void makeImage(RequestParser& request);
 	void readHTML(std::string filepath);
+	int findSocket();
 	std::string lookForRoot(LocationVector& location, RequestParser& request);
 	std::string lookForContent(LocationVector& location, RequestParser& request);
 
@@ -62,6 +63,9 @@ private:
 	typedef std::pair<char *, std::streampos> ImgInfo;
 	std::pair<char *, std::streampos> getImageBinary(const char* path);
 	std::string findImagePath(LocationVector& location, RequestParser& request);
+
+	// Error
+	void errorBody(std::string& code);
 };
 
 

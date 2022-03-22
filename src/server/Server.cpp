@@ -2,14 +2,14 @@
 #include "Response.hpp"
 
 // Builds the pollfd vector with the server sockets and runs the servers
-Server::Server(SocketsVector sockvector) : client_fd(0), status_code(200), sockets(sockvector)
+Server::Server(SocketsVector sockvector) : client_fd(0), status_code("200"), sockets(sockvector)
 {
 	for (size_t i = 0; i < sockets.size(); i++){
 		pollfd newfd = addToPollfd(sockets.at(i).getServFD());
 		pfds.push_back(newfd);
 		pfds[i].events = POLLIN;
 	}
-
+	server_index.clear();
 	run();
 }
 
@@ -79,7 +79,7 @@ void Server::handleClient(PollIterator& it, server_info serv_info)
 					<< TEAL << str_buffer << END << std::endl;
 	}
 
-	int sender_fd = (*it).fd;
+	sender_fd = (*it).fd;
 
 	if (bytes <= 0)
 	{
@@ -92,7 +92,7 @@ void Server::handleClient(PollIterator& it, server_info serv_info)
 		it = pfds.begin();
 
 		// reset status code to OK by default for subsequent requests.
-		status_code = 200;
+		status_code = "200";
 	}
 	else if ((*it).fd == sender_fd){
 		std::string str_buffer(buffer);
@@ -125,7 +125,7 @@ void Server::sendResponse(std::string str_buffer, int sender_fd, server_info ser
 		std::cout << GREEN << "+++ RESPONSE +++\n\n" << END << buffer << std::endl;
 
 	delete [] buffer;
-	status_code = 200;
+	status_code = "200";
 }
 
 // Server Main Loop. This is where the magic operates
@@ -153,8 +153,12 @@ void Server::run()
 	while(true) {
 		int ret = 0;
 		if ((ret = poll(&(pfds.front()), pfds.size(), 10000)) <= 0) {
-			(ret == -1) ? status_code = 500 : status_code = 408;
+			(ret == -1) ? status_code = "500" : status_code = "408";
 		}
+		if (status_code == "408")
+			std::cout << ORANGE << "Server is waiting..." << END << std::endl;
+		if (status_code == "500")
+			std::cout << BRED << "INTERNAL SERVER ERROR [500]" << END << std::endl;
 		for (PollIterator it = pfds.begin(); it != pfds.end(); it++) {
 			if ((*it).revents & POLLIN) 
 			{
