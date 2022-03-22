@@ -4,7 +4,15 @@ void Response::errorBody(std::string& code)
 {
 	std::string line;
 	std::fstream myfile;
-	std::string error_path = config.error_pages.at(code);
+	int i = 0;
+	std::string error_path;
+
+	if (config.error_pages.empty()){
+		if ((i = findSocket()))
+			error_path = server->sockets.at(i).getServInfo().error_pages.at(code);
+	}
+	else
+		error_path = config.error_pages.at(code);
 	
 	if (request.getURL().find("/image") != std::string::npos ||
 		request.getURL().find("favicon.ico") != std::string::npos)

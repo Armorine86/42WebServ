@@ -79,7 +79,7 @@ void Server::handleClient(PollIterator& it, server_info serv_info)
 					<< TEAL << str_buffer << END << std::endl;
 	}
 
-	int sender_fd = (*it).fd;
+	sender_fd = (*it).fd;
 
 	if (bytes <= 0)
 	{
@@ -89,6 +89,7 @@ void Server::handleClient(PollIterator& it, server_info serv_info)
 			perror("recv");
 		close((*it).fd); // Bye !
 		pfds.erase(it);
+		//server_index.erase(sender_fd);
 		it = pfds.begin();
 
 		// reset status code to OK by default for subsequent requests.

@@ -41,27 +41,22 @@ void Response::responseGET(RequestParser& request)
 	{
 		LocationVector location = config.locations;
 		std::string path;
+		int i = 0;
 	
 		path = lookForRoot(location, request);
-	
-	//faut vraiment qu'on mette ca dans une autre method
-		if (path == "") {
-			for (size_t i = 0; i < server->sockets.size(); i++) {
-				if (config.listen_port == server->sockets.at(i).getServInfo().listen_port
-					&& config.server_names != server->sockets.at(i).getServInfo().server_names) {
-					LocationVector tmp_location = server->sockets.at(i).getServInfo().locations;
-					path = lookForRoot(tmp_location, request);
-					
-					if (path != ""){
-						std::pair<int, size_t>p1(server->client_fd, i);
-						server->server_index[p1.first] = p1.second;
-					}
-					break;
+		if (path == "")
+			if((i = findSocket())){
+				LocationVector tmp_location = server->sockets.at(i).getServInfo().locations;
+				path = lookForRoot(tmp_location, request);
+				
+				if (path != ""){
+					std::pair<int, size_t>p1(server->sender_fd, i);
+					server->server_index[p1.first] = p1.second;
 				}
-				if (i == server->sockets.size())
-					path.append(config.root + request.getURL());
+				// if (i == server->sockets.size())
+				// 	path.append(config.root + request.getURL());
 			}
-		}
+
 		if (DEBUG)
 			std::cout << BRED << path << END << std::endl;
 		readHTML(path);
@@ -171,12 +166,23 @@ void Response::readHTML(std::string filepath)
 	
 	if (!myfile.good()){
 		server->status_code = "404";
-		std::cout << logEvent("file cannot open!\n") << std::endl;
+		if (DEBUG)
+			std::cout << logEvent("file cannot open!\n") << std::endl;
 	}
 
 	while (getline(myfile, line))
 		body << line << '\n';
 	bodySize = body.str().length();
+}
+
+int Response::findSocket()
+{
+	for (size_t i = 0; i < server->sockets.size(); i++) {
+		if (config.listen_port == server->sockets.at(i).getServInfo().listen_port
+			&& config.server_names != server->sockets.at(i).getServInfo().server_names)
+			return i;
+	}
+	return 0;
 }
 
 std::string Response::lookForRoot(LocationVector& location, RequestParser& request) 
@@ -202,7 +208,6 @@ std::string Response::lookForContent(LocationVector& location, RequestParser& re
 	StringVector tmp = split(request.getURL(), "/");
 
 	for (size_t i = 0; i < location.size(); i++){
-		//if (request.getURL().find(location.at(i).name) != std::string::npos) {
 		if (location.at(i).name.find(tmp[0]) != std::string::npos){
 			path = location.at(i).root;
 			path.append(request.getURL());

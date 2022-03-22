@@ -54,6 +54,7 @@ private:
 	void makeFavicon();
 	void makeImage(RequestParser& request);
 	void readHTML(std::string filepath);
+	int findSocket();
 	std::string lookForRoot(LocationVector& location, RequestParser& request);
 	std::string lookForContent(LocationVector& location, RequestParser& request);
 

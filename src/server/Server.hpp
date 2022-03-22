@@ -27,6 +27,7 @@ protected:
 
 	friend class Response;
 	int		client_fd;
+	int		sender_fd;
 	std::string	status_code;		
 	SocketsVector sockets;
 	ServerIndex server_index; // client_fd : server_index
