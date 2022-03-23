@@ -42,8 +42,10 @@ void RequestParser::RequestInfo(StringVector& content){
 				connection = false; }
 		}
 	}
-	if (method == "POST")
+	if (method == "POST") {
 		body.append(*(start - 1)); // Adds the request Body if the method is POST
+		QueryString.append(body);
+	}
 }
 
 // Collect infos on the first line of the Request Header
@@ -61,14 +63,16 @@ void RequestParser::ParseFirstLine(StringIterator& line){
 			if ((*start).find("?") != std::string::npos) {
 				url = *start;
 				StringVector tmp = split((*start), "?");
-				scriptPath = tmp[0];
+				scriptPath.append("./src/");
+				scriptPath.append(tmp[0]);
 				QueryString = tmp[1];
 				tmp = split((*start), "/");
 				scriptName = tmp[1].erase(tmp[1].find("?"), tmp[1].length());
 				scriptType = findScriptType((*start));
 				continue;
 			}
-			scriptPath = vec_str[1];
+			scriptPath.append("./src");
+			scriptPath.append(vec_str[1]);
 			StringVector tmp = split((*start), "/");
 			scriptName = tmp[1];
 			scriptType = findScriptType((*start)); 

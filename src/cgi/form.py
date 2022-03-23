@@ -1,17 +1,19 @@
-#!/usr/bin/python
-
 import cgi
 
 form = cgi.FieldStorage();
 
-name = form.getvalue('name')
+name = form.getvalue("name")
 email = form.getvalue("email")
 message = form.getvalue("message")
+
+length = len(name)
+length += len(email)
+length += len(message)
 
 # print HEADER fields
 print ("HTTP/1.1 200 OK")
 print ("Content-type: text/html\r\n\r\n")
-print ("Content-Length: %d", len(name + email + message))
+print ("Content-Length: %d", length)
 
 # print HTML response
 

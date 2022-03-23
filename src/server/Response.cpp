@@ -38,6 +38,8 @@ void Response::responseGET(RequestParser& request)
 		CGI cgi(request, config, server->sender_fd, server->pfds[0].fd);
 		//! find a better way of passing the server FD    --^
 		// TODO body = cgi.getOutput();
+		makeHeader(server->status_code);
+		return;
 	}
 	if (request.getURL().find("/image") != std::string::npos ||
 		request.getURL().find("favicon.ico") != std::string::npos)
