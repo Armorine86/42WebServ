@@ -57,25 +57,27 @@ void RequestParser::ParseFirstLine(StringIterator& line){
 
 	for (; start != end; start++)
 	{
-		if ((*start).find("GET") != std::string::npos
+		if ((*start).find("cgi") != std::string::npos) {
+			if ((*start).find("?") != std::string::npos) {
+				url = *start;
+				StringVector tmp = split((*start), "?");
+				scriptPath = tmp[0];
+				QueryString = tmp[1];
+				tmp = split((*start), "/");
+				scriptName = tmp[1].erase(tmp[1].find("?"), tmp[1].length());
+				continue;
+			}
+			scriptPath = vec_str[1];
+			StringVector tmp = split((*start), "/");
+			scriptName = tmp[1];
+		}
+		else if ((*start).find("GET") != std::string::npos
 			|| (*start).find("POST") != std::string::npos
 			|| (*start).find("DELETE") != std::string::npos){
-			if ((*start).find("GET") != std::string::npos) {
+			if ((*start).find("GET") != std::string::npos)
 				method = "GET";
-				if ((*start).find("?") != std::string::npos) {		
-					StringVector tmp = split((*start), "?");
-					QueryString = tmp[1];
-					tmp = split((*start), "/");
-					scriptName = tmp[1].erase(tmp[1].find("?"), tmp[1].length());
-				}
-			}
-			else if((*start).find("POST") != std::string::npos) {
+			else if((*start).find("POST") != std::string::npos)
 				method = "POST";
-				if ((*start).find("cgi") != std::string::npos){
-					StringVector tmp = split((*start), "/");
-					scriptName = tmp[1];
-				}
-			}
 			else if((*start).find("DELETE") != std::string::npos)
 				method = "DELETE";
 			else{

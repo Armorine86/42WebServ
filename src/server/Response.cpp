@@ -34,7 +34,7 @@ MethodType Response::getType(RequestParser& request)
 
 void Response::responseGET(RequestParser& request)
 {
-	if (request.getURL().find("cgi")) {
+	if (request.getURL().find("cgi") != std::string::npos) {
 		CGI cgi(request, config);
 		// TODO body = cgi.getOutput();
 	}

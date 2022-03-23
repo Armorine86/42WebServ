@@ -22,6 +22,7 @@ public:
 	std::string getContentType(void) { return contentType; }
 	std::string getQuery(void) { return QueryString; }
 	std::string getScriptName(void) { return scriptName; }
+	std::string getScriptPath(void) { return scriptPath; }
 	StringVector getAccept(void) { return accept; }
 
 private:
@@ -33,6 +34,7 @@ private:
 	std::string body; 		// Optional. Used for POST request
 	std::string QueryString;
 	std::string scriptName;
+	std::string scriptPath;
 	StringVector accept;	// type of request.  i.e: text/html
 	StringVector language;	// en-US || en-CA || etc.
 	StringVector char_set;	// UTF-8
