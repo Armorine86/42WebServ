@@ -9,6 +9,7 @@
 #include "Server.hpp"
 #include "CGI.hpp"
 #include "dirent.h"
+#include "utils.hpp"
 
 #define MAX_IMAGESIZE 1000000
 
@@ -56,7 +57,7 @@ private:
 	void makeHeader(std::string& code);
 	void makeFavicon();
 	void makeImage(RequestParser& request);
-	void makeAutoindex(std::string filepath);
+	void makeAutoindex(std::string filepath, RequestParser& request);
 	void readHTML(std::string filepath);
 	int findSocket();
 	std::string lookForRoot(LocationVector& location, RequestParser& request);

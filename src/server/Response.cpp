@@ -59,10 +59,9 @@ void Response::responseGET(RequestParser& request)
 		if (DEBUG)
 			std::cout << BRED << path << END << std::endl;
 		if (autoindex)
-			makeAutoindex(path);
+			makeAutoindex(path, request);
 		else
 			readHTML(path);
-		content_type = "*/*";
 	}
 	if (bodySize > config.client_max_body_size)
 		server->status_code = "413";
@@ -134,8 +133,16 @@ std::string Response::findImagePath(LocationVector& location, RequestParser& req
 
 	if (request.getURL().find("favicon.ico") != std::string::npos)
 		path.append("/images");
-
-	path.append(request.getURL());
+	
+	std::string tmp1 = path;
+	left_trim(tmp1, ".");
+	if (request.getURL().find(tmp1) != std::string::npos){
+		std::string tmp = request.getURL();
+		tmp = tmp.substr(tmp1.size());
+		path.append(tmp);
+	}
+	else
+		path.append(request.getURL());
 
 	return path;
 }
@@ -154,6 +161,7 @@ void Response::makeImage(RequestParser& request)
 	body.write(img.first, img.second);
 	bodySize = img.second;
 	content_type = "image/*";
+	server->status_code = "200";
 
 	delete[] img.first;
 }
@@ -177,14 +185,19 @@ void Response::readHTML(std::string filepath)
 	while (getline(myfile, line))
 		body << line << '\n';
 	bodySize = body.str().length();
+	content_type = "*/*";
 }
 
-void Response::makeAutoindex(std::string path) 
+void Response::makeAutoindex(std::string path, RequestParser& request) 
 {
 	DIR *dir;
-	dirent *fic;
+	dirent *dirent;
 	std::string	 line, value;
 
+	if (!ends_with(path, "upload")){
+		makeImage(request);
+		return;
+	}
 	dir = opendir(path.c_str());
 	if (!dir){
 		server->status_code = "404";
@@ -195,18 +208,18 @@ void Response::makeAutoindex(std::string path)
 	value.assign("<html>\n<head>\n<meta charset=\"utf-8\">\n"
 			"<title>Directory Listing</title>\n</head>\n<body>\n<h1>"
 			+ path + "</h1>\n<ul>");
-	while ((fic = readdir(dir)) != NULL)
+	while ((dirent = readdir(dir)) != NULL)
 	{
 		value.append("<li><a href=\"");
 		value.append(path);
 		if (value[value.size() - 1] != '/')
 			value.append("/");
-		value.append(fic->d_name);
-		if(fic->d_type == DT_DIR)
+		value.append(dirent->d_name);
+		if(dirent->d_type == DT_DIR)
 			value.append("/");
 		value.append("\"> ");
-		value.append(fic->d_name);
-		if(fic->d_type == DT_DIR)
+		value.append(dirent->d_name);
+		if(dirent->d_type == DT_DIR)
 			value.append("/");
 		value.append("</a></li>\n");
 	}
@@ -257,7 +270,15 @@ std::string Response::lookForContent(LocationVector& location, RequestParser& re
 			if (location.at(i).name.find(tmp[0]) != std::string::npos){
 				path = location.at(i).root;
 				autoindex = location.at(i).autoindex;
-				path.append(request.getURL());
+				std::string tmp1 = path;
+				left_trim(tmp1, ".");
+				if (request.getURL().find(tmp1) != std::string::npos){
+					std::string tmp = request.getURL();
+					tmp = tmp.substr(tmp1.size());
+					path.append(tmp);
+				}
+				else
+					path.append(request.getURL());
 				break;
 			}
 		}
