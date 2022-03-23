@@ -43,7 +43,7 @@ void RequestParser::RequestInfo(StringVector& content){
 		}
 	}
 	if (method == "POST")
-		body.append(*(start - 1));
+		body.append(*(start - 1)); // Adds the request Body if the method is POST
 }
 
 // Collect infos on the first line of the Request Header
@@ -65,11 +65,13 @@ void RequestParser::ParseFirstLine(StringIterator& line){
 				QueryString = tmp[1];
 				tmp = split((*start), "/");
 				scriptName = tmp[1].erase(tmp[1].find("?"), tmp[1].length());
+				scriptType = findScriptType((*start));
 				continue;
 			}
 			scriptPath = vec_str[1];
 			StringVector tmp = split((*start), "/");
 			scriptName = tmp[1];
+			scriptType = findScriptType((*start)); 
 		}
 		else if ((*start).find("GET") != std::string::npos
 			|| (*start).find("POST") != std::string::npos
@@ -103,4 +105,15 @@ void RequestParser::ParseFirstLine(StringIterator& line){
 			return;
 		}
 	}
+}
+
+std::string RequestParser::findScriptType(std::string& line)
+{
+	if (line.find(".py") != std::string::npos)
+		return ".py";
+	else if (line.find(".pl") != std::string::npos)
+		return ".pl";
+	else if (line.find(".php") != std::string::npos)
+		return ".php";
+	return "";
 }

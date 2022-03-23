@@ -23,11 +23,13 @@ public:
 	std::string getQuery(void) { return QueryString; }
 	std::string getScriptName(void) { return scriptName; }
 	std::string getScriptPath(void) { return scriptPath; }
+	std::string getScriptType(void) { return scriptType; }
 	StringVector getAccept(void) { return accept; }
 
 private:
-	std::string method; 	// Method
-	std::string url;		// URL
+	std::string	scriptType; // .py || .pl || .php
+	std::string method;		// GET || POST || DELETE	
+	std::string url;		
 	std::string host;		// DNS of the Server. In our case: LOCALHOST
 	std::string user_agent; // Browser
 	std::string contentType;
@@ -40,11 +42,9 @@ private:
 	StringVector char_set;	// UTF-8
 	bool connection;		// Keep-Alive || Close
 
-
-	// typedef std::vector<std::string>::iterator RequestIterator;
-
 	void RequestInfo(StringVector &content);
 	void ParseFirstLine(StringIterator &line); // Method, URL, Protocol
+	std::string findScriptType(std::string& line);
 };
 
 #endif // __REQUESTPARSER_H__

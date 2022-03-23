@@ -2,11 +2,22 @@
 
 CGI::CGI(RequestParser& request, server_info& server)
 {
-	(void)server;
-	bzero(env, sizeof(env));
-
 	setEnvVariables(request, server);
 	convToCharPtr();
+	setExecArgs(request, server);
+}
+
+char* CGI::findScriptType(RequestParser& request, server_info& server)
+{
+	std::map<std::string, std::string>::iterator it;
+	LocationVector vec = server.locations;
+
+	for (size_t i = 0; i < vec.size(); i++) {
+		it = vec[i].cgi_extensions.find(request.getScriptType());
+		if ((*it).first != "")
+			break;
+	}
+	return const_cast<char*>((*it).second.c_str());
 }
 
 void CGI::setEnvVariables(RequestParser& request, server_info& server)
@@ -27,10 +38,25 @@ void CGI::setEnvVariables(RequestParser& request, server_info& server)
 	envVar.push_back("CONTENT_LENGTH=" + IntToString(request.getBody().length()));
 }
 
+void CGI::setExecArgs(RequestParser& request, server_info& server)
+{
+	(void)request;
+	bzero(args, sizeof(args));
+	args[0] = findScriptType(request, server);
+	args[1] = const_cast<char*>(request.getScriptPath().c_str());
+}
+
 // Converts the strings to char * for execve.
 void CGI::convToCharPtr()
 {
+	bzero(envp, sizeof(envp));
+
 	for (int i = 0; i < N_ENV_VAR + 1; i++) {
-		env[i] = const_cast<char *>(envVar[i].c_str());
+		envp[i] = const_cast<char *>(envVar[i].c_str());
 	}
+}
+
+void CGI::execCGI(/*???*/)
+{
+	
 }
