@@ -34,7 +34,10 @@ MethodType Response::getType(RequestParser& request)
 
 void Response::responseGET(RequestParser& request)
 {
-	// TODO Implement CGI scripting for Get Method
+	if (request.getURL().find("cgi")) {
+		CGI cgi(request, config);
+		// TODO body = cgi.getOutput();
+	}
 	if (request.getURL().find("/image") != std::string::npos ||
 		request.getURL().find("favicon.ico") != std::string::npos)
 		makeImage(request);
@@ -71,6 +74,7 @@ void Response::responseGET(RequestParser& request)
 void Response::responsePOST(RequestParser &request)
 {
 	CGI cgi(request, config);
+	// TODO body = cgi.getOutput();
 }
 
 /*void Response::responseDELETE() 
