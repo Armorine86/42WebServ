@@ -256,8 +256,11 @@
 [Tue Mar 22 13:35:48 2022] Accepted Connection from: 127.0.0.1
 [Tue Mar 22 13:35:48 2022] Accepted Connection from: 127.0.0.1
 [Tue Mar 22 13:37:32 2022] Closing Server....
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 =======
+=======
+>>>>>>> server
 [Tue Mar 22 13:54:09 2022] [PARSE ERROR] Invalid Server Scope
 [Tue Mar 22 13:54:37 2022] [PARSE ERROR] Scope isn't closed... Missing `}`
 [Tue Mar 22 13:55:11 2022] Server is listening on: 127.0.0.1:8081
@@ -354,6 +357,7 @@
 [Tue Mar 22 15:55:41 2022] Accepted Connection from: 127.0.0.1
 [Tue Mar 22 15:55:41 2022] Accepted Connection from: 127.0.0.1
 [Tue Mar 22 15:56:23 2022] Closing Server....
+<<<<<<< HEAD
 [Tue Mar 22 19:04:00 2022] Server is listening on: 127.0.0.1:8081
 [Tue Mar 22 19:04:00 2022] Server is listening on: 127.0.0.1:4242
 [Tue Mar 22 19:04:00 2022] Server is listening on: 127.0.0.1:8081
@@ -457,3 +461,5 @@
 [Tue Mar 22 20:55:13 2022] Server is listening on: 127.0.0.1:8081
 [Tue Mar 22 20:55:16 2022] Accepted Connection from: 127.0.0.1
 >>>>>>> Stashed changes
+=======
+>>>>>>> server

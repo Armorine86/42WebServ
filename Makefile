@@ -20,27 +20,33 @@ PARSER_HDRS		=	config_fields.hpp ConfigParser.hpp RequestParser.hpp
 SERVER_FILES	= 	Server.cpp Socket.cpp Response.cpp Error.cpp
 SERVER_HDRS		= 	Server.hpp Socket.hpp Response.hpp
 
+CGI_FILES		=	CGI.cpp	
+CGI_HDRS		=	CGI.hpp
+
 UTILS_PATH		= 	$(SRCS_PATH)utils
 SERVER_PATH		=	$(SRCS_PATH)server
 PARSER_PATH		=	$(SRCS_PATH)parser
+CGI_PATH		=	$(SRCS_PATH)cgi
 
 SRCS 			=	$(addprefix $(SRCS_PATH), $(SRCS_FILES))
 SERVER_SRCS		=	$(addprefix $(SERVER_PATH), $(SERVER_FILES))
 UTILS_SRCS		= 	$(addprefix $(UTILS_PATH), $(UTILS_FILES))
 PARSER_SRCS		= 	$(addprefix $(PARSER_PATH), $(PARSER_FILES))
+CGI_SRCS		=	$(addprefix $(CGI_PATH), $(CGI_FILES))
 
 OBJS_FILES		= 	$(SRCS_FILES:.cpp=.o) $(UTILS_FILES:.cpp=.o) $(SERVER_FILES:.cpp=.o)\
-					$(PARSER_FILES:.cpp=.o)
+					$(PARSER_FILES:.cpp=.o) $(CGI_FILES:.cpp=.o)
 
 INCLUDES		=	$(addprefix $(INC_PATH), $(INC_FILES))	
 OBJS 			=	$(addprefix $(OBJS_PATH), $(OBJS_FILES))
 
-VPATH			=	$(SRCS_PATH) $(UTILS_PATH) $(SERVER_PATH) $(PARSER_PATH)
+VPATH			=	$(SRCS_PATH) $(UTILS_PATH) $(SERVER_PATH) $(PARSER_PATH) $(CGI_PATH)
 
 ALL_INCLUDES	= 	-I$(INC_PATH)\
 					-I$(UTILS_PATH)\
 					-I$(PARSER_PATH)\
 					-I$(SERVER_PATH)\
+					-I$(CGI_PATH)\
 
 $(OBJS_PATH)%.o: %.cpp
 	@$(CC) $(CFLAGS) $(ALL_INCLUDES) -c $< -o $@

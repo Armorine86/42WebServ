@@ -1,6 +1,6 @@
 #include "Response.hpp"
 
-Response::Response( RequestParser& request, server_info& config, Server* server) : config(config), server(server)
+Response::Response( RequestParser& request, server_info& config, Server* server) : config(config), server(server), autoindex(false)
 {
 	MethodType type = getType(request);
 
@@ -57,13 +57,14 @@ void Response::responseGET(RequestParser& request)
 					std::pair<int, size_t>p1(server->sender_fd, i);
 					server->server_index[p1.first] = p1.second;
 				}
-				// if (i == server->sockets.size())
-				// 	path.append(config.root + request.getURL());
 			}
 
 		if (DEBUG)
 			std::cout << BRED << path << END << std::endl;
-		readHTML(path);
+		if (autoindex)
+			makeAutoindex(path);
+		else
+			readHTML(path);
 		content_type = "*/*";
 	}
 	if (bodySize > config.client_max_body_size)
@@ -173,10 +174,51 @@ void Response::readHTML(std::string filepath)
 		server->status_code = "404";
 		if (DEBUG)
 			std::cout << logEvent("file cannot open!\n") << std::endl;
+		return;
 	}
 	server->status_code = "200";
+	body.clear();
 	while (getline(myfile, line))
 		body << line << '\n';
+	bodySize = body.str().length();
+}
+
+void Response::makeAutoindex(std::string path) 
+{
+	DIR *dir;
+	dirent *fic;
+	std::string	 line, value;
+
+	dir = opendir(path.c_str());
+	if (!dir){
+		server->status_code = "404";
+		std::cout << BRED << "Autoindex error" << END << std::endl;
+		return; 
+	}
+	server->status_code = "200";
+	value.assign("<html>\n<head>\n<meta charset=\"utf-8\">\n"
+			"<title>Directory Listing</title>\n</head>\n<body>\n<h1>"
+			+ path + "</h1>\n<ul>");
+	while ((fic = readdir(dir)) != NULL)
+	{
+		value.append("<li><a href=\"");
+		value.append(path);
+		if (value[value.size() - 1] != '/')
+			value.append("/");
+		value.append(fic->d_name);
+		if(fic->d_type == DT_DIR)
+			value.append("/");
+		value.append("\"> ");
+		value.append(fic->d_name);
+		if(fic->d_type == DT_DIR)
+			value.append("/");
+		value.append("</a></li>\n");
+	}
+	value.append("</ul></body></html>");
+	closedir(dir);
+
+	body.clear();
+	body << value;
 	bodySize = body.str().length();
 }
 
@@ -197,13 +239,15 @@ std::string Response::lookForRoot(LocationVector& location, RequestParser& reque
 	for (size_t i = 0; i < location.size(); i++){
 		if (location.at(i).name == request.getURL()) {
 			path = location.at(i).root;
+			autoindex = location.at(i).autoindex;
 			if (location.at(i).index != "")
 				path.append("/" + location.at(i).index);
 			break;
 		}
 	}
 	if (path == "")
-			path = lookForContent(location, request);
+		path = lookForContent(location, request);
+
 	return path;
 }
 
@@ -216,6 +260,7 @@ std::string Response::lookForContent(LocationVector& location, RequestParser& re
 		for (size_t i = 0; i < location.size(); i++){
 			if (location.at(i).name.find(tmp[0]) != std::string::npos){
 				path = location.at(i).root;
+				autoindex = location.at(i).autoindex;
 				path.append(request.getURL());
 				break;
 			}
@@ -223,3 +268,6 @@ std::string Response::lookForContent(LocationVector& location, RequestParser& re
 	}
 	return path;
 }
+
+
+

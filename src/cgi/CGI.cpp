@@ -2,6 +2,7 @@
 
 CGI::CGI(RequestParser& request, server_info& server)
 {
+	(void)server;
 	bzero(env, sizeof(env));
 
 	setEnvVariables(request, server);

@@ -122,7 +122,7 @@ void Server::sendResponse(std::string str_buffer, int sender_fd, server_info ser
 	
 	send(sender_fd, buffer, MAX_SEND, 0);
 	if (DEBUG)
-		std::cout << GREEN << "+++ RESPONSE +++\n\n" << END << buffer << std::endl;
+		std::cout << GREEN << "+++ RESPONSE +++\n\n" << END << header.data() << std::endl;
 
 	delete [] buffer;
 	status_code = "200";
