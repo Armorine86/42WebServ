@@ -14,15 +14,15 @@ void Response::errorBody(std::string& code)
 	else
 		error_path = config.error_pages.at(code);
 	
-	if (request.getURL().find("/image") != std::string::npos ||
-		request.getURL().find("favicon.ico") != std::string::npos)
-		makeImage(server->request);
+	if (request->getURL().find("/image") != std::string::npos ||
+		request->getURL().find("favicon.ico") != std::string::npos)
+		makeImage();
 	else {
 		body.clear();
 		myfile.open(error_path.c_str(), std::ios::in);
 		
 		if (!myfile.good()){
-			server->status_code = "404";
+			status_code = "404";
 			std::cout << logEvent("Ho no! Even the error file is not found!\n") << std::endl;
 		}
 

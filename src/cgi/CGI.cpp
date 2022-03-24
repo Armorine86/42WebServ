@@ -1,6 +1,6 @@
 #include "CGI.hpp"
 
-CGI::CGI(RequestParser& request, server_info& server) : url(request.getURL()), body(request.getBody())
+CGI::CGI(RequestParser* request, server_info& server) : url(request->getURL()), body(request->getBody())
 {
 	(void)server;
 	bzero(env, sizeof(env));

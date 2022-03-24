@@ -1,27 +1,30 @@
 #include "Response.hpp"
 
-Response::Response( RequestParser& request, server_info& config, Server* server) : config(config), server(server), autoindex(false)
+Response::Response( RequestParser* request, Server* server) : 
+request(request), server(server), autoindex(false), status_code(server->status_code)
 {
-	MethodType type = getType(request);
-
+	setConfig();
+	makePath();
+	
+	MethodType type = getType();
 	switch(type){
 		case GET:
-			responseGET(request);
+			responseGET();
 			break;
 		case POST:
-			responsePOST(request);
+			responsePOST();
 			break;
 		/*case DELETE:
-			responseDELETE(request); 
+			responseDELETE(); 
 			break;*/
 		default:
 			std::cerr << logEvent("Response: [405] Method not Allowed\n") << END << std::endl;
 	}
 }
 
-MethodType Response::getType(RequestParser& request)
+MethodType Response::getType()
 {
-	std::string method = request.getMethod();
+	std::string method = request->getMethod();
 
 	if (method.find("GET") != std::string::npos)
 		return GET;
@@ -32,43 +35,63 @@ MethodType Response::getType(RequestParser& request)
 	return NONE;
 }
 
-void Response::responseGET(RequestParser& request)
+//This find and set in the map the right config
+void Response::setConfig() 
 {
-	// TODO Implement CGI scripting for Get Method
-	if (request.getURL().find("/image") != std::string::npos ||
-		request.getURL().find("favicon.ico") != std::string::npos)
-		makeImage(request);
+	std::string host = request->getHost();
+	StringVector host_vec = split(host, ":");
+	int port = atoi(host_vec[1].c_str());
+	
+	if (server->server_map.count(server->sender_fd))
+		config = server->sockets.at(server->server_map.at(server->sender_fd)).getServInfo();
+	else{
+		for (size_t i = 0; i < server->sockets.size(); i++){
+			server_info tmp = server->sockets.at(i).getServInfo();
+			if (host_vec[0] == tmp.host && port == tmp.listen_port){
+				config = tmp;
+				std::pair<int, size_t>p1(server->client_fd, i);
+				server_map[p1.first] = p1.second;
+				break;
+			}
+		}
+	}
+	if (lookForRoot(config.locations) == ""){
+		int i = -1;
+		if((i = findSocket()) >= 0){
+			LocationVector tmp_location = server->sockets.at(i).getServInfo().locations;
+			if (lookForRoot(tmp_location) != ""){
+				config = server->sockets.at(i).getServInfo();
+				std::pair<int, size_t>p1(server->sender_fd, i);
+				server->server_map[p1.first] = p1.second;
+			}
+			else
+				status_code = "404";
+		}
+	}
+}
+
+
+void Response::responseGET()
+{
+	if (DEBUG)
+		std::cout << BRED << path << END << std::endl;
+	//* TODO Implement CGI scripting for Get Method
+	if (request->getURL().find("/image") != std::string::npos ||
+		request->getURL().find("favicon.ico") != std::string::npos)
+		makeImage();
 	else
 	{
-		LocationVector location = config.locations;
-		std::string path;
-		int i = 0;
-	
-		path = lookForRoot(location, request);
-		if (path == "")
-			if((i = findSocket()) >= 0){
-				LocationVector tmp_location = server->sockets.at(i).getServInfo().locations;
-				path = lookForRoot(tmp_location, request);
-				
-				if (path != ""){
-					std::pair<int, size_t>p1(server->sender_fd, i);
-					server->server_index[p1.first] = p1.second;
-				}
-			}
-
-		if (DEBUG)
-			std::cout << BRED << path << END << std::endl;
 		if (autoindex)
-			makeAutoindex(path, request);
+			makeAutoindex(path);
 		else
 			readHTML(path);
 	}
 	if (bodySize > config.client_max_body_size)
-		server->status_code = "413";
-	makeHeader(server->status_code);
+		status_code = "413";
+	makeHeader(status_code);
 }
 
-void Response::responsePOST(RequestParser &request)
+void Response::responsePOST()
 {
 	CGI cgi(request, config);
 }
@@ -77,6 +100,54 @@ void Response::responsePOST(RequestParser &request)
 {
 	
 } */
+
+void Response::makePath() 
+{
+	LocationVector location = config.locations;
+	path = lookForRoot(location);
+	StringVector url_vec = split(request->getURL(), "/");
+	if (path == "")
+	{
+		for (size_t i = 0; i < location.size(); i++){
+			if (location.at(i).name == "/"){
+				path = location.at(i).root;
+				if (location.at(i).index != "" && request->getURL() == "/")
+					path.append("/" + location.at(i).index);
+				else{
+					for (size_t y = 0; y < url_vec.size(); y++)
+						path.append("/" + url_vec.at(y));
+				}
+				autoindex = location.at(i).autoindex;
+				break;
+			}
+		}
+	}
+}
+
+std::string Response::lookForRoot(LocationVector& location) 
+{
+	std::string path = "";
+	StringVector url_vec = split(request->getURL(), "/");
+
+//le "/" devrait etre gerer dans makePath
+	if (request->getURL() == "/"){
+		return path;
+	}
+	for (size_t i = 0; i < location.size(); i++){
+		if (!url_vec.empty() && location.at(i).name == "/" + url_vec[0]){
+			path = location.at(i).root;
+			if (location.at(i).index != "")
+				path.append("/" + location.at(i).index);
+			else{
+				for (size_t y = 0; y < url_vec.size(); y++)
+					path.append("/" + url_vec.at(y));
+			}
+			autoindex = location.at(i).autoindex;
+			break;
+		}
+	}
+	return path;
+}
 
 // Generates a Header for the Response matching the parameter to
 // the wanted code in StatusCode map
@@ -103,7 +174,7 @@ std::pair<char *, std::streampos> Response::getImageBinary(const char* path)
 	std::ifstream f(path, std::ios::in|std::ios::binary|std::ios::ate);
 	
 	if (!f.is_open()) { // if file not found
-		server->status_code = "404";
+		status_code = "404";
 		img_info.first = NULL;
 		return img_info;
 	}
@@ -119,49 +190,21 @@ std::pair<char *, std::streampos> Response::getImageBinary(const char* path)
 	return img_info;
 }
 
-// Retrieves the requested image path in the directories
-std::string Response::findImagePath(LocationVector& location, RequestParser& request)
-{
-	std::string path;
-
-	for (size_t i = 0; i < location.size(); i++){
-		if (location.at(i).name.find("/image") != std::string::npos){
-			path = location.at(i).root;
-			break;
-		}
-	}
-
-	if (request.getURL().find("favicon.ico") != std::string::npos)
-		path.append("/images");
-	
-	std::string tmp1 = path;
-	left_trim(tmp1, ".");
-	if (request.getURL().find(tmp1) != std::string::npos){
-		std::string tmp = request.getURL();
-		tmp = tmp.substr(tmp1.size());
-		path.append(tmp);
-	}
-	else
-		path.append(request.getURL());
-
-	return path;
-}
-
 // Find the location of the requested image
 // Gets the Binary
 // Writes the content to the Response body
-void Response::makeImage(RequestParser& request) 
+void Response::makeImage() 
 {
 	LocationVector location = config.locations;
 
-	std::string img_path(findImagePath(location, request));
+	//std::string img_path(findImagePath(location));
 
-	ImgInfo img = getImageBinary(img_path.c_str());
+	ImgInfo img = getImageBinary(path.c_str());
 
 	body.write(img.first, img.second);
 	bodySize = img.second;
 	content_type = "image/*";
-	server->status_code = "200";
+	status_code = "200";
 
 	delete[] img.first;
 }
@@ -175,12 +218,12 @@ void Response::readHTML(std::string filepath)
 	myfile.open(filepath.c_str(), std::ios::in);
 	
 	if (!myfile.good()){
-		server->status_code = "404";
+		status_code = "404";
 		if (DEBUG)
 			std::cout << logEvent("file cannot open!\n") << std::endl;
 		return;
 	}
-	server->status_code = "200";
+	status_code = "200";
 	body.clear();
 	while (getline(myfile, line))
 		body << line << '\n';
@@ -188,23 +231,24 @@ void Response::readHTML(std::string filepath)
 	content_type = "*/*";
 }
 
-void Response::makeAutoindex(std::string path, RequestParser& request) 
+
+void Response::makeAutoindex(std::string path) 
 {
 	DIR *dir;
 	dirent *dirent;
 	std::string	 line, value;
 
 	if (!ends_with(path, "upload")){
-		makeImage(request);
+		makeImage();
 		return;
 	}
 	dir = opendir(path.c_str());
 	if (!dir){
-		server->status_code = "404";
+		status_code = "404";
 		std::cout << BRED << "Autoindex error" << END << std::endl;
 		return; 
 	}
-	server->status_code = "200";
+	status_code = "200";
 	value.assign("<html>\n<head>\n<meta charset=\"utf-8\">\n"
 			"<title>Directory Listing</title>\n</head>\n<body>\n<h1>"
 			+ path + "</h1>\n<ul>");
@@ -231,6 +275,7 @@ void Response::makeAutoindex(std::string path, RequestParser& request)
 	bodySize = body.str().length();
 }
 
+// Return the sockets with the same server port that is not the one already in config OR return -1.
 int Response::findSocket()
 {
 	for (size_t i = 0; i < server->sockets.size(); i++) {
@@ -240,51 +285,3 @@ int Response::findSocket()
 	}
 	return -1;
 }
-
-std::string Response::lookForRoot(LocationVector& location, RequestParser& request) 
-{
-	std::string path = "";
-
-	for (size_t i = 0; i < location.size(); i++){
-		if (location.at(i).name == request.getURL()) {
-			path = location.at(i).root;
-			autoindex = location.at(i).autoindex;
-			if (location.at(i).index != "")
-				path.append("/" + location.at(i).index);
-			break;
-		}
-	}
-	if (path == "")
-		path = lookForContent(location, request);
-
-	return path;
-}
-
-std::string Response::lookForContent(LocationVector& location, RequestParser& request) 
-{
-	std::string path = "";
-	StringVector tmp = split(request.getURL(), "/");
-
-	if (!tmp.empty()){
-		for (size_t i = 0; i < location.size(); i++){
-			if (location.at(i).name.find(tmp[0]) != std::string::npos){
-				path = location.at(i).root;
-				autoindex = location.at(i).autoindex;
-				std::string tmp1 = path;
-				left_trim(tmp1, ".");
-				if (request.getURL().find(tmp1) != std::string::npos){
-					std::string tmp = request.getURL();
-					tmp = tmp.substr(tmp1.size());
-					path.append(tmp);
-				}
-				else
-					path.append(request.getURL());
-				break;
-			}
-		}
-	}
-	return path;
-}
-
-
-

@@ -40,6 +40,6 @@
 typedef std::vector<std::string> StringVector;
 typedef std::vector<std::string>::iterator StringIterator;
 
-typedef std::map<int, size_t> ServerIndex;
+typedef std::map<int, size_t> ServerMap;
 
 #endif // __DEFINES_H__

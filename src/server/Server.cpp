@@ -9,7 +9,7 @@ Server::Server(SocketsVector sockvector) : client_fd(0), status_code("200"), soc
 		pfds.push_back(newfd);
 		pfds[i].events = POLLIN;
 	}
-	server_index.clear();
+	server_map.clear();
 	run();
 }
 
@@ -57,8 +57,8 @@ void Server::handleEvents(PollIterator& it, size_t i)
 		while (it->fd != pfds[i].fd)
 			it++;
 
-		std::pair<int, size_t>p1(client_fd, i);
-		server_index[p1.first] = p1.second;
+		// std::pair<int, size_t>p1(client_fd, i);
+		// server_map[p1.first] = p1.second;
 
 		std::cout << YELLOW << logEvent("Accepted Connection from: " + clientIP(client_fd, addrlen) + "\n") << END << std::endl;
 	}
@@ -66,7 +66,7 @@ void Server::handleEvents(PollIterator& it, size_t i)
 
 // Handles Client requests. If the FD in the pollfd vector is
 // the sender FD (client), we can send the response to the same FD
-void Server::handleClient(PollIterator& it, server_info serv_info)
+void Server::handleClient(PollIterator& it)
 {
 	char buffer[200000];
 	int bytes = recv((*it).fd, buffer, sizeof(buffer), 0);
@@ -82,32 +82,21 @@ void Server::handleClient(PollIterator& it, server_info serv_info)
 	sender_fd = (*it).fd;
 
 	if (bytes <= 0)
-	{
-		if (bytes == 0)
-			std::cout << "pollserver: socket " << sender_fd << " hung up" << std::endl; 
-		else 
-			perror("recv");
-		close((*it).fd); // Bye !
-		pfds.erase(it);
-		it = pfds.begin();
-
-		// reset status code to OK by default for subsequent requests.
-		status_code = "200";
-	}
+		closeSocket(bytes, it);
 	else if ((*it).fd == sender_fd){
 		std::string str_buffer(buffer);
 
 		bzero(buffer, sizeof(buffer));
-		sendResponse(str_buffer, sender_fd, serv_info);
+		sendResponse(str_buffer, sender_fd);
 	}
 }
 
 // Parse the request sent by the client and builds a response.
 // Memcpy the Header and the Body into a buffer to use with send().
-void Server::sendResponse(std::string str_buffer, int sender_fd, server_info serv_info)
+void Server::sendResponse(std::string str_buffer, int sender_fd)
 {
 	RequestParser request(str_buffer);
-	Response response(request, serv_info, this);
+	Response response(&request, this);
 	
 	std::string header = response.getResponseHeader();
 	std::string body = response.getResponseBody();
@@ -128,23 +117,19 @@ void Server::sendResponse(std::string str_buffer, int sender_fd, server_info ser
 	status_code = "200";
 }
 
-// Server Main Loop. This is where the magic operates
-//
-// 1. Push_back the binded server socket to the Pollfd vector and sets events to POLLIN.
-//
-// 2. Wait for an incoming connection from a client.
-//
-// 3. accept() the incoming connection, opens a FD for the client and adds it to the Pollfd vector.
-//
-// 4. Handle the client request. recv() the request header and puts it in a buffer. If recv() return 0
-// the resquest has been resolved and the client FD is closed and removed from the vector. 
-//
-// 5. Parse the request header and build a response relevent to the information received.
-//
-// 6. Allocate a char* type buffer (handling image binary) the size of the response header + body.
-// Copy the header AND the body to the buffer. send() the response to the sender (client fd).
-//
-// 7. Rince and Repeat
+void Server::closeSocket(const int bytes, PollIterator& it) 
+{
+	if (bytes == 0)
+		std::cout << "pollserver: socket " << sender_fd << " hung up" << std::endl; 
+	else 
+		perror("recv");
+	close((*it).fd);
+	pfds.erase(it);
+	it = pfds.begin();
+
+	status_code = "200";
+}
+
 void Server::run()
 {
 	for (size_t i = 0; i < sockets.size(); i++)
@@ -168,8 +153,8 @@ void Server::run()
 						break;
 					}
 					if ((*it).fd == pfds.at(i).fd){
-						int server_i = server_index.at(it->fd);
-						handleClient(it, sockets.at(server_i).getServInfo());
+						//int server_i = server_map.at(it->fd);
+						handleClient(it);
 						break;
 					}
 				}

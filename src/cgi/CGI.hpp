@@ -10,7 +10,7 @@
 class CGI {
 	public:
 		CGI() {}
-		CGI(RequestParser& request, server_info& server);
+		CGI(RequestParser* request, server_info& server);
 		~CGI() {};
 	
 	private:

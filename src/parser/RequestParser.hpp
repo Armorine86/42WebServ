@@ -18,9 +18,10 @@ public:
 
 	std::string getMethod(void) { return method; }
 	std::string getURL(void) { return url; }
+	std::string getHost(void) { return host; }
 	StringVector getAccept(void) { return accept; }
 	StringVector getBody(void) { return body; }
-
+	
 private:
 	std::string method; // Method
 	std::string url;	// URL
