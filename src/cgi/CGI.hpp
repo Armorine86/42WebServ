@@ -17,16 +17,15 @@
 class CGI {
 	public:
 		CGI() {}
-		CGI(RequestParser& request, server_info& server, int& sender, int& serv_fd);
+		CGI(RequestParser& request, server_info& server);
 		~CGI() {};
 	
 		std::string getCGIouput() { return output; }
 	private:
 
 		RequestParser req;
-		int client_fd;
 		int fd_pipe[2];
-		int server_fd;
+		
 		
 		std::string output; // final result to be sent back to Response body field
 		StringVector envVar; // CGI Environment Variables

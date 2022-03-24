@@ -44,7 +44,7 @@ void RequestParser::RequestInfo(StringVector& content){
 	}
 	if (method == "POST") {
 		body.append(*(start - 1)); // Adds the request Body if the method is POST
-		QueryString.append(body);
+		//QueryString.append(body);
 	}
 }
 
@@ -63,7 +63,7 @@ void RequestParser::ParseFirstLine(StringIterator& line){
 			if ((*start).find("?") != std::string::npos) {
 				url = *start;
 				StringVector tmp = split((*start), "?");
-				scriptPath.append("./src/");
+				scriptPath.append("./src");
 				scriptPath.append(tmp[0]);
 				QueryString = tmp[1];
 				tmp = split((*start), "/");

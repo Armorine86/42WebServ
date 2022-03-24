@@ -1,10 +1,7 @@
 #include "CGI.hpp"
 
-CGI::CGI(RequestParser& request, server_info& info, int& sender, int& serv_fd) :
-	req(request), client_fd(sender), server_fd(serv_fd)
+CGI::CGI(RequestParser& request, server_info& info) : req(request)
 {
-	(void)client_fd;
-	(void)server_fd;
 	setEnvVariables(info);
 	convToCharPtr();
 	execCGI(info);
@@ -37,7 +34,7 @@ void CGI::setEnvVariables(server_info& info)
 	envVar.push_back("QUERY_STRING=" + req.getQuery());
 	envVar.push_back("REMOTE_ADDR=" + info.host);
 	envVar.push_back("PATH_TRANSLATED=" + req.getScriptPath());
-	envVar.push_back("CONTENT_TYPE=" + req.getContentType());
+	envVar.push_back("CONTENT_TYPE=text/html")/* + req.getContentType())*/;
 	envVar.push_back("CONTENT_LENGTH=" + IntToString(req.getBody().length()));
 }
 
@@ -105,16 +102,15 @@ void CGI::execCGI(server_info& info)
 
 void CGI::execScript(char** argv)
 {
-	(void)argv;
+	//(void)argv;
 	dup2(fd_pipe[WRITE], STDOUT_FILENO);
 	close(fd_pipe[READ]);
 	close(fd_pipe[WRITE]);
 
-	//std::cout << envp[9] << std::endl;
-	// if (execve(argv[0], argv, envp) == -1) {
-	// 	perror("execve");
-	// 	exit(EXIT_FAILURE);
-	//}
+	if (execve(argv[0], argv, envp) == -1) {
+		perror("execve");
+		exit(EXIT_FAILURE);
+	}
 	exit(EXIT_SUCCESS);
 }
 
@@ -126,5 +122,6 @@ void CGI::readFromChild()
 	int ret = read(fd_pipe[READ], buffer, BUFFER_SIZE);
 
 	ret = 0;
+	output.append(buffer);
 	close(fd_pipe[READ]);
 }

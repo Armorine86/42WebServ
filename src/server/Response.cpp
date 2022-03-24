@@ -35,9 +35,10 @@ MethodType Response::getType(RequestParser& request)
 void Response::responseGET(RequestParser& request)
 {
 	if (request.getURL().find("cgi") != std::string::npos) {
-		CGI cgi(request, config, server->sender_fd, server->pfds[0].fd);
-		//! find a better way of passing the server FD    --^
-		// TODO body = cgi.getOutput();
+		CGI cgi(request, config);
+		body.clear();
+		body << cgi.getCGIouput();
+		bodySize = cgi.getCGIouput().length();
 		makeHeader(server->status_code);
 		return;
 	}
@@ -77,8 +78,8 @@ void Response::responseGET(RequestParser& request)
 
 void Response::responsePOST(RequestParser &request)
 {
-	CGI cgi(request, config, server->sender_fd, server->pfds[0].fd);
-	// TODO body = cgi.getOutput();
+	CGI cgi(request, config);
+	//body = cgi.getOutput();
 }
 
 /*void Response::responseDELETE() 
