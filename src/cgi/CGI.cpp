@@ -1,4 +1,5 @@
 #include "CGI.hpp"
+#include <sys/wait.h>
 
 CGI::CGI(RequestParser& request, server_info& info) : req(request)
 {
