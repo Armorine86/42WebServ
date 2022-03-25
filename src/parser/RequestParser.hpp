@@ -18,26 +18,33 @@ public:
 
 	std::string getMethod(void) { return method; }
 	std::string getURL(void) { return url; }
+	std::string getBody(void) { return body; }
+	std::string getContentType(void) { return contentType; }
+	std::string getQuery(void) { return QueryString; }
+	std::string getScriptName(void) { return scriptName; }
+	std::string getScriptPath(void) { return scriptPath; }
+	std::string getScriptType(void) { return scriptType; }
 	StringVector getAccept(void) { return accept; }
-	StringVector getBody(void) { return body; }
 
 private:
-	std::string method; // Method
-	std::string url;	// URL
-	std::string host;	// DNS of the Server. In our case: LOCALHOST
-	// std::string version; // HTTP/1.1
+	std::string	scriptType; // .py || .pl || .php
+	std::string method;		// GET || POST || DELETE	
+	std::string url;		
+	std::string host;		// DNS of the Server. In our case: LOCALHOST
 	std::string user_agent; // Browser
+	std::string contentType;
+	std::string body; 		// Optional. Used for POST request
+	std::string QueryString;
+	std::string scriptName;
+	std::string scriptPath; //! Try char * directly
 	StringVector accept;	// type of request.  i.e: text/html
 	StringVector language;	// en-US || en-CA || etc.
 	StringVector char_set;	// UTF-8
 	bool connection;		// Keep-Alive || Close
 
-	StringVector body; // Optional. Used for POST request
-
-	// typedef std::vector<std::string>::iterator RequestIterator;
-
 	void RequestInfo(StringVector &content);
 	void ParseFirstLine(StringIterator &line); // Method, URL, Protocol
+	std::string findScriptType(std::string& line);
 };
 
 #endif // __REQUESTPARSER_H__

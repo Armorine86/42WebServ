@@ -113,6 +113,8 @@ void ConfigParser::fillConfigVector(ParserIterator start, ParserIterator end)
 		}
 		if ((*start).find("location") != std::string::npos){
 			location_info fields;
+			//ca serait bien ici un field init
+			fields.autoindex = false;
 			while ((*start).find("}") == std::string::npos){
 				fillLocationFields(split(*start, " "), fields, getLocationType(*start));
 				start++;

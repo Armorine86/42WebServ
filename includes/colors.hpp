@@ -6,7 +6,7 @@
 /*   By: mmondell <mmondell@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/21 16:46:53 by mmondell          #+#    #+#             */
-/*   Updated: 2022/02/18 13:01:45 by mmondell         ###   ########.fr       */
+/*   Updated: 2022/03/23 10:07:08 by mmondell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,6 @@
 #define PURPLE		"\033[38;5;57m"
 #define PINK		"\033[38;5;200m"
 #define YELLOW 		"\033[38;5;226m"
-#define PERL 		"\033[1;35m"
 #define ITALIC 		"\033[3m"
 #define END   		"\033[0;0m"
 #define ORANGE		"\033[38;5;208m"

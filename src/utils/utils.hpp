@@ -6,7 +6,7 @@
 /*   By: mmondell <mmondell@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 14:47:52 by mmondell          #+#    #+#             */
-/*   Updated: 2022/03/16 08:06:08 by mmondell         ###   ########.fr       */
+/*   Updated: 2022/03/22 20:12:45 by mmondell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,3 +35,15 @@ StringVector split(std::string line, std::string delimiter);
 std::string& left_trim(std::string &line, const char* delimiters);
 std::string& right_trim(std::string &line, const char* delimiters);
 std::string& both_trim(std::string &line, const char* delimiters);
+
+// Convert Numerical type to String
+template<typename T>
+std::string IntToString(const T& num) {
+	std::stringstream ss;
+	std::string str;
+
+	ss << num;
+	ss >> str;
+	
+	return str;
+}
