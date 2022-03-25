@@ -18,6 +18,7 @@ public:
 
 	std::string getMethod(void) { return method; }
 	std::string getURL(void) { return url; }
+	std::string getHost(void) { return host; }
 	std::string getBody(void) { return body; }
 	std::string getContentType(void) { return contentType; }
 	std::string getQuery(void) { return QueryString; }

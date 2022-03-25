@@ -11,7 +11,7 @@ INC_FILES 		=	colors.hpp defines.hpp status_codes.hpp
 
 SRCS_FILES		=	main.cpp 
 
-UTILS_FILES		=	logger.cpp string_utils.cpp
+UTILS_FILES		=	logger.cpp utils.cpp
 UTILS_HDRS		=	utils.hpp
 
 PARSER_FILES	=	ConfigParser.cpp ConfigParser_utils.cpp RequestParser.cpp

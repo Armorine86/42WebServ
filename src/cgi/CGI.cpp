@@ -1,7 +1,7 @@
 #include "CGI.hpp"
 #include <sys/wait.h>
 
-CGI::CGI(RequestParser& request, server_info& info) : req(request)
+CGI::CGI(RequestParser* request, server_info& server) : url(request->getURL()), body(request->getBody())
 {
 	setEnvVariables(info);
 	convToCharPtr();

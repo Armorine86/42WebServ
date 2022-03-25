@@ -30,7 +30,6 @@ protected:
 	int		sender_fd;
 	std::string	status_code;		
 	SocketsVector sockets;
-	ServerIndex server_index; // client_fd : server_index
 	std::vector<pollfd> pfds;  //pollfd struct vector
 	RequestParser request;
 	sockaddr_storage client_addr;
@@ -38,10 +37,11 @@ protected:
 	typedef std::vector<pollfd>::iterator PollIterator;
 
 	void handleEvents(PollIterator& it, size_t i);
-	void handleClient(PollIterator& it, server_info serv_info);
-	void sendResponse(std::string str_buffer, int sender_fd, server_info serv_info);
+	void handleClient(PollIterator& it);
+	void sendResponse(std::string str_buffer, int sender_fd);
 
 	bool checkBufferSize(const char* buffer);
+	void closeSocket(const int bytes, PollIterator& it);
 
 	pollfd addToPollfd(int newfd);
 

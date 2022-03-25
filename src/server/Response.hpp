@@ -9,6 +9,7 @@
 #include "Server.hpp"
 #include "CGI.hpp"
 #include "dirent.h"
+#include "utils.hpp"
 
 #define MAX_IMAGESIZE 1000000
 
@@ -21,11 +22,11 @@ typedef enum MethodType {
 
 class Server;
 
-class Response : public Server{
+class Response {
 
 public:
 	Response() {}
-	Response(RequestParser& request, server_info& config, Server* server);
+	Response(RequestParser* request, Server* server);
 	~Response() {};
 
 	std::string getResponseHeader() { return header; }
@@ -34,38 +35,41 @@ public:
 	size_t getBodySize() { return bodySize; }
 
 private:
-	server_info config;
+	RequestParser *request;
 	Server *server;
+	server_info config;
 	size_t headerSize;
 	size_t bodySize;
 	std::string header;
 	std::string content_type;
 	std::stringstream body;
 	bool	autoindex;
-	// ServerIndex server_index;
+	std::string status_code;
 	StatusCode status; // Status Code map
+	std::string path;
 
 	typedef std::map<std::string, std::string>::iterator MapIterator;
 	typedef std::vector<location_info>::iterator LocIterator;
 
-	MethodType getType(RequestParser& request);
+	MethodType getType();
 
-	void responseGET(RequestParser& request);
-	void responsePOST(RequestParser& request);
+	void responseGET();
+	void responsePOST();
 	//void responseDELETE(RequestParser& const request);
 	void makeHeader(std::string& code);
 	void makeFavicon();
-	void makeImage(RequestParser& request);
+	void makeImage();
 	void makeAutoindex(std::string filepath);
 	void readHTML(std::string filepath);
+	void setConfig();
 	int findSocket();
-	std::string lookForRoot(LocationVector& location, RequestParser& request);
-	std::string lookForContent(LocationVector& location, RequestParser& request);
+	std::string lookForRoot(LocationVector& location);
+	std::string setPath(LocationVector& location, StringVector& url_vec, size_t i, bool var);
+	std::string lookForContent(LocationVector& location);
 
 	// Image Methods
 	typedef std::pair<char *, std::streampos> ImgInfo;
 	std::pair<char *, std::streampos> getImageBinary(const char* path);
-	std::string findImagePath(LocationVector& location, RequestParser& request);
 
 	// Error
 	void errorBody(std::string& code);
