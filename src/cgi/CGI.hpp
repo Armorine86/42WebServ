@@ -25,7 +25,8 @@ class CGI {
 
 		RequestParser req;
 		int fd_pipe[2];
-		
+		std::string url;
+		std::string body;
 		
 		std::string output; // final result to be sent back to Response body field
 		StringVector envVar; // CGI Environment Variables

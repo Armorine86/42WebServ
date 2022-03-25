@@ -105,7 +105,7 @@ void Server::sendResponse(std::string str_buffer, int sender_fd)
 	memcpy(buffer, header.data(), header.length());
 	memcpy(buffer + header.length(), body.data(), body.length());
 	
-	std::cout << buffer << std::endl;
+	//std::cout << buffer << std::endl;
 	send(sender_fd, buffer, MAX_SEND, 0);
 	if (DEBUG)
 		//std::cout << GREEN << "+++ RESPONSE +++\n\n" << END << header.data() << std::endl;

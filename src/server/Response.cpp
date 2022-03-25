@@ -36,8 +36,8 @@ MethodType Response::getType()
 }
 
 //This find and set in the map the right config
-void Response::setConfig() 
-
+void Response::setConfig()
+{
 	std::string host = request->getHost();
 	StringVector host_vec = split(host, ":");
 	int port = atoi(host_vec[1].c_str());

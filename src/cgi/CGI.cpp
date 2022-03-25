@@ -3,9 +3,10 @@
 
 CGI::CGI(RequestParser* request, server_info& server) : url(request->getURL()), body(request->getBody())
 {
-	setEnvVariables(info);
+	
+	setEnvVariables(server);
 	convToCharPtr();
-	execCGI(info);
+	execCGI(server);
 }
 
 char* CGI::findScriptType(server_info& info)
