@@ -1,5 +1,4 @@
 #include "utils.hpp"
-#include "defines.hpp"
 
 void validEndline(std::string& line, int& line_num)
 {
@@ -25,7 +24,6 @@ std::string format_line(std::string &line, int& line_num) {
 
 	while (!line.empty()) {
 		if (strchr(CONFIG_BLOCKS_DELIMITERS, line[0])) {
-			//new_string.push_back(' ');
 			new_string.push_back(line[0]);
 			break;
 		}
@@ -87,4 +85,17 @@ bool ends_with(std::string const & value, std::string const & ending)
 {
     if (ending.size() > value.size()) return false;
     return std::equal(ending.rbegin(), ending.rend(), value.rbegin());
+}
+
+
+bool is_valid(std::string path)
+{
+	struct stat s;
+	if( stat(path.c_str(),&s) == 0 )
+	{
+		//it's a directory or a file
+		if( s.st_mode & S_IFDIR || s.st_mode & S_IFREG)
+			return true;
+	}
+	return false;
 }

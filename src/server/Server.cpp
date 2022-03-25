@@ -9,7 +9,6 @@ Server::Server(SocketsVector sockvector) : client_fd(0), status_code("200"), soc
 		pfds.push_back(newfd);
 		pfds[i].events = POLLIN;
 	}
-	server_map.clear();
 	run();
 }
 
@@ -56,9 +55,6 @@ void Server::handleEvents(PollIterator& it, size_t i)
 
 		while (it->fd != pfds[i].fd)
 			it++;
-
-		// std::pair<int, size_t>p1(client_fd, i);
-		// server_map[p1.first] = p1.second;
 
 		std::cout << YELLOW << logEvent("Accepted Connection from: " + clientIP(client_fd, addrlen) + "\n") << END << std::endl;
 	}

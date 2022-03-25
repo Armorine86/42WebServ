@@ -30,7 +30,6 @@ protected:
 	int		sender_fd;
 	std::string	status_code;		
 	SocketsVector sockets;
-	ServerMap server_map; // client_fd : server_map
 	std::vector<pollfd> pfds;  //pollfd struct vector
 	RequestParser request;
 	sockaddr_storage client_addr;

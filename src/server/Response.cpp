@@ -4,7 +4,7 @@ Response::Response( RequestParser* request, Server* server) :
 request(request), server(server), autoindex(false), status_code(server->status_code)
 {
 	setConfig();
-	makePath();
+	path = lookForRoot(config.locations);
 	
 	MethodType type = getType();
 	switch(type){
@@ -42,17 +42,11 @@ void Response::setConfig()
 	StringVector host_vec = split(host, ":");
 	int port = atoi(host_vec[1].c_str());
 	
-	if (server->server_map.count(server->sender_fd))
-		config = server->sockets.at(server->server_map.at(server->sender_fd)).getServInfo();
-	else{
-		for (size_t i = 0; i < server->sockets.size(); i++){
-			server_info tmp = server->sockets.at(i).getServInfo();
-			if (host_vec[0] == tmp.host && port == tmp.listen_port){
-				config = tmp;
-				std::pair<int, size_t>p1(server->client_fd, i);
-				server_map[p1.first] = p1.second;
-				break;
-			}
+	for (size_t i = 0; i < server->sockets.size(); i++){
+		server_info tmp = server->sockets.at(i).getServInfo();
+		if (host_vec[0] == tmp.host && port == tmp.listen_port){
+			config = tmp;
+			break;
 		}
 	}
 	if (lookForRoot(config.locations) == ""){
@@ -61,15 +55,12 @@ void Response::setConfig()
 			LocationVector tmp_location = server->sockets.at(i).getServInfo().locations;
 			if (lookForRoot(tmp_location) != ""){
 				config = server->sockets.at(i).getServInfo();
-				std::pair<int, size_t>p1(server->sender_fd, i);
-				server->server_map[p1.first] = p1.second;
 			}
 			else
 				status_code = "404";
 		}
 	}
 }
-
 
 void Response::responseGET()
 {
@@ -101,51 +92,38 @@ void Response::responsePOST()
 	
 } */
 
-void Response::makePath() 
-{
-	LocationVector location = config.locations;
-	path = lookForRoot(location);
-	StringVector url_vec = split(request->getURL(), "/");
-	if (path == "")
-	{
-		for (size_t i = 0; i < location.size(); i++){
-			if (location.at(i).name == "/"){
-				path = location.at(i).root;
-				if (location.at(i).index != "" && request->getURL() == "/")
-					path.append("/" + location.at(i).index);
-				else{
-					for (size_t y = 0; y < url_vec.size(); y++)
-						path.append("/" + url_vec.at(y));
-				}
-				autoindex = location.at(i).autoindex;
-				break;
-			}
-		}
-	}
-}
-
 std::string Response::lookForRoot(LocationVector& location) 
 {
 	std::string path = "";
 	StringVector url_vec = split(request->getURL(), "/");
 
-//le "/" devrait etre gerer dans makePath
-	if (request->getURL() == "/"){
-		return path;
-	}
-	for (size_t i = 0; i < location.size(); i++){
+	for (size_t i = 0; i < location.size() && path == ""; i++){
 		if (!url_vec.empty() && location.at(i).name == "/" + url_vec[0]){
-			path = location.at(i).root;
-			if (location.at(i).index != "")
-				path.append("/" + location.at(i).index);
-			else{
-				for (size_t y = 0; y < url_vec.size(); y++)
-					path.append("/" + url_vec.at(y));
-			}
-			autoindex = location.at(i).autoindex;
-			break;
+			path = setPath(location, url_vec, i, false);
 		}
+		if (location.at(i).name == "/"){
+			path = setPath(location, url_vec, i, true);
+		}
+		if (!is_valid(path))
+			path = "";
 	}
+	return path;
+}
+
+std::string Response::setPath(LocationVector& location, StringVector& url_vec, size_t i, bool var)
+{
+	std::string path = "";
+
+	path = location.at(i).root;
+	if (var && location.at(i).index != "" && request->getURL() == "/")
+		path.append("/" + location.at(i).index);
+	if (!var && location.at(i).index != "")
+		path.append("/" + location.at(i).index);
+	else{
+		for (size_t y = 0; y < url_vec.size(); y++)
+			path.append("/" + url_vec.at(y));
+	}
+	autoindex = location.at(i).autoindex;
 	return path;
 }
 
@@ -197,8 +175,6 @@ void Response::makeImage()
 {
 	LocationVector location = config.locations;
 
-	//std::string img_path(findImagePath(location));
-
 	ImgInfo img = getImageBinary(path.c_str());
 
 	body.write(img.first, img.second);
@@ -230,7 +206,6 @@ void Response::readHTML(std::string filepath)
 	bodySize = body.str().length();
 	content_type = "*/*";
 }
-
 
 void Response::makeAutoindex(std::string path) 
 {

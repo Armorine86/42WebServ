@@ -62,9 +62,9 @@ private:
 	void makeAutoindex(std::string filepath);
 	void readHTML(std::string filepath);
 	void setConfig();
-	void makePath();
 	int findSocket();
 	std::string lookForRoot(LocationVector& location);
+	std::string setPath(LocationVector& location, StringVector& url_vec, size_t i, bool var);
 	std::string lookForContent(LocationVector& location);
 
 	// Image Methods
