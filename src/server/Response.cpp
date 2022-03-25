@@ -66,17 +66,16 @@ void Response::responseGET()
 {
 	if (DEBUG)
 		std::cout << BRED << path << END << std::endl;
+
 	//* TODO Implement CGI scripting for Get Method
-	if (request->getURL().find("/image") != std::string::npos ||
+	if ((!is_dir(path) && request->getURL().find("/upload") != std::string::npos) ||
+		request->getURL().find("/image") != std::string::npos ||
 		request->getURL().find("favicon.ico") != std::string::npos)
 		makeImage();
+	else if (autoindex)
+		makeAutoindex(path);
 	else
-	{
-		if (autoindex)
-			makeAutoindex(path);
-		else
-			readHTML(path);
-	}
+		readHTML(path);
 	if (bodySize > config.client_max_body_size)
 		status_code = "413";
 	makeHeader(status_code);
@@ -137,8 +136,8 @@ void Response::makeHeader(std::string& code_status)
 	if (code_status != "200"){
 		errorBody(code_status);
 	}
-	s_header << "HTTP/1.1 " << (*it).first << (*it).second << "\r\n"
-	<< "Content-type: " << content_type
+	s_header << "HTTP/1.1 " << (*it).first << (*it).second /* << "\r\n"
+	<< "Content-type: " << content_type */
 	<< "\r\nContent-Length: " << bodySize << "\r\n\r\n";
 
 	headerSize = s_header.str().length();
@@ -213,20 +212,27 @@ void Response::makeAutoindex(std::string path)
 	dirent *dirent;
 	std::string	 line, value;
 
-	if (!ends_with(path, "upload")){
-		makeImage();
-		return;
-	}
 	dir = opendir(path.c_str());
 	if (!dir){
-		status_code = "404";
-		std::cout << BRED << "Autoindex error" << END << std::endl;
-		return; 
+		/* if (is_valid){
+			left_word_trim(path, "/upload");
+			status_code = "200";
+			body.clear();
+			body << "<img src=\"" << path << "\"/>";
+			bodySize = body.str().length();
+		}
+		else{
+			status_code = "404";
+			std::cout << BRED << "Autoindex error" << END << std::endl;
+		}
+		return;  */
 	}
+	body.clear();
 	status_code = "200";
 	value.assign("<html>\n<head>\n<meta charset=\"utf-8\">\n"
 			"<title>Directory Listing</title>\n</head>\n<body>\n<h1>"
 			+ path + "</h1>\n<ul>");
+	left_word_trim(path, "/upload");
 	while ((dirent = readdir(dir)) != NULL)
 	{
 		value.append("<li><a href=\"");
@@ -245,7 +251,6 @@ void Response::makeAutoindex(std::string path)
 	value.append("</ul></body></html>");
 	closedir(dir);
 
-	body.clear();
 	body << value;
 	bodySize = body.str().length();
 }

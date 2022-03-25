@@ -99,3 +99,21 @@ bool is_valid(std::string path)
 	}
 	return false;
 }
+
+bool is_dir(std::string path)
+{
+	struct stat s;
+	if( stat(path.c_str(),&s) == 0 && s.st_mode & S_IFDIR)
+		return true;
+	return false;
+}
+
+std::string& left_word_trim(std::string &line, std::string s_delimiters)
+{
+	const char* delimiters = s_delimiters.c_str();
+	size_t n = line.find(delimiters);
+
+    line.erase(0, n);
+
+    return line;
+}

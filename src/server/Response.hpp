@@ -22,7 +22,7 @@ typedef enum MethodType {
 
 class Server;
 
-class Response : public Server{
+class Response {
 
 public:
 	Response() {}
