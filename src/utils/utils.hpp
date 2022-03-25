@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   utils.hpp                                          :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: gcollet <gcollet@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/01/19 14:47:52 by mmondell          #+#    #+#             */
-/*   Updated: 2022/03/25 14:44:48 by gcollet          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #pragma once
 
 #include <string>
@@ -40,3 +28,14 @@ std::string& right_trim(std::string &line, const char* delimiters);
 std::string& both_trim(std::string &line, const char* delimiters);
 std::string& left_word_trim(std::string &line, std::string s_delimiters);
 
+// Convert Numerical type to String
+template<typename T>
+std::string IntToString(const T& num) {
+	std::stringstream ss;
+	std::string str;
+
+	ss << num;
+	ss >> str;
+	
+	return str;
+}
