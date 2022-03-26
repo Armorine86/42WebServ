@@ -35,18 +35,18 @@ public:
 	size_t getBodySize() { return bodySize; }
 
 private:
-	RequestParser *request;
-	Server *server;
-	server_info config;
-	size_t headerSize;
-	size_t bodySize;
-	std::string header;
-	std::string content_type;
+	RequestParser	*request;
+	Server			*server;
+	server_info		config;
+	size_t 			headerSize;
+	size_t 			bodySize;
+	std::string 	header;
 	std::stringstream body;
-	bool	autoindex;
-	std::string status_code;
-	StatusCode status; // Status Code map
-	std::string path;
+	bool			autoindex;
+	bool			redirection;
+	std::string 	status_code;
+	StatusCode 		status; // Status Code map
+	std::string 	path;
 
 	typedef std::map<std::string, std::string>::iterator MapIterator;
 	typedef std::vector<location_info>::iterator LocIterator;

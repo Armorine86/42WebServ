@@ -17,8 +17,8 @@ struct location_info {
 	std::string		index;
 	std::string		root;
 	std::string		upload_directory;
-	std::string		redirections;
 	int				upload_max_size;
+	bool			redirections;
 	bool			upload;
 	bool			autoindex;
 };
@@ -32,7 +32,7 @@ struct server_info {
 	std::string 	server_names;
 	std::map<std::string, std::string> 	error_pages; //
 	LocationVector	locations;
-	int listen_port;
+	int 			listen_port;
 	unsigned int	client_max_body_size; //in megabyte
 
 	server_info() {

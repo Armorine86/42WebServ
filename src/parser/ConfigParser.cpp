@@ -115,6 +115,7 @@ void ConfigParser::fillConfigVector(ParserIterator start, ParserIterator end)
 			location_info fields;
 			//ca serait bien ici un field init
 			fields.autoindex = false;
+			fields.redirections = false;
 			while ((*start).find("}") == std::string::npos){
 				fillLocationFields(split(*start, " "), fields, getLocationType(*start));
 				start++;
@@ -244,7 +245,8 @@ void ConfigParser::fillLocationFields(StringVector vec, location_info &fields, l
 		}
 		case redirections:
 		{
-			fields.redirections = vec[1];
+			if (vec[1].find("301") != std::string::npos)
+				fields.redirections = true;
 			break;
 		}
 		case loc_none:

@@ -64,6 +64,7 @@ void Response::setConfig()
 
 void Response::responseGET()
 {
+	body.clear();
 	if (DEBUG)
 		std::cout << BRED << path << END << std::endl;
 
@@ -74,6 +75,11 @@ void Response::responseGET()
 		makeImage();
 	else if (autoindex)
 		makeAutoindex(path);
+	else if (redirection){
+		status_code = "301";
+		/* body << "Location: http://127.0.0.1:4242";
+		bodySize = body.str().length(); */
+	}
 	else
 		readHTML(path);
 	if (bodySize > config.client_max_body_size)
@@ -104,6 +110,8 @@ std::string Response::lookForRoot(LocationVector& location)
 		if (location.at(i).name == "/"){
 			path = setPath(location, url_vec, i, true);
 		}
+		if (path == "/redirection")
+			break;
 		if (!is_valid(path))
 			path = "";
 	}
@@ -124,6 +132,7 @@ std::string Response::setPath(LocationVector& location, StringVector& url_vec, s
 			path.append("/" + url_vec.at(y));
 	}
 	autoindex = location.at(i).autoindex;
+	redirection = location.at(i).redirections;
 	return path;
 }
 
@@ -134,13 +143,16 @@ void Response::makeHeader(std::string& code_status)
 	MapIterator it = status.code.find(code_status);
 	std::stringstream s_header;
 
-	if (code_status != "200"){
+	if (code_status != "200" && code_status != "301"){
 		errorBody(code_status);
 	}
-	s_header << "HTTP/1.1 " << (*it).first << (*it).second /* << "\r\n"
-	<< "Content-type: " << content_type */
-	<< "\r\nContent-Length: " << bodySize << "\r\n\r\n";
-
+	s_header << "HTTP/1.1 " << (*it).first << (*it).second
+	<< "\r\nContent-Length: " << bodySize;
+	if (code_status == "301")
+		s_header << "\r\nLocation: http://127.0.0.1:4242";
+	s_header << "\r\n\r\n";
+	if (DEBUG)
+		std::cout << s_header.str() << std::endl;
 	headerSize = s_header.str().length();
 	header = s_header.str();
 }
@@ -179,7 +191,6 @@ void Response::makeImage()
 
 	body.write(img.first, img.second);
 	bodySize = img.second;
-	content_type = "image/*";
 	status_code = "200";
 
 	delete[] img.first;
@@ -200,11 +211,9 @@ void Response::readHTML(std::string filepath)
 		return;
 	}
 	status_code = "200";
-	body.clear();
 	while (getline(myfile, line))
 		body << line << '\n';
 	bodySize = body.str().length();
-	content_type = "*/*";
 }
 
 void Response::makeAutoindex(std::string path) 
@@ -215,20 +224,10 @@ void Response::makeAutoindex(std::string path)
 
 	dir = opendir(path.c_str());
 	if (!dir){
-		/* if (is_valid){
-			left_word_trim(path, "/upload");
-			status_code = "200";
-			body.clear();
-			body << "<img src=\"" << path << "\"/>";
-			bodySize = body.str().length();
-		}
-		else{
-			status_code = "404";
-			std::cout << BRED << "Autoindex error" << END << std::endl;
-		}
-		return;  */
+		status_code = "404";
+		std::cout << BRED << "Autoindex error" << END << std::endl;
+		return;
 	}
-	body.clear();
 	status_code = "200";
 	value.assign("<html>\n<head>\n<meta charset=\"utf-8\">\n"
 			"<title>Directory Listing</title>\n</head>\n<body>\n<h1>"
