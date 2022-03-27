@@ -1,6 +1,0 @@
-[Thu Mar 10 22:05:57 2022] Server is listening on: 127.0.0.1:8081
-[Thu Mar 10 22:06:04 2022] Accepted Connection from: 127.0.0.1
-[Thu Mar 10 22:06:12 2022] Closing Server....
-[Thu Mar 10 22:12:18 2022] Server is listening on: 127.0.0.1:8081
-[Thu Mar 10 22:12:26 2022] Accepted Connection from: 127.0.0.1
-[Thu Mar 10 22:12:31 2022] Closing Server....
