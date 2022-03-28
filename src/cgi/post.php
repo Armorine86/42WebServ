@@ -1,4 +1,4 @@
-#!/usr/bin/php-cgi
+#!/usr/bin/php
 
 Hi <?php echo htmlspecialchars($_POST['name']); ?>.
 Your email is: <?php echo (int)$_POST['email']; ?>.

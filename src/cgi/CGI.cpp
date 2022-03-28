@@ -119,10 +119,10 @@ void CGI::execScript(char** argv)
 
 void CGI::readFromChild()
 {
-	char buffer[BUFFER_SIZE + 1];
+	char buffer[200000];
 	bzero(buffer, sizeof(buffer));
 
-	int ret = read(fd_pipe[0], buffer, BUFFER_SIZE);
+	int ret = read(fd_pipe[0], buffer, 200000);
 
 	ret = 0;
 	output.append(buffer);
