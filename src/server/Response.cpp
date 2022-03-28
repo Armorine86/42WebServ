@@ -88,13 +88,12 @@ void Response::responseGET()
 		request->getURL().find("/image") != std::string::npos ||
 		request->getURL().find("favicon.ico") != std::string::npos)
 		makeImage();
+	if (request->getURL().find("/420") != std::string::npos)
+		status_code = "420";
 	else if (autoindex)
 		makeAutoindex(path);
-	else if (redirection){
+	else if (redirection)
 		status_code = "301";
-		/* body << "Location: http://127.0.0.1:4242";
-		bodySize = body.str().length(); */
-	}
 	else
 		readHTML(path);
 	if (bodySize > config.client_max_body_size)
