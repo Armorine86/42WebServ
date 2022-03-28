@@ -37,7 +37,7 @@ void CGI::setEnvVariables(server_info& info)
 	envVar.push_back("REMOTE_ADDR=" + info.host);
 	envVar.push_back("PATH_TRANSLATED=" + req->getScriptPath());
 	if (req->getMethod() == "POST")
-		envVar.push_back("CONTENT_TYPE=application/x-www-form-urlencoded")/* + req->getContentType())*/;
+		envVar.push_back("CONTENT_TYPE=" + req->getContentType());
 	else
 		envVar.push_back("CONTENT_TYPE=text/html")/* + req->getContentType())*/;
 	envVar.push_back("CONTENT_LENGTH=" + IntToString(req->getBody().length()));
@@ -87,7 +87,7 @@ void CGI::execCGI(server_info& info)
 	std::transform(argv.begin(), argv.end(), std::back_inserter(tab), &sTochar);
 	tab.push_back(NULL);
 
-	if (req->getMethod() == "POST")
+	if (req->getMethod() == "POST" && req->getScriptType() == ".py")
 		write(fd_pipe[1], req->getBody().data(), req->getBody().size());
 
 	pid_t pid = fork();

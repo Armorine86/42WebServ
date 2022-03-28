@@ -8,14 +8,6 @@ name = form.getvalue('name')
 email = form.getvalue('email')
 message = form.getvalue('message')
 
-# length = len(name)
-# length += len(email)
-# length += len(message)
-
-# print ('HTTP/1.1 200 OK')
-# print ('Content-Type: text/html')
-# print ("Content-Length: %d" % (length))
-
 print ('<html>')
 print ('<head>')
 print ('<title>CGI GET</title>')
