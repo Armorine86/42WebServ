@@ -35,24 +35,26 @@ public:
 	size_t getBodySize() { return bodySize; }
 
 private:
-	RequestParser	*request;
-	Server			*server;
-	server_info		config;
-	size_t 			headerSize;
-	size_t 			bodySize;
-	std::string 	header;
-	std::stringstream body;
 	bool			autoindex;
 	bool			redirection;
-	std::string 	status_code;
-	StatusCode 		status; // Status Code map
+	bool 			cgiRequest;
+	size_t 			headerSize;
+	size_t 			bodySize;
+	RequestParser	*request;
 	std::string 	path;
+	std::string 	header;
+	std::string 	status_code;
+	Server			*server;
+	server_info		config;
+	StatusCode 		status; // Status Code map
+	std::stringstream body;
 
 	typedef std::map<std::string, std::string>::iterator MapIterator;
 	typedef std::vector<location_info>::iterator LocIterator;
 
 	MethodType getType();
 
+	void handleCGI();
 	void responseGET();
 	void responsePOST();
 	//void responseDELETE(RequestParser& const request);

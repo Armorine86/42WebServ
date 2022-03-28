@@ -23,7 +23,7 @@ class CGI {
 		std::string getCGIouput() { return output; }
 	private:
 
-		RequestParser req;
+		RequestParser *req;
 		int fd_pipe[2];
 		std::string url;
 		std::string body;

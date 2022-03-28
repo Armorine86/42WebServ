@@ -1,7 +1,7 @@
 #include "Response.hpp"
 
 Response::Response( RequestParser* request, Server* server) : 
-request(request), server(server), autoindex(false), status_code(server->status_code)
+autoindex(false), request(request), status_code(server->status_code), server(server)
 {
 	setConfig();
 	path = lookForRoot(config.locations);
@@ -44,7 +44,7 @@ void Response::setConfig()
 	
 	for (size_t i = 0; i < server->sockets.size(); i++){
 		server_info tmp = server->sockets.at(i).getServInfo();
-		if (host_vec[0] == tmp.host && port == tmp.listen_port){
+		if ((host_vec[0] == tmp.host || host_vec[0] == "localhost") && port == tmp.listen_port){
 			config = tmp;
 			break;
 		}
@@ -62,13 +62,27 @@ void Response::setConfig()
 	}
 }
 
+void Response::handleCGI()
+{
+	CGI cgi(request, config);
+
+	body.clear();
+	body << cgi.getCGIouput();
+}
+
 void Response::responseGET()
 {
 	body.clear();
 	if (DEBUG)
 		std::cout << BRED << path << END << std::endl;
-
-	//* TODO Implement CGI scripting for Get Method
+	
+	if (request->isCGIRequest())
+	{
+		handleCGI();
+		status_code = "200";
+		makeHeader(status_code);
+		return;
+	}
 	if ((!is_dir(path) && request->getURL().find("/upload") != std::string::npos) ||
 		request->getURL().find("/image") != std::string::npos ||
 		request->getURL().find("favicon.ico") != std::string::npos)

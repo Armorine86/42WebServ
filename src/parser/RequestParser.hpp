@@ -16,6 +16,7 @@ public:
 	RequestParser(const RequestParser &src) { *this = src; }
 	~RequestParser(){};
 
+	bool isCGIRequest() { return cgiRequest; }
 	std::string getMethod(void) { return method; }
 	std::string getURL(void) { return url; }
 	std::string getHost(void) { return host; }
@@ -42,7 +43,10 @@ private:
 	StringVector language;	// en-US || en-CA || etc.
 	StringVector char_set;	// UTF-8
 	bool connection;		// Keep-Alive || Close
+	bool cgiRequest;
 
+	void cgiEnvGet(StringIterator& start);
+	void cgiEnvPOST(StringIterator& start, StringVector& vec_str);
 	void RequestInfo(StringVector &content);
 	void ParseFirstLine(StringIterator &line); // Method, URL, Protocol
 	std::string findScriptType(std::string& line);
