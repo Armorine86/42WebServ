@@ -1,7 +1,7 @@
 #include "Response.hpp"
 
 Response::Response( RequestParser* request, Server* server) : 
-autoindex(false), request(request), status_code(server->status_code), server(server)
+autoindex(false), bodySize(0), request(request), status_code(server->status_code), server(server)
 {
 	setConfig();
 	path = lookForRoot(config.locations);
@@ -67,6 +67,7 @@ void Response::handleCGI()
 	CGI cgi(request, config);
 
 	body.clear();
+	bodySize = cgi.getCGIouput().length();
 	body << cgi.getCGIouput();
 }
 
@@ -104,7 +105,10 @@ void Response::responseGET()
 void Response::responsePOST()
 {
 	CGI cgi(request, config);
-	//body = cgi.getOutput();
+	bodySize = cgi.getCGIouput().length();
+	body << cgi.getCGIouput();
+	status_code = "200";
+	makeHeader(status_code);
 }
 
 /*void Response::responseDELETE() 

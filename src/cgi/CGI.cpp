@@ -36,7 +36,10 @@ void CGI::setEnvVariables(server_info& info)
 	envVar.push_back("QUERY_STRING=" + req->getQuery());
 	envVar.push_back("REMOTE_ADDR=" + info.host);
 	envVar.push_back("PATH_TRANSLATED=" + req->getScriptPath());
-	envVar.push_back("CONTENT_TYPE=text/html")/* + req->getContentType())*/;
+	if (req->getMethod() == "POST")
+		envVar.push_back("CONTENT_TYPE=application/x-www-form-urlencoded")/* + req->getContentType())*/;
+	else
+		envVar.push_back("CONTENT_TYPE=text/html")/* + req->getContentType())*/;
 	envVar.push_back("CONTENT_LENGTH=" + IntToString(req->getBody().length()));
 }
 
