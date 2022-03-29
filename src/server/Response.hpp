@@ -66,6 +66,7 @@ private:
 	void readHTML(std::string filepath);
 	void setConfig();
 	int findSocket();
+	void deletePath(std::string path);
 	std::string lookForRoot(LocationVector& location);
 	std::string setPath(LocationVector& location, StringVector& url_vec, size_t i, bool var);
 	std::string lookForContent(LocationVector& location);

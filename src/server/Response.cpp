@@ -112,15 +112,17 @@ void Response::responsePOST()
 
 void Response::responseDELETE()
 {
-	/* You could use nftw(3). First, make a pass to collect the set of 
-	file paths to remove. Then use unlink (for non-directories) and 
-	rmdir(2) in a second pass */
+	deletePath(path);
+	status_code = "200";
+	makeHeader(status_code);
+}
 
-	/* nftw(path.c_str(), ) */
-
+void Response::deletePath(std::string path)
+{
 	DIR *dir;
 	dirent *dirent;
-	std::string	 line, value;
+	int ret = 0;
+	std::string line;
 
 	dir = opendir(path.c_str());
 	if (!dir){
@@ -128,29 +130,30 @@ void Response::responseDELETE()
 		std::cout << BRED << "Deleting error" << END << std::endl;
 		return;
 	}
-	status_code = "200";
-	value.assign("<html>\n<head>\n<meta charset=\"utf-8\">\n"
-			"<title>Directory Listing</title>\n</head>\n<body>\n"
-			"<h1>Upload Directory Deleted</h1>\n</body></html>");
-	left_word_trim(path, "/upload");
 	while ((dirent = readdir(dir)) != NULL)
 	{
-		if (path[path.size() - 1] != '/')
-			path.append("/");
-		path.append(dirent->d_name);
+		line.clear();
+		line = path;
+		if (line[line.size() - 1] != '/')
+			line.append("/");
+		line.append(dirent->d_name);
+		if (line[line.size() - 1] == '.')
+			continue;
 		if(dirent->d_type == DT_DIR)
-			path.append("/");
-	
-		if (is_dir(path))
-			rmdir(path.c_str());
+			line.append("/");
+
+		if (is_dir(line)){
+			deletePath(line);
+			ret = rmdir(line.c_str());
+		}
 		else
-			unlink(path.c_str());
+			ret = unlink(line.c_str());
+		if (ret < 0)
+			std::cout << "Deleting error: " << errno << std::endl;
 	}
 	closedir(dir);
-
-	body << value;
-	bodySize = body.str().length();
 }
+
 
 std::string Response::lookForRoot(LocationVector& location) 
 {
