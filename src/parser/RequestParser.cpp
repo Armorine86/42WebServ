@@ -34,8 +34,11 @@ void RequestParser::RequestInfo(StringVector& content){
 			language = split((*start).erase(0,17), ",");
 		else if ((*start).find("Accept-Charset:") != std::string::npos)
 			char_set = split((*start), ",");
-		else if ((*start).find("Content-Type:") != std::string::npos)
+		else if ((*start).find("Content-Type:") != std::string::npos) {
 			contentType = (*start).erase(0, strlen("Content-Type: "));
+			if (contentType == "multipart/form-data")
+				isCGIUpload = true;
+		}
 		else if ((*start).find("Connection:") != std::string::npos) {
 			if ((*start).find("keep-alive") != std::string::npos) {
 				connection = true; }
