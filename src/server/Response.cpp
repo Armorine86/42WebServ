@@ -131,15 +131,25 @@ void Response::responseDELETE()
 	status_code = "200";
 	value.assign("<html>\n<head>\n<meta charset=\"utf-8\">\n"
 			"<title>Directory Listing</title>\n</head>\n<body>\n"
-			"<h1>Upload Directory Deleted</h1>\n<ul>");
+			"<h1>Upload Directory Deleted</h1>\n</body></html>");
 	left_word_trim(path, "/upload");
 	while ((dirent = readdir(dir)) != NULL)
 	{
-		if (is_dir)
-			rmdir();
+		if (path[path.size() - 1] != '/')
+			path.append("/");
+		path.append(dirent->d_name);
+		if(dirent->d_type == DT_DIR)
+			path.append("/");
+	
+		if (is_dir(path))
+			rmdir(path.c_str());
 		else
-			unlink();
+			unlink(path.c_str());
 	}
+	closedir(dir);
+
+	body << value;
+	bodySize = body.str().length();
 }
 
 std::string Response::lookForRoot(LocationVector& location) 
