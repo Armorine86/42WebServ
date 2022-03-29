@@ -52,7 +52,8 @@ void RequestParser::cgiEnvGet(StringIterator& start) {
 	StringVector tmp = split((*start), "?");
 	scriptPath.append("./src");
 	scriptPath.append(tmp[0]);
-	QueryString = tmp[1];
+	if (tmp.size() > 1)
+		QueryString = tmp[1];
 	tmp = split((*start), "/");
 	scriptName = tmp[1].erase(tmp[1].find("?"), tmp[1].length());
 	scriptType = findScriptType((*start));
