@@ -4,6 +4,7 @@
 #include "defines.hpp"
 #include <sstream>
 #include <fstream>
+/* #include <ftw.h> */
 #include "RequestParser.hpp"
 #include "status_codes.hpp"
 #include "Server.hpp"
@@ -57,7 +58,7 @@ private:
 	void handleCGI();
 	void responseGET();
 	void responsePOST();
-	//void responseDELETE(RequestParser& const request);
+	void responseDELETE();
 	void makeHeader(std::string& code);
 	void makeFavicon();
 	void makeImage();
@@ -65,6 +66,7 @@ private:
 	void readHTML(std::string filepath);
 	void setConfig();
 	int findSocket();
+	void deletePath(std::string path);
 	std::string lookForRoot(LocationVector& location);
 	std::string setPath(LocationVector& location, StringVector& url_vec, size_t i, bool var);
 	std::string lookForContent(LocationVector& location);

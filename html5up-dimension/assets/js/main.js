@@ -399,3 +399,15 @@
 					});
 
 })(jQuery);
+
+const fn = (res)=>{}
+
+const deleteBtn = document.getElementById("deleteBtn");
+if (deleteBtn) {
+	deleteBtn.addEventListener("click", (event)=>{
+		event.preventDefault();
+		alert("Upload Directory Deleted");
+		axios.delete("http://127.0.0.1:8081/upload").then(fn);
+	})
+	 
+}
