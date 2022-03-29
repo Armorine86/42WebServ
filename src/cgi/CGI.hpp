@@ -36,6 +36,7 @@ class CGI {
 		char* args[3]; // [0]/usr/bin/<language> [1]<ScriptPath>
 		char* envp[N_ENV_VAR + 1];
 
+		std::string formatContentDisposition();
 		char* findScriptType(server_info& server);
 		void setEnvVariables(server_info& server);
 		void setExecArgs(server_info& server);

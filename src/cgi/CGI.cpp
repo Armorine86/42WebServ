@@ -9,6 +9,18 @@ CGI::CGI(RequestParser* request, server_info& server) : url(request->getURL()), 
 	execCGI(server);
 }
 
+std::string CGI::formatContentDisposition()
+{
+	std::string tmp(req->getBody());
+	StringVector tab = split(tmp, ";");
+
+	tmp.clear();
+	tmp.append(tab[1]);
+	tmp.append(tab[2]);
+
+	return tmp;
+}
+
 char* CGI::findScriptType(server_info& info)
 {
 	std::map<std::string, std::string>::iterator it;
@@ -36,12 +48,8 @@ void CGI::setEnvVariables(server_info& info)
 	envVar.push_back("QUERY_STRING=" + req->getQuery());
 	envVar.push_back("REMOTE_ADDR=" + info.host);
 	envVar.push_back("PATH_TRANSLATED=" + req->getScriptPath());
-	if (req->getMethod() == "POST") {
-		if (req->isUpload() == true) 
-			envVar.push_back("CONTENT_TYPE=multipart/form-data");
-		else
-			envVar.push_back("CONTENT_TYPE=" + req->getContentType());
-	}
+	if (req->getMethod() == "POST")
+		envVar.push_back("CONTENT_TYPE=" + req->getContentType());
 	else
 		envVar.push_back("CONTENT_TYPE=text/html");
 	envVar.push_back("CONTENT_LENGTH=" + IntToString(req->getBody().length()));
@@ -91,8 +99,13 @@ void CGI::execCGI(server_info& info)
 	std::transform(argv.begin(), argv.end(), std::back_inserter(tab), &sTochar);
 	tab.push_back(NULL);
 
-	if (req->getMethod() == "POST" /*&& req->isUpload() == false*/)
-		write(fd_pipe[1], req->getBody().data(), req->getBody().size());
+	std::string body;
+	// if (req->isUpload() == true)
+	// 	body = formatContentDisposition();
+	// else
+	body = req->getBody();
+	if (req->getMethod() == "POST")
+		write(fd_pipe[1], body.data(), req->getBody().size());
 
 	pid_t pid = fork();
 	if (pid == -1)
@@ -115,9 +128,11 @@ void CGI::execCGI(server_info& info)
 void CGI::execScript(char** argv)
 {
 	if (execve(argv[0], argv, envp) == -1) {
+		std::cerr << BRED << "DIDN'T FUCKING WORK" << END << std::endl;
 		perror("execve");
 		exit(EXIT_FAILURE);
 	}
+	std::cerr << GREEN << "SUCCESS" << END << std::endl;
 	exit(EXIT_SUCCESS);
 }
 
