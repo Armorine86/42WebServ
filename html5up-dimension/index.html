@@ -11,6 +11,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+		<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 	</head>
 	<body class="is-preload">
 
@@ -37,7 +38,7 @@
 								<li><a href="#Upload">Upload</a></li>
 								<li><a href="#CGIPost">CGI Post</a></li>
 								<li><a href="#CGIGet">CGI Get</a></li>
-								<li><a href="#EasterEgg">EasterEgg?</a></li>
+								<li><a href="#Game">Game</a></li>
 								<!--<li><a href="#elements">Elements</a></li>-->
 							</ul>
 						</nav>
@@ -80,6 +81,7 @@
 								<div class="field half">
 									<ul class="actions" >
 										<li><input type="submit" value="Upload File" class="primary"  /></li>
+										<li><input type="button" id="deleteBtn" value="Delete" class="primary" /></li>
 									</ul>
 								</div>
 								<div class="field half">
@@ -154,19 +156,13 @@
 							</article>
 
 							<!-- Pong -->
-							<article id="EasterEgg">
+							<article id="Game">
 								<h2 class="major">Not So Hidden Easter Egg</h2>
 								<form method="GET" action="cgi/pong.py" enctype="application/x-www-form-urlencoded">
 									<ul class="actions">
 										<li><input type="submit" value="What's this?" class="primary" /></li>
 									</ul>
 								</form>
-								<ul class="icons">
-									<li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
-									<li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
-									<li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
-									<li><a href="#" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
-								</ul>
 							</article>
 
 						<!-- Elements -->
@@ -410,6 +406,7 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 								</section>
 
 							</article>
+							
 
 					</div>
 
@@ -429,6 +426,7 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 			<script src="assets/js/breakpoints.min.js"></script>
 			<script src="assets/js/util.js"></script>
 			<script src="assets/js/main.js"></script>
+
 
 	</body>
 </html>

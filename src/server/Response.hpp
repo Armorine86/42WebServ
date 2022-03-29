@@ -4,6 +4,7 @@
 #include "defines.hpp"
 #include <sstream>
 #include <fstream>
+/* #include <ftw.h> */
 #include "RequestParser.hpp"
 #include "status_codes.hpp"
 #include "Server.hpp"
@@ -57,7 +58,7 @@ private:
 	void handleCGI();
 	void responseGET();
 	void responsePOST();
-	//void responseDELETE(RequestParser& const request);
+	void responseDELETE();
 	void makeHeader(std::string& code);
 	void makeFavicon();
 	void makeImage();

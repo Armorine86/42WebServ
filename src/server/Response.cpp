@@ -14,9 +14,9 @@ autoindex(false), bodySize(0), request(request), status_code(server->status_code
 		case POST:
 			responsePOST();
 			break;
-		/*case DELETE:
+		case DELETE:
 			responseDELETE(); 
-			break;*/
+			break;
 		default:
 			std::cerr << logEvent("Response: [405] Method not Allowed\n") << END << std::endl;
 	}
@@ -110,10 +110,37 @@ void Response::responsePOST()
 	makeHeader(status_code);
 }
 
-/*void Response::responseDELETE() 
+void Response::responseDELETE()
 {
-	
-} */
+	/* You could use nftw(3). First, make a pass to collect the set of 
+	file paths to remove. Then use unlink (for non-directories) and 
+	rmdir(2) in a second pass */
+
+	/* nftw(path.c_str(), ) */
+
+	DIR *dir;
+	dirent *dirent;
+	std::string	 line, value;
+
+	dir = opendir(path.c_str());
+	if (!dir){
+		status_code = "404";
+		std::cout << BRED << "Deleting error" << END << std::endl;
+		return;
+	}
+	status_code = "200";
+	value.assign("<html>\n<head>\n<meta charset=\"utf-8\">\n"
+			"<title>Directory Listing</title>\n</head>\n<body>\n"
+			"<h1>Upload Directory Deleted</h1>\n<ul>");
+	left_word_trim(path, "/upload");
+	while ((dirent = readdir(dir)) != NULL)
+	{
+		if (is_dir)
+			rmdir();
+		else
+			unlink();
+	}
+}
 
 std::string Response::lookForRoot(LocationVector& location) 
 {
