@@ -18,7 +18,7 @@ class CGI {
 	public:
 		CGI() {}
 		CGI(RequestParser* request, server_info& server);
-		~CGI() {};
+		~CGI();
 	
 		std::string getCGIouput() { return output; }
 	private:
@@ -32,17 +32,15 @@ class CGI {
 		StringVector envVar; // CGI Environment Variables
 
 
-		StringVector argv;
-		char* args[3]; // [0]/usr/bin/<language> [1]<ScriptPath>
-		char* envp[N_ENV_VAR + 1];
+		//StringVector argv;
 
 		std::string formatContentDisposition();
-		char* findScriptType(server_info& server);
+		const char* findScriptType(server_info& server);
 		void setEnvVariables(server_info& server);
-		void setExecArgs(server_info& server);
-		void convToCharPtr();
+		char** setExecArgs(server_info& server);
+		char** convToCharPtr();
 		void execCGI(server_info& server);
-		void execScript(char** argv);
+		void execScript(char* const* args, char* const* envp);
 
 		void readFromChild();
 

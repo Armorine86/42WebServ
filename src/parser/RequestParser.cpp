@@ -50,6 +50,8 @@ void RequestParser::RequestInfo(StringVector& content){
 			for (; start != end; start++) {
 				body.append(*start);
 				body.append("\r\n");
+				if (start->find("Content-Type: ") != std::string::npos)
+					body.append("\r\n");
 			}
 			start--;
 		}
