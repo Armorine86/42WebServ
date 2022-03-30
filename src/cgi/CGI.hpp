@@ -35,7 +35,7 @@ class CGI {
 		//StringVector argv;
 
 		std::string formatContentDisposition();
-		const char* findScriptType(server_info& server);
+		std::string& findScriptType(server_info& server);
 		void setEnvVariables(server_info& server);
 		char** setExecArgs(server_info& server);
 		char** convToCharPtr();
