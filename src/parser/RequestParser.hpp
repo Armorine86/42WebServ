@@ -16,6 +16,7 @@ public:
 	RequestParser(const RequestParser &src) { *this = src; }
 	~RequestParser(){};
 
+	bool isUpload() { return isCGIUpload; }
 	bool isCGIRequest() { return cgiRequest; }
 	std::string getMethod(void) { return method; }
 	std::string getURL(void) { return url; }
@@ -44,6 +45,7 @@ private:
 	StringVector char_set;	// UTF-8
 	bool connection;		// Keep-Alive || Close
 	bool cgiRequest;
+	bool isCGIUpload;
 
 	void cgiEnvGet(StringIterator& start);
 	void cgiEnvPOST(StringIterator& start, StringVector& vec_str);

@@ -68,16 +68,16 @@
 						<!-- File Upload -->
 						<article id="Upload">
 							<h2 class="major">Upload</h2>
-							<form method="post" enctype="multipart/form-data" action="/upload">
+							<form method="POST" enctype="multipart/form-data" action="/cgi/upload.py">
 								<div class="fields">
 									<div class="field half">
 										<label for="file">File</label>
-										<input type="file" name="file1" />
+										<input type="file" name="filename"/>
 									</div>
-									<div class="field half">
+									<!-- <div class="field half">
 										<label for="file">File</label>
-										<input type="file" name="file2" />
-									</div>
+										<input type="file" name="file" />
+									</div> -->
 								<div class="field half">
 									<ul class="actions" >
 										<li><input type="submit" value="Upload File" class="primary"  /></li>

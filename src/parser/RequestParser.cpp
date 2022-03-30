@@ -1,6 +1,6 @@
 #include "RequestParser.hpp"
 
-RequestParser::RequestParser(std::string &request) : cgiRequest(false) {
+RequestParser::RequestParser(std::string &request) : cgiRequest(false), isCGIUpload(false) {
 	StringVector content = split(request, "\r\n");
 
 	if (content.empty()) {
@@ -25,26 +25,38 @@ void RequestParser::RequestInfo(StringVector& content){
 			|| (*start).find("DELETE") != std::string::npos)
 			ParseFirstLine(start);
 		else if ((*start).find("Host:") != std::string::npos)
-			host = (*start).erase(0,6);
+			host.append((*start).erase(0,6));
 		else if ((*start).find("User-Agent:") != std::string::npos)
-			user_agent = (*start).erase(0, 12);
+			user_agent.append((*start).erase(0, 12));
 		else if ((*start).find("Accept:") != std::string::npos)
 			accept = split((*start).erase(0,8), ",");
 		else if ((*start).find("Accept-Language:") != std::string::npos)
 			language = split((*start).erase(0,17), ",");
 		else if ((*start).find("Accept-Charset:") != std::string::npos)
 			char_set = split((*start), ",");
-		else if ((*start).find("Content-Type:") != std::string::npos)
-			contentType = (*start).erase(0, strlen("Content-Type: "));
+		else if ((*start).find("Content-Type:") != std::string::npos) {
+			contentType.clear();
+			contentType.append((*start).erase(0, strlen("Content-Type: ")));
+			if (contentType.find("multipart/form-data") != std::string::npos)
+				isCGIUpload = true;
+		}
 		else if ((*start).find("Connection:") != std::string::npos) {
 			if ((*start).find("keep-alive") != std::string::npos) {
 				connection = true; }
 			else {
 				connection = false; }
 		}
+		else if (start->find("----") != std::string::npos) {
+			for (; start != end; start++) {
+				body.append(*start);
+				body.append("\r\n");
+			}
+			start--;
+		}
 	}
-	if (method == "POST") 
+	if (method == "POST" && isCGIUpload == false) 
 		body.append(*(start - 1)); // Adds the request Body if the method is POST
+	
 }
 
 void RequestParser::cgiEnvGet(StringIterator& start) {
@@ -52,7 +64,8 @@ void RequestParser::cgiEnvGet(StringIterator& start) {
 	StringVector tmp = split((*start), "?");
 	scriptPath.append("./src");
 	scriptPath.append(tmp[0]);
-	QueryString = tmp[1];
+	if (tmp.size() > 1)
+		QueryString = tmp[1];
 	tmp = split((*start), "/");
 	scriptName = tmp[1].erase(tmp[1].find("?"), tmp[1].length());
 	scriptType = findScriptType((*start));

@@ -9,6 +9,18 @@ CGI::CGI(RequestParser* request, server_info& server) : url(request->getURL()), 
 	execCGI(server);
 }
 
+std::string CGI::formatContentDisposition()
+{
+	std::string tmp(req->getBody());
+	StringVector tab = split(tmp, ";");
+
+	tmp.clear();
+	tmp.append(tab[1]);
+	tmp.append(tab[2]);
+
+	return tmp;
+}
+
 char* CGI::findScriptType(server_info& info)
 {
 	std::map<std::string, std::string>::iterator it;
@@ -39,7 +51,7 @@ void CGI::setEnvVariables(server_info& info)
 	if (req->getMethod() == "POST")
 		envVar.push_back("CONTENT_TYPE=" + req->getContentType());
 	else
-		envVar.push_back("CONTENT_TYPE=text/html")/* + req->getContentType())*/;
+		envVar.push_back("CONTENT_TYPE=text/html");
 	envVar.push_back("CONTENT_LENGTH=" + IntToString(req->getBody().length()));
 }
 
@@ -87,8 +99,13 @@ void CGI::execCGI(server_info& info)
 	std::transform(argv.begin(), argv.end(), std::back_inserter(tab), &sTochar);
 	tab.push_back(NULL);
 
-	if (req->getMethod() == "POST" && req->getScriptType() == ".py")
-		write(fd_pipe[1], req->getBody().data(), req->getBody().size());
+	std::string body;
+	// if (req->isUpload() == true)
+	// 	body = formatContentDisposition();
+	// else
+	body = req->getBody();
+	if (req->getMethod() == "POST")
+		write(fd_pipe[1], body.data(), req->getBody().size());
 
 	pid_t pid = fork();
 	if (pid == -1)
@@ -111,9 +128,11 @@ void CGI::execCGI(server_info& info)
 void CGI::execScript(char** argv)
 {
 	if (execve(argv[0], argv, envp) == -1) {
+		std::cerr << BRED << "DIDN'T FUCKING WORK" << END << std::endl;
 		perror("execve");
 		exit(EXIT_FAILURE);
 	}
+	std::cerr << GREEN << "SUCCESS" << END << std::endl;
 	exit(EXIT_SUCCESS);
 }
 
