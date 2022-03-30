@@ -18,7 +18,7 @@ class CGI {
 	public:
 		CGI() {}
 		CGI(RequestParser* request, server_info& server);
-		~CGI();
+		~CGI() {};
 	
 		std::string getCGIouput() { return output; }
 	private:
@@ -40,7 +40,7 @@ class CGI {
 		char** setExecArgs(server_info& server);
 		char** convToCharPtr();
 		void execCGI(server_info& server);
-		void execScript(char* const* args, char* const* envp);
+		void execScript(char** args, char** envp);
 
 		void readFromChild();
 

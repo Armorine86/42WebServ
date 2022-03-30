@@ -112,13 +112,24 @@ void CGI::createPipe()
 // }
 
 void printarrays(char** args, char** envp) {
-	for (size_t i = 0; args[i]; i++)
+	for (size_t i = 0; i < 3; i++)
 		std::cout << args[i] << std::endl;
 	
 	std::cout << std::endl;
 
-	for (size_t i = 0; envp[i]; i++)
+	for (size_t i = 0; i < N_ENV_VAR; i++)
 		std::cout << envp[i] << std::endl;
+}
+
+void freeArrays(char** args, char** envp) {
+
+	for (size_t i = 0; i < N_ENV_VAR; i++)
+		delete[] envp[i];
+	delete[] envp;
+
+	for (size_t i = 0; i < 3; i++)
+		delete[] args[i];
+	delete[] args;
 }
 
 void CGI::execCGI(server_info& info)
@@ -126,8 +137,8 @@ void CGI::execCGI(server_info& info)
 	char** args = setExecArgs(info);
 	char** envp = convToCharPtr();
 
-	if (DEBUG)
-		printarrays(args, envp);
+	// if (DEBUG)
+	// 	printarrays(args, envp);
 	createPipe();
 
 	// std::vector<char *> tab;
@@ -156,22 +167,16 @@ void CGI::execCGI(server_info& info)
 	close(fd_pipe[0]);
 	close(fd_pipe[1]);
 
-	for (size_t i = 0; i < N_ENV_VAR; i++)
-		delete[] envp[i];
-
-	for (size_t i = 0; i < 3; i++)
-		delete[] args[i];
+	freeArrays(args, envp);
 }
 
-void CGI::execScript(char* const* args, char* const* envp)
+void CGI::execScript(char** args, char** envp)
 {
 	if (execve(args[0], args, envp) == -1) {
 		std::cerr << BRED << "DIDN'T FUCKING WORK" << END << std::endl;
 		perror("execve");
-		exit(EXIT_FAILURE);
 	}
 	std::cerr << GREEN << "SUCCESS" << END << std::endl;
-	exit(EXIT_SUCCESS);
 }
 
 void CGI::readFromChild()
