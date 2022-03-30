@@ -5,33 +5,7 @@ CGI::CGI(RequestParser* request, server_info& server) : url(request->getURL()), 
 {
 	req = request;
 	setEnvVariables(server);
-	convToCharPtr();
 	execCGI(server);
-}
-
-std::string CGI::formatContentDisposition()
-{
-	std::string tmp(req->getBody());
-	StringVector tab = split(tmp, ";");
-
-	tmp.clear();
-	tmp.append(tab[1]);
-	tmp.append(tab[2]);
-
-	return tmp;
-}
-
-char* CGI::findScriptType(server_info& info)
-{
-	std::map<std::string, std::string>::iterator it;
-	LocationVector vec = info.locations;
-
-	for (size_t i = 0; i < vec.size(); i++) {
-		it = vec[i].cgi_extensions.find(req->getScriptType());
-		if ((*it).first != "")
-			break;
-	}
-	return const_cast<char*>((*it).second.c_str());
 }
 
 void CGI::setEnvVariables(server_info& info)
@@ -53,26 +27,56 @@ void CGI::setEnvVariables(server_info& info)
 	else
 		envVar.push_back("CONTENT_TYPE=text/html");
 	envVar.push_back("CONTENT_LENGTH=" + IntToString(req->getBody().length()));
+
 }
 
-void CGI::setExecArgs(server_info& info)
+std::string& CGI::findScriptType(server_info& info)
 {
-	bzero(args, sizeof(args));
+	std::map<std::string, std::string>::iterator it;
 
-	argv.push_back(findScriptType(info));
-	argv.push_back(req->getScriptPath());
+	for (size_t i = 0; i < info.locations.size(); i++) {
+		it = info.locations[i].cgi_extensions.find(req->getScriptType());
+		if (it->first != "")
+			break;
+	}
+	return it->second;
+}
+
+char** CGI::setExecArgs(server_info& info)
+{
+	char **args = new char*[3];
+
+	std::string temp = findScriptType(info);
+	size_t len = temp.length();
+
+
+	args[0] = new char[len + 1];
+	strcpy(args[0], temp.c_str());
+
+	len = req->getScriptPath().length();
+
+
+	args[1] = new char[len + 1];
+	strcpy(args[1], req->getScriptPath().c_str());
+
+	args[2] = NULL;
+
+	return args;
 }
 
 // Converts the strings to char * for execve.
-void CGI::convToCharPtr()
+char** CGI::convToCharPtr()
 {
-	bzero(envp, sizeof(envp));
+	char **envp = new char*[N_ENV_VAR + 1];
 
 	int i = 0;
 	for (; i < N_ENV_VAR; i++) {
-		envp[i] = const_cast<char*>(envVar[i].c_str());
+		envp[i] = new char[envVar[i].size() + 1];
+		strcpy(envp[i], envVar[i].c_str());
 	}
 	envp[i] = NULL;
+
+	return envp;
 }
 
 void CGI::createPipe()
@@ -83,26 +87,35 @@ void CGI::createPipe()
 	dup2(fd_pipe[1], STDOUT_FILENO);
 }
 
-char* sTochar(const std::string& str) {
-	char* arr = new char[str.size()];
+void printarrays(char** args, char** envp) {
+	for (size_t i = 0; i < 3; i++)
+		std::cout << args[i] << std::endl;
+	
+	std::cout << std::endl;
 
-	memcpy(arr, str.data(), str.size() + 1);
-	return arr;
+	for (size_t i = 0; i < N_ENV_VAR; i++)
+		std::cout << envp[i] << std::endl;
+}
+
+void freeArrays(char** args, char** envp) {
+
+	for (size_t i = 0; i < N_ENV_VAR; i++)
+		delete[] envp[i];
+	delete[] envp;
+
+	for (size_t i = 0; i < 3; i++)
+		delete[] args[i];
+	delete[] args;
 }
 
 void CGI::execCGI(server_info& info)
 {
-	createPipe();
-	setExecArgs(info);
+	char** args = setExecArgs(info);
+	char** envp = convToCharPtr();
 
-	std::vector<char *> tab;
-	std::transform(argv.begin(), argv.end(), std::back_inserter(tab), &sTochar);
-	tab.push_back(NULL);
+	createPipe();
 
 	std::string body;
-	// if (req->isUpload() == true)
-	// 	body = formatContentDisposition();
-	// else
 	body = req->getBody();
 	if (req->getMethod() == "POST")
 		write(fd_pipe[1], body.data(), req->getBody().size());
@@ -112,7 +125,7 @@ void CGI::execCGI(server_info& info)
 		perror("fork");
 	
 	if (pid == 0) {
-		execScript(tab.data());
+		execScript(args, envp);
 	}
 	int status;
 	waitpid(pid, &status, 0);
@@ -120,28 +133,25 @@ void CGI::execCGI(server_info& info)
 	readFromChild();
 	close(fd_pipe[0]);
 	close(fd_pipe[1]);
-	for (size_t i = 0; i < tab.size(); i++) {
-		delete[] tab[i];
-	}
+
+	freeArrays(args, envp);
 }
 
-void CGI::execScript(char** argv)
+void CGI::execScript(char** args, char** envp)
 {
-	if (execve(argv[0], argv, envp) == -1) {
+	if (execve(args[0], args, envp) == -1) {
 		std::cerr << BRED << "DIDN'T FUCKING WORK" << END << std::endl;
 		perror("execve");
-		exit(EXIT_FAILURE);
 	}
 	std::cerr << GREEN << "SUCCESS" << END << std::endl;
-	exit(EXIT_SUCCESS);
 }
 
 void CGI::readFromChild()
 {
-	char buffer[200000];
-	bzero(buffer, sizeof(buffer));
+	char buffer[100000];
+	bzero(buffer, 100000);
 
-	int ret = read(fd_pipe[0], buffer, 200000);
+	int ret = read(fd_pipe[0], buffer, 100000);
 
 	ret = 0;
 	output.append(buffer);
