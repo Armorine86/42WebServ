@@ -207,7 +207,7 @@ void Response::makeHeader(std::string& code_status)
 	<< "\r\nContent-Length: " << bodySize;
 	if (code_status == "301")
 		s_header << "\r\nLocation: http://127.0.0.1:4242";
-	s_header << "\r\n\r\n";
+	s_header << "\r\nSet-Cookie:UserID = XYZ;" << "\r\n\r\n";
 	if (DEBUG)
 		std::cout << s_header.str() << std::endl;
 	headerSize = s_header.str().length();
