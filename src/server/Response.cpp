@@ -103,11 +103,57 @@ void Response::responseGET()
 
 void Response::responsePOST()
 {
-	CGI cgi(request, config);
-	bodySize = cgi.getCGIouput().length();
-	body << cgi.getCGIouput();
+	if (request->getContentType().find("multipart/form-data") != std::string::npos)
+		responseMultipart();
+	else{
+		CGI cgi(request, config);
+		bodySize = cgi.getCGIouput().length();
+		body << cgi.getCGIouput();
+	}
 	status_code = "200";
 	makeHeader(status_code);
+}
+
+void Response::responseMultipart() 
+{
+	//set the boundary
+	//voir pour le content disposition et le filename
+	//while ou for loop qui check ligne par ligne jusquau boundary de fin avec -- a la fin
+	
+	//std::ofstream pour ecrire dans le fichier dans le directory d’upload le contenu 
+	//content-lenght du file en hexa
+
+	std::string boundary, content, filepath;
+	size_t start = 0, pos = 0;
+
+	boundary = request->getContentType();
+	left_word_trim(boundary, "--");
+	content = request->getBody();
+
+	pos = content.find("filepath=\"", pos);
+	if (pos != std::string::npos)
+	{
+		pos += 10;
+		start = content.find('"', pos);
+		if (start != std::string::npos)
+		{
+			for (size_t i = 0; i < config.locations.size(); i++){
+				if (config.locations.at(i).upload_directory != "")
+					filepath.assign(config.locations.at(i).upload_directory);
+			}
+			filepath.append(content.substr(pos, start - pos));
+		}
+	}
+	while (//on est pas rendu au boundary){
+		std::ofstream ofs(filepath.c_str());
+
+		if (!ofs.good() || !ofs.is_open())
+			//erreur
+		ofs.write(//debut du content, len du content);
+		ofs.close();
+		if (!ofs.good())
+			//erreur
+	}
 }
 
 void Response::responseDELETE()
@@ -117,6 +163,8 @@ void Response::responseDELETE()
 	makeHeader(status_code);
 }
 
+//Recursive function that will get inside all the branch of the upload directory
+//delete all files and finally all directories
 void Response::deletePath(std::string path)
 {
 	DIR *dir;
@@ -154,7 +202,7 @@ void Response::deletePath(std::string path)
 	closedir(dir);
 }
 
-
+//Look for the asked root in the config file
 std::string Response::lookForRoot(LocationVector& location) 
 {
 	std::string path = "";
@@ -175,6 +223,7 @@ std::string Response::lookForRoot(LocationVector& location)
 	return path;
 }
 
+//Create the path that the request asked for using the config file
 std::string Response::setPath(LocationVector& location, StringVector& url_vec, size_t i, bool var)
 {
 	std::string path = "";
