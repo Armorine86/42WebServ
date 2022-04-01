@@ -65,6 +65,7 @@ void Server::handleEvents(PollIterator& it, size_t i)
 void Server::handleClient(PollIterator& it)
 {
 	char buffer[200000];
+	bzero(buffer, sizeof(buffer));
 	int bytes = recv((*it).fd, buffer, sizeof(buffer), 0);
 
 	if (DEBUG) {
@@ -82,16 +83,16 @@ void Server::handleClient(PollIterator& it)
 	else if ((*it).fd == sender_fd){
 		std::string str_buffer(buffer);
 
+		sendResponse(str_buffer, sender_fd, buffer);
 		bzero(buffer, sizeof(buffer));
-		sendResponse(str_buffer, sender_fd);
 	}
 }
 
 // Parse the request sent by the client and builds a response.
 // Memcpy the Header and the Body into a buffer to use with send().
-void Server::sendResponse(std::string str_buffer, int sender_fd)
+void Server::sendResponse(std::string str_buffer, int sender_fd, char * buf)
 {
-	RequestParser request(str_buffer);
+	RequestParser request(str_buffer, buf);
 	Response response(&request, this);
 	
 	std::string header = response.getResponseHeader();

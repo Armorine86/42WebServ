@@ -50,17 +50,17 @@ ALL_INCLUDES	= 	-I$(INC_PATH)\
 
 $(OBJS_PATH)%.o: %.cpp
 	@$(CC) $(CFLAGS) $(ALL_INCLUDES) -c $< -o $@
+	@printf "\033[93m▓▓▓\033[0m"
 
 all:	$(NAME)
 
 $(NAME):	$(OBJS_PATH) $(OBJS)
-	@echo "\n\033[96m Compiling WebServ \033[0m\n"
 	@$(CC) $(OBJS) -o $(NAME)
-	@echo "\\n\033[32;1m WebServ IS READY \033[0m \\n"
+	@echo "\\n\033[32;1m\n WebServ IS READY \033[0m \\n"
 
 $(OBJS_PATH):
 	@mkdir -p $(OBJS_PATH)
-	@echo "\033[34;1m Created Object Directory \033[0m"
+	@echo "\033[34;1m Creating Object Directory\n \033[0m"
 	
 linux : CFLAGS += -g
 linux :	$(OBJS_PATH) $(OBJS)

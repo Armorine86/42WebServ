@@ -4,7 +4,6 @@
 #include "defines.hpp"
 #include <sstream>
 #include <fstream>
-/* #include <ftw.h> */
 #include "RequestParser.hpp"
 #include "status_codes.hpp"
 #include "Server.hpp"
@@ -67,6 +66,7 @@ private:
 	void setConfig();
 	int findSocket();
 	void deletePath(std::string path);
+	void responseMultipart();
 	std::string lookForRoot(LocationVector& location);
 	std::string setPath(LocationVector& location, StringVector& url_vec, size_t i, bool var);
 	std::string lookForContent(LocationVector& location);

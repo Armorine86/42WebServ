@@ -88,7 +88,7 @@ void Response::responseGET()
 		request->getURL().find("/image") != std::string::npos ||
 		request->getURL().find("favicon.ico") != std::string::npos)
 		makeImage();
-	if (request->getURL().find("/420") != std::string::npos)
+	else if (request->getURL().find("/420") != std::string::npos)
 		status_code = "420";
 	else if (autoindex)
 		makeAutoindex(path);
@@ -103,11 +103,68 @@ void Response::responseGET()
 
 void Response::responsePOST()
 {
-	CGI cgi(request, config);
-	bodySize = cgi.getCGIouput().length();
-	body << cgi.getCGIouput();
+	if (request->getContentType().find("multipart/form-data") != std::string::npos)
+		responseMultipart();
+	else{
+		CGI cgi(request, config);
+		bodySize = cgi.getCGIouput().length();
+		body << cgi.getCGIouput();
+	}
 	status_code = "200";
 	makeHeader(status_code);
+}
+
+void Response::responseMultipart() 
+{
+	std::string boundary, content, filepath;
+	size_t start = 0, pos = 0;
+
+	boundary = request->getContentType();
+	left_word_trim(boundary, "--");
+	content = request->buffer;
+
+	pos = content.find("filename=\"", pos);
+	if (pos != std::string::npos)
+	{
+		pos += 10;
+		start = content.find('"', pos);
+		if (start != std::string::npos)
+		{
+			for (size_t i = 0; i < config.locations.size(); i++){
+				if (config.locations.at(i).upload_directory != ""){
+					filepath.assign(config.locations.at(i).upload_directory);
+					break;
+				}
+			}
+			filepath.append(content.substr(pos, start - pos));
+		}
+	}
+
+	start = content.find("\r\n\r\n", start);
+	start += 4;
+
+	char * ptr;
+	pos = start;
+	while (pos < sizeof(request->buffer)){
+		ptr = (char*)memchr(request->buffer + pos, '-', sizeof(request->buffer));
+		pos = ptr - request->buffer + 1;
+		if (memcmp(ptr, boundary.c_str(), boundary.size()) == 0)
+			break;
+		//faire dequoi aussi si ca trouve pas le boundary
+		//setter aussi un file too big
+	}
+
+	std::ofstream ofs(filepath.c_str());
+
+	if (!ofs.good() || !ofs.is_open())
+		std::cout << BRED << "OFSTREAM Error in filepath" << END << std::endl;
+	const char * addr = &request->buffer[start];
+	size_t len = (pos - 5) - start;
+	ofs.write(addr, len);
+	ofs.close();
+	if (!ofs.good())
+		std::cout << BRED << "OFSTREAM Error in writing" << END << std::endl;
+	makeAutoindex(path);
 }
 
 void Response::responseDELETE()
@@ -117,6 +174,8 @@ void Response::responseDELETE()
 	makeHeader(status_code);
 }
 
+//Recursive function that will get inside all the branch of the upload directory
+//delete all files and finally all directories
 void Response::deletePath(std::string path)
 {
 	DIR *dir;
@@ -154,7 +213,7 @@ void Response::deletePath(std::string path)
 	closedir(dir);
 }
 
-
+//Look for the asked root in the config file
 std::string Response::lookForRoot(LocationVector& location) 
 {
 	std::string path = "";
@@ -175,6 +234,7 @@ std::string Response::lookForRoot(LocationVector& location)
 	return path;
 }
 
+//Create the path that the request asked for using the config file
 std::string Response::setPath(LocationVector& location, StringVector& url_vec, size_t i, bool var)
 {
 	std::string path = "";
@@ -246,6 +306,7 @@ void Response::makeImage()
 
 	ImgInfo img = getImageBinary(path.c_str());
 
+	body.clear();
 	body.write(img.first, img.second);
 	bodySize = img.second;
 	status_code = "200";

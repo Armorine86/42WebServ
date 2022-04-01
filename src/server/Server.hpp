@@ -38,7 +38,7 @@ protected:
 
 	void handleEvents(PollIterator& it, size_t i);
 	void handleClient(PollIterator& it);
-	void sendResponse(std::string str_buffer, int sender_fd);
+	void sendResponse(std::string str_buffer, int sender_fd, char* buf);
 
 	bool checkBufferSize(const char* buffer);
 	void closeSocket(const int bytes, PollIterator& it);
