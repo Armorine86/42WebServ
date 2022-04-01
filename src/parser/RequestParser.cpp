@@ -1,6 +1,7 @@
 #include "RequestParser.hpp"
 
-RequestParser::RequestParser(std::string &request) : cgiRequest(false), isCGIUpload(false) {
+RequestParser::RequestParser(std::string &request, char* buf) : cgiRequest(false), isCGIUpload(false) {
+	memcpy(buffer, buf, 200000);
 	StringVector content = split(request, "\r\n");
 
 	if (content.empty()) {

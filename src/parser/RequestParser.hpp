@@ -12,7 +12,7 @@ class RequestParser
 
 public:
 	RequestParser(){};
-	RequestParser(std::string &request);
+	RequestParser(std::string &request, char* buf);
 	RequestParser(const RequestParser &src) { *this = src; }
 	~RequestParser(){};
 
@@ -28,6 +28,7 @@ public:
 	std::string getScriptPath(void) { return scriptPath; }
 	std::string getScriptType(void) { return scriptType; }
 	StringVector getAccept(void) { return accept; }
+	char buffer[200000];
 
 private:
 	std::string	scriptType; // .py || .pl || .php

@@ -124,13 +124,13 @@ void Response::responseMultipart()
 	//content-lenght du file en hexa
 
 	std::string boundary, content, filepath;
-	size_t start = 0, pos = 0;
+	size_t start = 0, pos = 0/* , end = 0 */;
 
 	boundary = request->getContentType();
 	left_word_trim(boundary, "--");
-	content = request->getBody();
+	content = request->buffer;
 
-	pos = content.find("filepath=\"", pos);
+	pos = content.find("filename=\"", pos);
 	if (pos != std::string::npos)
 	{
 		pos += 10;
@@ -138,22 +138,35 @@ void Response::responseMultipart()
 		if (start != std::string::npos)
 		{
 			for (size_t i = 0; i < config.locations.size(); i++){
-				if (config.locations.at(i).upload_directory != "")
+				if (config.locations.at(i).upload_directory != ""){
 					filepath.assign(config.locations.at(i).upload_directory);
+					break;
+				}
 			}
 			filepath.append(content.substr(pos, start - pos));
 		}
 	}
-	while (//on est pas rendu au boundary){
+
+	start = content.find("\r\n\r\n", start);
+	start += 4;
+	/* while (start != std::string::npos){ */
+		//end = content.find("\r\n", start);
+		/* end = content.find(boundary, start);
+		if (end == std::string::npos)
+			end = content.find("\n--" + boundary, start);
+		if (end == std::string::npos)
+			return; */
 		std::ofstream ofs(filepath.c_str());
 
 		if (!ofs.good() || !ofs.is_open())
-			//erreur
-		ofs.write(//debut du content, len du content);
+			std::cout << BRED << "OFSTREAM Error in filepath" << END << std::endl;
+		const char * addr = &request->buffer[start];
+		ofs.write(addr, sizeof(request->buffer));
 		ofs.close();
 		if (!ofs.good())
-			//erreur
-	}
+			std::cout << BRED << "OFSTREAM Error in writing" << END << std::endl;
+		
+	/* } */
 }
 
 void Response::responseDELETE()
