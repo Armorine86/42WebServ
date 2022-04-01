@@ -397,6 +397,7 @@
 					$window.on('load', function() {
 						$main._show(location.hash.substr(1), true);
 					});
+		
 
 })(jQuery);
 
@@ -410,4 +411,22 @@ if (deleteBtn) {
 		axios.delete("http://127.0.0.1:8081/upload").then(fn);
 	})
 	 
+}
+
+function validate(el) {
+	var maxfilesize = 1024 * 1024,  // 1 Mb
+		filesize    = el.files[0].size,
+		warningel   = document.getElementById( 'lbError' );
+  
+	if ( filesize > maxfilesize )
+	{
+		document.getElementById('submit').disabled = true;
+		alert("File is trop beaucoup!");
+		return false;
+	}
+	else
+	{
+		document.getElementById('submit').disabled = false;
+		return true;
+	}   
 }
