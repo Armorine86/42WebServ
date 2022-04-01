@@ -88,7 +88,7 @@ void Response::responseGET()
 		request->getURL().find("/image") != std::string::npos ||
 		request->getURL().find("favicon.ico") != std::string::npos)
 		makeImage();
-	if (request->getURL().find("/420") != std::string::npos)
+	else if (request->getURL().find("/420") != std::string::npos)
 		status_code = "420";
 	else if (autoindex)
 		makeAutoindex(path);
@@ -116,15 +116,8 @@ void Response::responsePOST()
 
 void Response::responseMultipart() 
 {
-	//set the boundary
-	//voir pour le content disposition et le filename
-	//while ou for loop qui check ligne par ligne jusquau boundary de fin avec -- a la fin
-	
-	//std::ofstream pour ecrire dans le fichier dans le directory d’upload le contenu 
-	//content-lenght du file en hexa
-
 	std::string boundary, content, filepath;
-	size_t start = 0, pos = 0/* , end = 0 */;
+	size_t start = 0, pos = 0;
 
 	boundary = request->getContentType();
 	left_word_trim(boundary, "--");
@@ -149,24 +142,29 @@ void Response::responseMultipart()
 
 	start = content.find("\r\n\r\n", start);
 	start += 4;
-	/* while (start != std::string::npos){ */
-		//end = content.find("\r\n", start);
-		/* end = content.find(boundary, start);
-		if (end == std::string::npos)
-			end = content.find("\n--" + boundary, start);
-		if (end == std::string::npos)
-			return; */
-		std::ofstream ofs(filepath.c_str());
 
-		if (!ofs.good() || !ofs.is_open())
-			std::cout << BRED << "OFSTREAM Error in filepath" << END << std::endl;
-		const char * addr = &request->buffer[start];
-		ofs.write(addr, sizeof(request->buffer));
-		ofs.close();
-		if (!ofs.good())
-			std::cout << BRED << "OFSTREAM Error in writing" << END << std::endl;
-		
-	/* } */
+	char * ptr;
+	pos = start;
+	while (pos < sizeof(request->buffer)){
+		ptr = (char*)memchr(request->buffer + pos, '-', sizeof(request->buffer));
+		pos = ptr - request->buffer + 1;
+		if (memcmp(ptr, boundary.c_str(), boundary.size()) == 0)
+			break;
+		//faire dequoi aussi si ca trouve pas le boundary
+		//setter aussi un file too big
+	}
+
+	std::ofstream ofs(filepath.c_str());
+
+	if (!ofs.good() || !ofs.is_open())
+		std::cout << BRED << "OFSTREAM Error in filepath" << END << std::endl;
+	const char * addr = &request->buffer[start];
+	size_t len = (pos - 5) - start;
+	ofs.write(addr, len);
+	ofs.close();
+	if (!ofs.good())
+		std::cout << BRED << "OFSTREAM Error in writing" << END << std::endl;
+	makeAutoindex(path);
 }
 
 void Response::responseDELETE()
@@ -308,6 +306,7 @@ void Response::makeImage()
 
 	ImgInfo img = getImageBinary(path.c_str());
 
+	body.clear();
 	body.write(img.first, img.second);
 	bodySize = img.second;
 	status_code = "200";
