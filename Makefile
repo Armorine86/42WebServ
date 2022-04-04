@@ -1,6 +1,6 @@
 NAME 			=	webserv
 
-INC_PATH		=	includes/
+INC_PATH		=	src/includes/
 OBJS_PATH 		=	obj/
 SRCS_PATH 		=	src/
 CC 				=	clang++
@@ -17,7 +17,7 @@ UTILS_HDRS		=	utils.hpp
 PARSER_FILES	=	ConfigParser.cpp ConfigParser_utils.cpp RequestParser.cpp
 PARSER_HDRS		=	config_fields.hpp ConfigParser.hpp RequestParser.hpp
 				
-SERVER_FILES	= 	Server.cpp Socket.cpp Response.cpp Error.cpp
+SERVER_FILES	= 	Server.cpp Socket.cpp Response.cpp Error.cpp Get.cpp Post.cpp Delete.cpp
 SERVER_HDRS		= 	Server.hpp Socket.hpp Response.hpp
 
 CGI_FILES		=	CGI.cpp	

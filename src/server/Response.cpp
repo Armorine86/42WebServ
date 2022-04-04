@@ -4,13 +4,11 @@ Response::Response(RequestParser *request, Server *server) : autoindex(false), b
 {
 	if (server->isChunked == true)
 	{
-		// server->upload_path = "./resources/upload/razer.png";
 		responseMultipart();
 		return;
 	}
 
 	setConfig();
-
 	path = lookForRoot(config.locations);
 
 	MethodType type = getType();
@@ -73,193 +71,6 @@ void Response::setConfig()
 				status_code = "404";
 		}
 	}
-}
-
-void Response::handleCGI()
-{
-	CGI cgi(request, config);
-
-	body.clear();
-	bodySize = cgi.getCGIouput().length();
-	body << cgi.getCGIouput();
-}
-
-void Response::responseGET()
-{
-	body.clear();
-	if (DEBUG)
-		std::cout << BRED << path << END << std::endl;
-
-	if (request->isCGIRequest())
-	{
-		handleCGI();
-		status_code = "200";
-		makeHeader(status_code);
-		return;
-	}
-	if ((!is_dir(path) && request->getURL().find("/upload") != std::string::npos) ||
-		request->getURL().find("/image") != std::string::npos ||
-		request->getURL().find("favicon.ico") != std::string::npos)
-		makeImage();
-	else if (request->getURL().find("/420") != std::string::npos)
-		status_code = "420";
-	else if (autoindex)
-		makeAutoindex(path);
-	else if (redirection)
-		status_code = "301";
-	else
-		readHTML(path);
-	if (bodySize > config.client_max_body_size)
-		status_code = "413";
-	makeHeader(status_code);
-}
-
-void Response::responsePOST()
-{
-	if (request->getContentType().find("multipart/form-data") != std::string::npos)
-		responseMultipart();
-	else
-	{
-		CGI cgi(request, config);
-		bodySize = cgi.getCGIouput().length();
-		body << cgi.getCGIouput();
-		status_code = "200";
-		makeHeader(status_code);
-	}
-}
-
-void Response::responseMultipart()
-{
-	std::string boundary, end, content, filepath;
-	size_t start = 0, pos = 0;
-
-	boundary = request->getContentType();
-	left_word_trim(boundary, "--");
-	content = request->buffer;
-
-	end.append(boundary + "--");
-
-	if (server->isChunked == false)
-	{
-		pos = content.find("filename=\"", pos);
-		if (pos != std::string::npos)
-		{
-			pos += 10;
-			start = content.find('"', pos);
-			if (start != std::string::npos)
-			{
-				for (size_t i = 0; i < config.locations.size(); i++)
-				{
-					if (config.locations.at(i).upload_directory != "")
-					{
-						filepath.assign(config.locations.at(i).upload_directory);
-						break;
-					}
-				}
-				filepath.append(content.substr(pos, start - pos));
-				server->upload_path.append(filepath);
-			}
-			start = content.find("\r\n\r\n", start);
-			start += 4;
-			std::ifstream infile(server->upload_path.c_str());
-			if (infile.good())
-				unlink(server->upload_path.c_str());
-			if (server->bytes == RECV_BUFSIZE)
-				server->isChunked = true;
-		}
-	}
-
-	char *ptr;
-	pos = start;
-	while (true)
-	{
-		ptr = (char *)memchr(request->buffer + pos, '-', sizeof(request->buffer));
-		pos = ptr - request->buffer + 1;
-		if (memcmp(ptr, end.c_str(), end.size()) == 0)
-			break;
-		if (pos > sizeof(request->buffer))
-		{
-			pos = server->bytes;
-			break;
-		}
-		// faire dequoi aussi si ca trouve pas le boundary
-		// setter aussi un file too big
-	}
-
-	std::ofstream ofs(server->upload_path.c_str(),
-					  std::ofstream::out | std::ofstream::app | std::ofstream::binary);
-
-	if (!ofs.good() || !ofs.is_open())
-		std::cout << BRED << "OFSTREAM Error in filepath" << END << std::endl;
-
-	const char *addr = &request->buffer[start];
-
-	size_t len = 0;
-	if (server->bytes != RECV_BUFSIZE)
-		len = (pos - 5) - start;
-	else
-		len = pos - start;
-
-	ofs.write(addr, len);
-	ofs.close();
-
-	if (!ofs.good())
-		std::cout << BRED << "OFSTREAM Error in writing" << END << std::endl;
-	if (server->bytes != RECV_BUFSIZE)
-	{
-		makeAutoindex("./resources/upload/"); //this is hardcoded and I hate it
-		makeHeader(status_code);
-		//bzero(request->buffer, sizeof(request->buffer));
-		server->isChunked = false;
-	}
-}
-
-void Response::responseDELETE()
-{
-	deletePath(path);
-	status_code = "200";
-	makeHeader(status_code);
-}
-
-// Recursive function that will get inside all the branch of the upload directory
-// delete all files and finally all directories
-void Response::deletePath(std::string path)
-{
-	DIR *dir;
-	dirent *dirent;
-	int ret = 0;
-	std::string line;
-
-	dir = opendir(path.c_str());
-	if (!dir)
-	{
-		status_code = "404";
-		std::cout << BRED << "Deleting error" << END << std::endl;
-		return;
-	}
-	while ((dirent = readdir(dir)) != NULL)
-	{
-		line.clear();
-		line = path;
-		if (line[line.size() - 1] != '/')
-			line.append("/");
-		line.append(dirent->d_name);
-		if (line[line.size() - 1] == '.')
-			continue;
-		if (dirent->d_type == DT_DIR)
-			line.append("/");
-
-		if (is_dir(line))
-		{
-			deletePath(line);
-			ret = rmdir(line.c_str());
-		}
-		else
-			ret = unlink(line.c_str());
-		if (ret < 0)
-			std::cout << "Deleting error: " << errno << std::endl;
-	}
-	closedir(dir);
 }
 
 // Look for the asked root in the config file
@@ -329,108 +140,6 @@ void Response::makeHeader(std::string &code_status)
 	header = s_header.str();
 }
 
-// Retrieves the requested image binary and sets the informations in a pair
-std::pair<char *, std::streampos> Response::getImageBinary(const char *path)
-{
-	ImgInfo img_info;
-	std::ifstream f(path, std::ios::in | std::ios::binary | std::ios::ate);
-
-	if (!f.is_open())
-	{ // if file not found
-		status_code = "404";
-		img_info.first = NULL;
-		return img_info;
-	}
-
-	img_info.second = f.tellg();
-
-	img_info.first = new char[static_cast<long>(img_info.second)];
-
-	f.seekg(0, std::ios::beg);
-	f.read(img_info.first, img_info.second);
-	f.close();
-
-	return img_info;
-}
-
-// Find the location of the requested image
-// Gets the Binary
-// Writes the content to the Response body
-void Response::makeImage()
-{
-	LocationVector location = config.locations;
-
-	ImgInfo img = getImageBinary(path.c_str());
-
-	body.clear();
-	body.write(img.first, img.second);
-	bodySize = img.second;
-	status_code = "200";
-
-	delete[] img.first;
-}
-
-// Used to respond with passed HTML file
-void Response::readHTML(std::string filepath)
-{
-	std::string line;
-	std::fstream myfile;
-
-	myfile.open(filepath.c_str(), std::ios::in);
-
-	if (!myfile.good())
-	{
-		status_code = "404";
-		if (DEBUG)
-			std::cout << logEvent("file cannot open!\n") << std::endl;
-		return;
-	}
-	status_code = "200";
-	while (getline(myfile, line))
-		body << line << '\n';
-	bodySize = body.str().length();
-}
-
-void Response::makeAutoindex(std::string path)
-{
-	DIR *dir;
-	dirent *dirent;
-	std::string line, value;
-
-	dir = opendir(path.c_str());
-	if (!dir)
-	{
-		status_code = "404";
-		std::cout << BRED << "Autoindex error" << END << std::endl;
-		return;
-	}
-	status_code = "200";
-	value.assign("<html>\n<head>\n<meta charset=\"utf-8\">\n"
-				 "<title>Directory Listing</title>\n</head>\n<body>\n<h1>" +
-				 path + "</h1>\n<ul>");
-	left_word_trim(path, "/upload");
-	while ((dirent = readdir(dir)) != NULL)
-	{
-		value.append("<li><a href=\"");
-		value.append(path);
-		if (value[value.size() - 1] != '/')
-			value.append("/");
-		value.append(dirent->d_name);
-		if (dirent->d_type == DT_DIR)
-			value.append("/");
-		value.append("\"> ");
-		value.append(dirent->d_name);
-		if (dirent->d_type == DT_DIR)
-			value.append("/");
-		value.append("</a></li>\n");
-	}
-	value.append("</ul></body></html>");
-	closedir(dir);
-
-	body << value;
-	bodySize = body.str().length();
-}
-
 // Return the sockets with the same server port that is not the one already in config OR return -1.
 int Response::findSocket()
 {
@@ -440,4 +149,15 @@ int Response::findSocket()
 			return i;
 	}
 	return -1;
+}
+
+void Response::handleCGI()
+{
+	CGI cgi(request, config);
+
+	body.clear();
+	bodySize = cgi.getCGIouput().length();
+	body << cgi.getCGIouput();
+	status_code = "200";
+	makeHeader(status_code);
 }
