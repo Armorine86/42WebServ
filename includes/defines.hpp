@@ -24,6 +24,7 @@
 #define CONFIG_BLOCKS_DELIMITERS "{};"
 #define LOCALHOST "127.0.0.1"
 #define LISTENPORT 8080
+#define ROOT "./Cyborgab"
 
 // Error codes
 #define FILESTREAM_ERROR 1

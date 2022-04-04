@@ -65,7 +65,7 @@ void RequestParser::RequestInfo(StringVector& content){
 void RequestParser::cgiEnvGet(StringIterator& start) {
 	url = *start;
 	StringVector tmp = split(*start, "?");
-	scriptPath.append("./html5up-dimension");
+	scriptPath.append(ROOT);
 	scriptPath.append(tmp[0]);
 	if (tmp.size() > 1)
 		QueryString = tmp[1];
@@ -76,7 +76,7 @@ void RequestParser::cgiEnvGet(StringIterator& start) {
 
 void RequestParser::cgiEnvPOST(StringIterator& start, StringVector& vec_str)
 {
-	scriptPath.append("./html5up-dimension");
+	scriptPath.append(ROOT);
 	scriptPath.append(vec_str[1]);
 	StringVector tmp = split((*start), "/");
 	scriptName = tmp[1];
