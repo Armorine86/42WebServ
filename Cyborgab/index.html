@@ -72,7 +72,7 @@
 								<div class="fields">
 									<div class="field half">
 										<label for="file">File</label>
-										<input type="file" name="filename"/>
+										<input type="file" name="filename" onchange="validate(this)"/>
 									</div>
 									<div class="field half">
 										<ul class="actions" >
@@ -86,7 +86,7 @@
 									</div> -->
 								<div class="field half">
 									<ul class="actions" >
-										<li><input type="submit" value="Upload File" class="primary"  /></li>
+										<li><input type="submit" id="submit" onsubmit="return validate()" value="Upload File" class="primary"/></li>
 									</ul>
 								</div>
 								<div class="field half"><center>
