@@ -123,9 +123,9 @@ void Response::responsePOST()
 		CGI cgi(request, config);
 		bodySize = cgi.getCGIouput().length();
 		body << cgi.getCGIouput();
+		status_code = "200";
+		makeHeader(status_code);
 	}
-	status_code = "200";
-	makeHeader(status_code);
 }
 
 void Response::responseMultipart()
@@ -186,13 +186,6 @@ void Response::responseMultipart()
 		// setter aussi un file too big
 	}
 
-/* 	if (server->isChunked == false)
-	{
-		std::ifstream infile(server->upload_path.c_str());
-		if (infile.good())
-			unlink(server->upload_path.c_str());
-	} */
-
 	std::ofstream ofs(server->upload_path.c_str(),
 					  std::ofstream::out | std::ofstream::app | std::ofstream::binary);
 
@@ -215,6 +208,7 @@ void Response::responseMultipart()
 	if (server->bytes != RECV_BUFSIZE)
 	{
 		makeAutoindex("./resources/upload/"); //this is hardcoded and I hate it
+		makeHeader(status_code);
 		//bzero(request->buffer, sizeof(request->buffer));
 		server->isChunked = false;
 	}

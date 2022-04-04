@@ -108,24 +108,26 @@ void Server::sendResponse(std::string &str_buffer, int sender_fd, char *buf)
 	RequestParser request(str_buffer, buf);
 	Response response(&request, this);
 
-	std::string header = response.getResponseHeader();
-	std::string body = response.getResponseBody();
+	if (isChunked == false){
+		std::string header = response.getResponseHeader();
+		std::string body = response.getResponseBody();
 
-	size_t MAX_SEND = response.getBodySize() + response.getHeaderSize() + 1;
+		size_t MAX_SEND = response.getBodySize() + response.getHeaderSize() + 1;
 
-	char *buffer = new char[MAX_SEND];
-	bzero(buffer, MAX_SEND);
+		char *buffer = new char[MAX_SEND];
+		bzero(buffer, MAX_SEND);
 
-	memcpy(buffer, header.data(), header.length());
-	memcpy(buffer + header.length(), body.data(), body.length());
+		memcpy(buffer, header.data(), header.length());
+		memcpy(buffer + header.length(), body.data(), body.length());
 
-	// std::cout << buffer << std::endl;
-	send(sender_fd, buffer, MAX_SEND, 0);
-	// if (DEBUG)
-	// std::cout << GREEN << "+++ RESPONSE +++\n\n" << END << header.data() << std::endl;
+		send(sender_fd, buffer, MAX_SEND, 0);
+		// if (DEBUG)
+		// std::cout << GREEN << "+++ RESPONSE +++\n\n" << END << header.data() << std::endl;
 
-	delete[] buffer;
-	status_code = "200";
+		delete[] buffer;
+		str_buffer.clear();
+		status_code = "200";
+	}
 }
 
 void Server::closeSocket(const int bytes, PollIterator &it)
@@ -154,8 +156,8 @@ void Server::run()
 		{
 			(ret == -1) ? status_code = "500" : status_code = "408";
 		}
-		if (status_code == "408")
-			std::cout << ORANGE << "Server is waiting..." << END << std::endl;
+		/* if (status_code == "408")
+			std::cout << ORANGE << "Server is waiting..." << END << std::endl; */
 		if (status_code == "500")
 			std::cout << BRED << "INTERNAL SERVER ERROR [500]" << END << std::endl;
 		for (PollIterator it = pfds.begin(); it != pfds.end(); it++)

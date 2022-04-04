@@ -26,9 +26,9 @@ void RequestParser::RequestInfo(StringVector& content){
 			|| (*start).find("DELETE") != std::string::npos)
 			ParseFirstLine(start);
 		else if ((*start).find("Host:") != std::string::npos)
-			host.append((*start).erase(0,6));
+			host.assign((*start).erase(0,6));
 		else if ((*start).find("User-Agent:") != std::string::npos)
-			user_agent.append((*start).erase(0, 12));
+			user_agent.assign((*start).erase(0, 12));
 		else if ((*start).find("Accept:") != std::string::npos)
 			accept = split((*start).erase(0,8), ",");
 		else if ((*start).find("Accept-Language:") != std::string::npos)
@@ -37,7 +37,7 @@ void RequestParser::RequestInfo(StringVector& content){
 			char_set = split((*start), ",");
 		else if ((*start).find("Content-Type:") != std::string::npos) {
 			contentType.clear();
-			contentType.append((*start).erase(0, strlen("Content-Type: ")));
+			contentType.assign((*start).erase(0, strlen("Content-Type: ")));
 			if (contentType.find("multipart/form-data") != std::string::npos)
 				isCGIUpload = true;
 		}
