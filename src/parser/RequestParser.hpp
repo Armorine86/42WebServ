@@ -28,7 +28,7 @@ public:
 	std::string getScriptPath(void) { return scriptPath; }
 	std::string getScriptType(void) { return scriptType; }
 	StringVector getAccept(void) { return accept; }
-	char buffer[200000];
+	char buffer[4096];
 
 private:
 	std::string	scriptType; // .py || .pl || .php

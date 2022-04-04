@@ -1,24 +1,32 @@
 #include "Response.hpp"
 
-Response::Response( RequestParser* request, Server* server) : 
-autoindex(false), bodySize(0), request(request), status_code(server->status_code), server(server)
+Response::Response(RequestParser *request, Server *server) : autoindex(false), bodySize(0), request(request), status_code(server->status_code), server(server)
 {
+	if (server->isChunked == true)
+	{
+		// server->upload_path = "./resources/upload/razer.png";
+		responseMultipart();
+		return;
+	}
+
 	setConfig();
+
 	path = lookForRoot(config.locations);
-	
+
 	MethodType type = getType();
-	switch(type){
-		case GET:
-			responseGET();
-			break;
-		case POST:
-			responsePOST();
-			break;
-		case DELETE:
-			responseDELETE(); 
-			break;
-		default:
-			std::cerr << logEvent("Response: [405] Method not Allowed\n") << END << std::endl;
+	switch (type)
+	{
+	case GET:
+		responseGET();
+		break;
+	case POST:
+		responsePOST();
+		break;
+	case DELETE:
+		responseDELETE();
+		break;
+	default:
+		std::cerr << logEvent("Response: [405] Method not Allowed\n") << END << std::endl;
 	}
 }
 
@@ -35,25 +43,30 @@ MethodType Response::getType()
 	return NONE;
 }
 
-//This find and set in the map the right config
+// This find and set in the map the right config
 void Response::setConfig()
 {
 	std::string host = request->getHost();
 	StringVector host_vec = split(host, ":");
 	int port = atoi(host_vec[1].c_str());
-	
-	for (size_t i = 0; i < server->sockets.size(); i++){
+
+	for (size_t i = 0; i < server->sockets.size(); i++)
+	{
 		server_info tmp = server->sockets.at(i).getServInfo();
-		if ((host_vec[0] == tmp.host || host_vec[0] == "localhost") && port == tmp.listen_port){
+		if ((host_vec[0] == tmp.host || host_vec[0] == "localhost") && port == tmp.listen_port)
+		{
 			config = tmp;
 			break;
 		}
 	}
-	if (lookForRoot(config.locations) == ""){
+	if (lookForRoot(config.locations) == "")
+	{
 		int i = -1;
-		if((i = findSocket()) >= 0){
+		if ((i = findSocket()) >= 0)
+		{
 			LocationVector tmp_location = server->sockets.at(i).getServInfo().locations;
-			if (lookForRoot(tmp_location) != ""){
+			if (lookForRoot(tmp_location) != "")
+			{
 				config = server->sockets.at(i).getServInfo();
 			}
 			else
@@ -76,7 +89,7 @@ void Response::responseGET()
 	body.clear();
 	if (DEBUG)
 		std::cout << BRED << path << END << std::endl;
-	
+
 	if (request->isCGIRequest())
 	{
 		handleCGI();
@@ -105,7 +118,8 @@ void Response::responsePOST()
 {
 	if (request->getContentType().find("multipart/form-data") != std::string::npos)
 		responseMultipart();
-	else{
+	else
+	{
 		CGI cgi(request, config);
 		bodySize = cgi.getCGIouput().length();
 		body << cgi.getCGIouput();
@@ -114,57 +128,96 @@ void Response::responsePOST()
 	makeHeader(status_code);
 }
 
-void Response::responseMultipart() 
+void Response::responseMultipart()
 {
-	std::string boundary, content, filepath;
+	std::string boundary, end, content, filepath;
 	size_t start = 0, pos = 0;
 
 	boundary = request->getContentType();
 	left_word_trim(boundary, "--");
 	content = request->buffer;
 
-	pos = content.find("filename=\"", pos);
-	if (pos != std::string::npos)
+	end.append(boundary + "--");
+
+	if (server->isChunked == false)
 	{
-		pos += 10;
-		start = content.find('"', pos);
-		if (start != std::string::npos)
+		pos = content.find("filename=\"", pos);
+		if (pos != std::string::npos)
 		{
-			for (size_t i = 0; i < config.locations.size(); i++){
-				if (config.locations.at(i).upload_directory != ""){
-					filepath.assign(config.locations.at(i).upload_directory);
-					break;
+			pos += 10;
+			start = content.find('"', pos);
+			if (start != std::string::npos)
+			{
+				for (size_t i = 0; i < config.locations.size(); i++)
+				{
+					if (config.locations.at(i).upload_directory != "")
+					{
+						filepath.assign(config.locations.at(i).upload_directory);
+						break;
+					}
 				}
+				filepath.append(content.substr(pos, start - pos));
+				server->upload_path.append(filepath);
 			}
-			filepath.append(content.substr(pos, start - pos));
+			start = content.find("\r\n\r\n", start);
+			start += 4;
+			std::ifstream infile(server->upload_path.c_str());
+			if (infile.good())
+				unlink(server->upload_path.c_str());
+			if (server->bytes == RECV_BUFSIZE)
+				server->isChunked = true;
 		}
 	}
 
-	start = content.find("\r\n\r\n", start);
-	start += 4;
-
-	char * ptr;
+	char *ptr;
 	pos = start;
-	while (pos < sizeof(request->buffer)){
-		ptr = (char*)memchr(request->buffer + pos, '-', sizeof(request->buffer));
+	while (true)
+	{
+		ptr = (char *)memchr(request->buffer + pos, '-', sizeof(request->buffer));
 		pos = ptr - request->buffer + 1;
-		if (memcmp(ptr, boundary.c_str(), boundary.size()) == 0)
+		if (memcmp(ptr, end.c_str(), end.size()) == 0)
 			break;
-		//faire dequoi aussi si ca trouve pas le boundary
-		//setter aussi un file too big
+		if (pos > sizeof(request->buffer))
+		{
+			pos = server->bytes;
+			break;
+		}
+		// faire dequoi aussi si ca trouve pas le boundary
+		// setter aussi un file too big
 	}
 
-	std::ofstream ofs(filepath.c_str());
+/* 	if (server->isChunked == false)
+	{
+		std::ifstream infile(server->upload_path.c_str());
+		if (infile.good())
+			unlink(server->upload_path.c_str());
+	} */
+
+	std::ofstream ofs(server->upload_path.c_str(),
+					  std::ofstream::out | std::ofstream::app | std::ofstream::binary);
 
 	if (!ofs.good() || !ofs.is_open())
 		std::cout << BRED << "OFSTREAM Error in filepath" << END << std::endl;
-	const char * addr = &request->buffer[start];
-	size_t len = (pos - 5) - start;
+
+	const char *addr = &request->buffer[start];
+
+	size_t len = 0;
+	if (server->bytes != RECV_BUFSIZE)
+		len = (pos - 5) - start;
+	else
+		len = pos - start;
+
 	ofs.write(addr, len);
 	ofs.close();
+
 	if (!ofs.good())
 		std::cout << BRED << "OFSTREAM Error in writing" << END << std::endl;
-	makeAutoindex(path);
+	if (server->bytes != RECV_BUFSIZE)
+	{
+		makeAutoindex("./resources/upload/"); //this is hardcoded and I hate it
+		//bzero(request->buffer, sizeof(request->buffer));
+		server->isChunked = false;
+	}
 }
 
 void Response::responseDELETE()
@@ -174,8 +227,8 @@ void Response::responseDELETE()
 	makeHeader(status_code);
 }
 
-//Recursive function that will get inside all the branch of the upload directory
-//delete all files and finally all directories
+// Recursive function that will get inside all the branch of the upload directory
+// delete all files and finally all directories
 void Response::deletePath(std::string path)
 {
 	DIR *dir;
@@ -184,7 +237,8 @@ void Response::deletePath(std::string path)
 	std::string line;
 
 	dir = opendir(path.c_str());
-	if (!dir){
+	if (!dir)
+	{
 		status_code = "404";
 		std::cout << BRED << "Deleting error" << END << std::endl;
 		return;
@@ -198,10 +252,11 @@ void Response::deletePath(std::string path)
 		line.append(dirent->d_name);
 		if (line[line.size() - 1] == '.')
 			continue;
-		if(dirent->d_type == DT_DIR)
+		if (dirent->d_type == DT_DIR)
 			line.append("/");
 
-		if (is_dir(line)){
+		if (is_dir(line))
+		{
 			deletePath(line);
 			ret = rmdir(line.c_str());
 		}
@@ -213,17 +268,20 @@ void Response::deletePath(std::string path)
 	closedir(dir);
 }
 
-//Look for the asked root in the config file
-std::string Response::lookForRoot(LocationVector& location) 
+// Look for the asked root in the config file
+std::string Response::lookForRoot(LocationVector &location)
 {
 	std::string path = "";
 	StringVector url_vec = split(request->getURL(), "/");
 
-	for (size_t i = 0; i < location.size() && path == ""; i++){
-		if (!url_vec.empty() && location.at(i).name == "/" + url_vec[0]){
+	for (size_t i = 0; i < location.size() && path == ""; i++)
+	{
+		if (!url_vec.empty() && location.at(i).name == "/" + url_vec[0])
+		{
 			path = setPath(location, url_vec, i, false);
 		}
-		if (location.at(i).name == "/"){
+		if (location.at(i).name == "/")
+		{
 			path = setPath(location, url_vec, i, true);
 		}
 		if (path == "/redirection")
@@ -234,8 +292,8 @@ std::string Response::lookForRoot(LocationVector& location)
 	return path;
 }
 
-//Create the path that the request asked for using the config file
-std::string Response::setPath(LocationVector& location, StringVector& url_vec, size_t i, bool var)
+// Create the path that the request asked for using the config file
+std::string Response::setPath(LocationVector &location, StringVector &url_vec, size_t i, bool var)
 {
 	std::string path = "";
 
@@ -244,7 +302,8 @@ std::string Response::setPath(LocationVector& location, StringVector& url_vec, s
 		path.append("/" + location.at(i).index);
 	if (!var && location.at(i).index != "")
 		path.append("/" + location.at(i).index);
-	else{
+	else
+	{
 		for (size_t y = 0; y < url_vec.size(); y++)
 			path.append("/" + url_vec.at(y));
 	}
@@ -255,19 +314,21 @@ std::string Response::setPath(LocationVector& location, StringVector& url_vec, s
 
 // Generates a Header for the Response matching the parameter to
 // the wanted code in StatusCode map
-void Response::makeHeader(std::string& code_status)
+void Response::makeHeader(std::string &code_status)
 {
 	MapIterator it = status.code.find(code_status);
 	std::stringstream s_header;
 
-	if (code_status != "200" && code_status != "301"){
+	if (code_status != "200" && code_status != "301")
+	{
 		errorBody(code_status);
 	}
 	s_header << "HTTP/1.1 " << (*it).first << (*it).second
-	<< "\r\nContent-Length: " << bodySize;
+			 << "\r\nContent-Length: " << bodySize;
 	if (code_status == "301")
 		s_header << "\r\nLocation: http://127.0.0.1:4242";
-	s_header << "\r\nSet-Cookie:UserID = XYZ;" << "\r\n\r\n";
+	s_header << "\r\nSet-Cookie:UserID = XYZ;"
+			 << "\r\n\r\n";
 	if (DEBUG)
 		std::cout << s_header.str() << std::endl;
 	headerSize = s_header.str().length();
@@ -275,12 +336,13 @@ void Response::makeHeader(std::string& code_status)
 }
 
 // Retrieves the requested image binary and sets the informations in a pair
-std::pair<char *, std::streampos> Response::getImageBinary(const char* path)
+std::pair<char *, std::streampos> Response::getImageBinary(const char *path)
 {
 	ImgInfo img_info;
-	std::ifstream f(path, std::ios::in|std::ios::binary|std::ios::ate);
-	
-	if (!f.is_open()) { // if file not found
+	std::ifstream f(path, std::ios::in | std::ios::binary | std::ios::ate);
+
+	if (!f.is_open())
+	{ // if file not found
 		status_code = "404";
 		img_info.first = NULL;
 		return img_info;
@@ -288,10 +350,10 @@ std::pair<char *, std::streampos> Response::getImageBinary(const char* path)
 
 	img_info.second = f.tellg();
 
-	img_info.first = new char [static_cast<long>(img_info.second)];
+	img_info.first = new char[static_cast<long>(img_info.second)];
 
-	f.seekg (0, std::ios::beg);
-	f.read (img_info.first, img_info.second);
+	f.seekg(0, std::ios::beg);
+	f.read(img_info.first, img_info.second);
 	f.close();
 
 	return img_info;
@@ -300,7 +362,7 @@ std::pair<char *, std::streampos> Response::getImageBinary(const char* path)
 // Find the location of the requested image
 // Gets the Binary
 // Writes the content to the Response body
-void Response::makeImage() 
+void Response::makeImage()
 {
 	LocationVector location = config.locations;
 
@@ -314,15 +376,16 @@ void Response::makeImage()
 	delete[] img.first;
 }
 
-// Used to respond with passed HTML file 
-void Response::readHTML(std::string filepath) 
+// Used to respond with passed HTML file
+void Response::readHTML(std::string filepath)
 {
 	std::string line;
 	std::fstream myfile;
-	
+
 	myfile.open(filepath.c_str(), std::ios::in);
-	
-	if (!myfile.good()){
+
+	if (!myfile.good())
+	{
 		status_code = "404";
 		if (DEBUG)
 			std::cout << logEvent("file cannot open!\n") << std::endl;
@@ -334,22 +397,23 @@ void Response::readHTML(std::string filepath)
 	bodySize = body.str().length();
 }
 
-void Response::makeAutoindex(std::string path) 
+void Response::makeAutoindex(std::string path)
 {
 	DIR *dir;
 	dirent *dirent;
-	std::string	 line, value;
+	std::string line, value;
 
 	dir = opendir(path.c_str());
-	if (!dir){
+	if (!dir)
+	{
 		status_code = "404";
 		std::cout << BRED << "Autoindex error" << END << std::endl;
 		return;
 	}
 	status_code = "200";
 	value.assign("<html>\n<head>\n<meta charset=\"utf-8\">\n"
-			"<title>Directory Listing</title>\n</head>\n<body>\n<h1>"
-			+ path + "</h1>\n<ul>");
+				 "<title>Directory Listing</title>\n</head>\n<body>\n<h1>" +
+				 path + "</h1>\n<ul>");
 	left_word_trim(path, "/upload");
 	while ((dirent = readdir(dir)) != NULL)
 	{
@@ -358,11 +422,11 @@ void Response::makeAutoindex(std::string path)
 		if (value[value.size() - 1] != '/')
 			value.append("/");
 		value.append(dirent->d_name);
-		if(dirent->d_type == DT_DIR)
+		if (dirent->d_type == DT_DIR)
 			value.append("/");
 		value.append("\"> ");
 		value.append(dirent->d_name);
-		if(dirent->d_type == DT_DIR)
+		if (dirent->d_type == DT_DIR)
 			value.append("/");
 		value.append("</a></li>\n");
 	}
@@ -376,9 +440,9 @@ void Response::makeAutoindex(std::string path)
 // Return the sockets with the same server port that is not the one already in config OR return -1.
 int Response::findSocket()
 {
-	for (size_t i = 0; i < server->sockets.size(); i++) {
-		if (config.listen_port == server->sockets.at(i).getServInfo().listen_port
-			&& config.server_names != server->sockets.at(i).getServInfo().server_names)
+	for (size_t i = 0; i < server->sockets.size(); i++)
+	{
+		if (config.listen_port == server->sockets.at(i).getServInfo().listen_port && config.server_names != server->sockets.at(i).getServInfo().server_names)
 			return i;
 	}
 	return -1;

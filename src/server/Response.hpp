@@ -11,7 +11,7 @@
 #include "dirent.h"
 #include "utils.hpp"
 
-#define MAX_IMAGESIZE 1000000
+#define MAX_IMAGESIZE 1048576 // 1 mg
 
 typedef enum MethodType {
 	GET,
@@ -54,6 +54,7 @@ private:
 
 	MethodType getType();
 
+	int findSocket();
 	void handleCGI();
 	void responseGET();
 	void responsePOST();
@@ -64,12 +65,12 @@ private:
 	void makeAutoindex(std::string filepath);
 	void readHTML(std::string filepath);
 	void setConfig();
-	int findSocket();
 	void deletePath(std::string path);
 	void responseMultipart();
 	std::string lookForRoot(LocationVector& location);
 	std::string setPath(LocationVector& location, StringVector& url_vec, size_t i, bool var);
 	std::string lookForContent(LocationVector& location);
+	std::string findUploadPath();
 
 	// Image Methods
 	typedef std::pair<char *, std::streampos> ImgInfo;

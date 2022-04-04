@@ -9,6 +9,8 @@
 #include <fstream>
 #include <poll.h>
 
+#define RECV_BUFSIZE 4096
+
 class Sockets;
 class Reponse;
 // Server class
@@ -28,7 +30,11 @@ protected:
 	friend class Response;
 	int		client_fd;
 	int		sender_fd;
-	std::string	status_code;		
+	int		bytes;
+	bool	isChunked;
+	std::string str_buffer;
+	std::string upload_path;
+	std::string	status_code;	
 	SocketsVector sockets;
 	std::vector<pollfd> pfds;  //pollfd struct vector
 	RequestParser request;
@@ -38,7 +44,7 @@ protected:
 
 	void handleEvents(PollIterator& it, size_t i);
 	void handleClient(PollIterator& it);
-	void sendResponse(std::string str_buffer, int sender_fd, char* buf);
+	void sendResponse(std::string& str_buffer, int sender_fd, char* buf);
 
 	bool checkBufferSize(const char* buffer);
 	void closeSocket(const int bytes, PollIterator& it);
