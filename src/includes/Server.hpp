@@ -27,18 +27,19 @@ public:
 
 protected:
 
-	friend class Response;
-	int		client_fd;
-	int		sender_fd;
-	int		bytes;
-	bool	isChunked;
-	std::string str_buffer;
-	std::string upload_path;
-	std::string	status_code;	
-	SocketsVector sockets;
+	friend class 	Response;
+	int				client_fd;
+	int				sender_fd;
+	int				bytes;
+	std::string 	str_buffer;
+	std::string 	upload_path;
+	std::string		status_code;	
+	SocketsVector 	sockets;
 	std::vector<pollfd> pfds;  //pollfd struct vector
-	RequestParser request;
+	RequestParser 	request;
 	sockaddr_storage client_addr;
+	bool			isChunked;
+	bool			tropBeaucoup;
 
 	typedef std::vector<pollfd>::iterator PollIterator;
 

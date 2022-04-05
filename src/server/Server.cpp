@@ -2,7 +2,8 @@
 #include "Response.hpp"
 
 // Builds the pollfd vector with the server sockets and runs the servers
-Server::Server(SocketsVector sockvector) : client_fd(0), status_code("200"), sockets(sockvector)
+Server::Server(SocketsVector sockvector) : 
+client_fd(0), status_code("200"), sockets(sockvector), isChunked(false), tropBeaucoup(false)
 {
 	for (size_t i = 0; i < sockets.size(); i++)
 	{
@@ -71,16 +72,17 @@ void Server::handleClient(PollIterator &it)
 	bzero(buffer, sizeof(buffer));
 
 	bytes = recv(it->fd, buffer, RECV_BUFSIZE, 0);
-	/* 	std::string str_buffer; */
 
 	for (int i = 0; i < bytes; i++)
-	{
 		str_buffer.push_back(buffer[i]);
+
+	if (tropBeaucoup){
+		str_buffer = "";
+		if (bytes != RECV_BUFSIZE)
+			tropBeaucoup = false;
+		return;
 	}
-
-	/* if (str_buffer.size() == RECV_BUFSIZE)
-		isChunked = true; */
-
+	
 	if (DEBUG)
 	{
 		std::cout << TEAL << "\n+++ REQUEST HEADER +++\n\n"
@@ -98,6 +100,7 @@ void Server::handleClient(PollIterator &it)
 	{
 		sendResponse(str_buffer, sender_fd, buffer);
 		bzero(buffer, sizeof(buffer));
+		/* str_buffer.clear(); */
 	}
 }
 

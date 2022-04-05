@@ -41,6 +41,11 @@ void RequestParser::RequestInfo(StringVector& content){
 			if (contentType.find("multipart/form-data") != std::string::npos)
 				isCGIUpload = true;
 		}
+		else if ((*start).find("Content-Length:") != std::string::npos){
+			std::string tmp;
+			tmp.assign((*start).erase(0, strlen("Content-Length: ")));
+			contentLength = atoi(tmp.c_str());	
+		}
 		else if ((*start).find("Connection:") != std::string::npos) {
 			if ((*start).find("keep-alive") != std::string::npos) {
 				connection = true; }

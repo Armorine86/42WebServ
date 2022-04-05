@@ -18,6 +18,12 @@ void Response::responseMultipart()
 	boundary.append(boundary + "--");
 
 	if (server->isChunked == false){
+		if (config.client_max_body_size < request->getContentLength()){
+			status_code = "413";
+			makeHeader(status_code);
+			server->tropBeaucoup = true;
+			return;
+		}
 		start = setFilename();
 		pos = start;
 	}
