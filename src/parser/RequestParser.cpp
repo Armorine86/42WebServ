@@ -102,6 +102,8 @@ void RequestParser::ParseFirstLine(StringIterator& line){
 		if ((*start).find("cgi") != std::string::npos) {
 			cgiRequest = true;
 			if ((*start).find("?") != std::string::npos) {
+				StringVector tmp = split((*start), "?");
+		 		QueryString = tmp[1];
 				cgiEnvGet(start);
 				continue;
 			}
@@ -122,20 +124,16 @@ void RequestParser::ParseFirstLine(StringIterator& line){
 				return;
 			}
 		}
-		else if((*start).at(0) == '/') {
+		else if ((*start).at(0) == '/') {
 			url = *start;
 		}
-		else if((*start).find("HTTP") != std::string::npos) {
+		else if ((*start).find("HTTP") != std::string::npos) {
 			if ((*start).find("HTTP/1.1") == std::string::npos) {
 				std::cerr << logEvent("[505] HTTP Version Not Supported\n") << END << std::endl;
 				return;
 			}
 		}
-		else if ((*start).find("?") != std::string::npos) {
-			StringVector tmp = split((*start), "?");
-			QueryString = tmp[1];
-		}
-		else{
+		else {
 			std::cerr << logEvent("[400] Bad Request\n") << END << std::endl;
 			return;
 		}
