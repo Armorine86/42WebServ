@@ -10,12 +10,15 @@ void Response::responsePOST()
 
 void Response::responseMultipart()
 {
-	std::string boundary;
+	std::string boundary("");
 	size_t start = 0, pos = 0;
 
 	boundary = request->getContentType();
 	left_word_trim(boundary, "--");
 	boundary.append("--");
+
+	if (server->bin_boundary == "")
+		server->bin_boundary = boundary;
 
 	if (server->isChunked == false){
 		if (config.client_max_body_size < request->getContentLength()){
@@ -28,7 +31,7 @@ void Response::responseMultipart()
 		pos = start;
 	}
 	
-	pos = findBodyEnd(pos, boundary);
+	pos = findBodyEnd(pos, server->bin_boundary);
 
 	writeToFile(start, pos);
 

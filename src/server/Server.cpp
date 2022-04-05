@@ -83,13 +83,13 @@ void Server::handleClient(PollIterator &it)
 		return;
 	}
 	
-	if (DEBUG)
-	{
-		std::cout << TEAL << "\n+++ REQUEST HEADER +++\n\n"
-				  << END << YELLOW << "client fd: " << it->fd
-				  << END << "\n"
-				  << TEAL << str_buffer << END << std::endl;
-	}
+	// if (DEBUG)
+	// {
+	// 	std::cout << TEAL << "\n+++ REQUEST HEADER +++\n\n"
+	// 			  << END << YELLOW << "client fd: " << it->fd
+	// 			  << END << "\n"
+	// 			  << TEAL << str_buffer << END << std::endl;
+	// }
 
 	sender_fd = (*it).fd;
 

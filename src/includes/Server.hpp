@@ -31,6 +31,7 @@ protected:
 	int				client_fd;
 	int				sender_fd;
 	int				bytes;
+	std::string		bin_boundary;
 	std::string 	str_buffer;
 	std::string 	upload_path;
 	std::string		status_code;	
