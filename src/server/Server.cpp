@@ -100,7 +100,7 @@ void Server::handleClient(PollIterator &it)
 	{
 		sendResponse(str_buffer, sender_fd, buffer);
 		bzero(buffer, sizeof(buffer));
-		/* str_buffer.clear(); */
+		str_buffer.clear();
 	}
 }
 
@@ -128,7 +128,6 @@ void Server::sendResponse(std::string &str_buffer, int sender_fd, char *buf)
 		// std::cout << GREEN << "+++ RESPONSE +++\n\n" << END << header.data() << std::endl;
 
 		delete[] buffer;
-		str_buffer.clear();
 		status_code = "200";
 	}
 }

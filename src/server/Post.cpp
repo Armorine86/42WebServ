@@ -15,7 +15,7 @@ void Response::responseMultipart()
 
 	boundary = request->getContentType();
 	left_word_trim(boundary, "--");
-	boundary.append(boundary + "--");
+	boundary.append("--");
 
 	if (server->isChunked == false){
 		if (config.client_max_body_size < request->getContentLength()){
@@ -27,8 +27,9 @@ void Response::responseMultipart()
 		start = setFilename();
 		pos = start;
 	}
-
+	
 	pos = findBodyEnd(pos, boundary);
+
 	writeToFile(start, pos);
 
 	if (server->bytes != RECV_BUFSIZE)
@@ -100,19 +101,17 @@ void Response::writeToFile(size_t start, size_t pos)
 size_t Response::findBodyEnd(size_t pos, std::string boundary) 
 {
 	char *ptr;
-	while (true)
+	while (pos < sizeof(request->buffer))
 	{
 		ptr = (char *)memchr(request->buffer + pos, '-', sizeof(request->buffer));
 		pos = ptr - request->buffer + 1;
-		if (memcmp(ptr, boundary.c_str(), boundary.size()) == 0)
-			break;
 		if (pos > sizeof(request->buffer))
 		{
 			pos = server->bytes;
 			break;
 		}
-		// faire dequoi aussi si ca trouve pas le boundary
-		// setter aussi un file too big
+		if (memcmp(ptr, boundary.c_str(), boundary.size()) == 0)
+			break;
 	}
 	return pos;
 }
