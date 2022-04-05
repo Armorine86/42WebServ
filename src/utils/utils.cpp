@@ -62,23 +62,25 @@ std::string& both_trim(std::string &line, const char* delimiters) {
 
 StringVector split(std::string line, std::string delimiter) {
    
-   StringVector result;
+	StringVector result;
    
-   size_t i = 0, j = 0;
-   
-   while (i < line.length() && j < line.length()) {
-	   i = line.find_first_of(delimiter, j);
-	   if (i == std::string::npos) {
-		   i = line.length();
-	   }
-	   std::string str = line.substr(j, i - j);
-	   if (!str.empty()) {
-		   result.push_back(str);
-	   }
-	   j = i + 1;
-   }
+	if (line.empty())
+		return result;
 
-   return result;
+	size_t i = 0, j = 0;
+   
+	while (i < line.length() && j < line.length()) {
+		i = line.find_first_of(delimiter, j);
+		if (i == std::string::npos) {
+			i = line.length();
+		}
+		std::string str = line.substr(j, i - j);
+		if (!str.empty()) {
+			result.push_back(str);
+		}
+		j = i + 1;
+	}
+	return result;
 }
 
 bool ends_with(std::string const & value, std::string const & ending)

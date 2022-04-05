@@ -46,7 +46,13 @@ void Response::setConfig()
 {
 	std::string host = request->getHost();
 	StringVector host_vec = split(host, ":");
-	int port = atoi(host_vec[1].c_str());
+
+	if (host_vec.empty())
+		return;
+
+	int port = 0;
+
+	port = atoi(host_vec[1].c_str());
 
 	for (size_t i = 0; i < server->sockets.size(); i++)
 	{
