@@ -15,6 +15,7 @@ void Response::responseMultipart()
 
 	boundary = request->getContentType();
 	left_word_trim(boundary, "--");
+	boundary.insert(0, "--");
 	boundary.append("--");
 
 	if (server->bin_boundary == "")
@@ -104,17 +105,19 @@ void Response::writeToFile(size_t start, size_t pos)
 size_t Response::findBodyEnd(size_t pos, std::string boundary) 
 {
 	char *ptr;
+	size_t max_length = 0;
 	while (pos < sizeof(request->buffer))
 	{
-		ptr = (char *)memchr(request->buffer + pos, '-', sizeof(request->buffer));
-		pos = ptr - request->buffer + 1;
-		if (pos > sizeof(request->buffer))
+		max_length = sizeof(request->buffer) - pos;
+		ptr = (char *)memchr(request->buffer + pos, '-', max_length);
+		if (ptr == NULL || pos > sizeof(request->buffer))
 		{
 			pos = server->bytes;
-			break;
+			return pos;
 		}
+		pos = ptr - request->buffer + 1;
 		if (memcmp(ptr, boundary.c_str(), boundary.size()) == 0)
 			break;
 	}
-	return pos;
+	return pos + 1;
 }

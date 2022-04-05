@@ -128,6 +128,7 @@ void Server::sendResponse(std::string &str_buffer, int sender_fd, char *buf)
 		// std::cout << GREEN << "+++ RESPONSE +++\n\n" << END << header.data() << std::endl;
 
 		delete[] buffer;
+		bin_boundary = "";
 		status_code = "200";
 	}
 }
