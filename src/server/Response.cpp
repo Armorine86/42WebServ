@@ -134,7 +134,7 @@ void Response::makeHeader(std::string &code_status)
 	{
 		errorBody(code_status);
 	}
-	s_header << "HTTP/1.1 " << (*it).first << (*it).second
+	s_header << "HTTP/1.1 " << it->first << it->second
 			 << "\r\nContent-Length: " << bodySize;
 	if (code_status == "301")
 		s_header << "\r\nLocation: http://127.0.0.1:4242";

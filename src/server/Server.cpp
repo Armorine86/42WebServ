@@ -2,8 +2,7 @@
 #include "Response.hpp"
 
 // Builds the pollfd vector with the server sockets and runs the servers
-Server::Server(SocketsVector sockvector) : 
-client_fd(0), status_code("200"), sockets(sockvector), isChunked(false), tropBeaucoup(false)
+Server::Server(SocketsVector sockvector) : client_fd(0), status_code("200"), sockets(sockvector), isChunked(false), tropBeaucoup(false)
 {
 	for (size_t i = 0; i < sockets.size(); i++)
 	{
@@ -76,13 +75,14 @@ void Server::handleClient(PollIterator &it)
 	for (int i = 0; i < bytes; i++)
 		str_buffer.push_back(buffer[i]);
 
-	if (tropBeaucoup){
+	if (tropBeaucoup)
+	{
 		str_buffer = "";
 		if (bytes != RECV_BUFSIZE)
 			tropBeaucoup = false;
 		return;
 	}
-	
+
 	// if (DEBUG)
 	// {
 	// 	std::cout << TEAL << "\n+++ REQUEST HEADER +++\n\n"
@@ -91,12 +91,12 @@ void Server::handleClient(PollIterator &it)
 	// 			  << TEAL << str_buffer << END << std::endl;
 	// }
 
-	sender_fd = (*it).fd;
+	sender_fd = it->fd;
 
 	if (bytes <= 0)
 		closeSocket(bytes, it);
 
-	else if ((*it).fd == sender_fd)
+	else if (it->fd == sender_fd)
 	{
 		sendResponse(str_buffer, sender_fd, buffer);
 		bzero(buffer, sizeof(buffer));
@@ -111,7 +111,8 @@ void Server::sendResponse(std::string &str_buffer, int sender_fd, char *buf)
 	RequestParser request(str_buffer, buf);
 	Response response(&request, this);
 
-	if (isChunked == false){
+	if (isChunked == false)
+	{
 		std::string header = response.getResponseHeader();
 		std::string body = response.getResponseBody();
 
@@ -165,16 +166,16 @@ void Server::run()
 			std::cout << BRED << "INTERNAL SERVER ERROR [500]" << END << std::endl;
 		for (PollIterator it = pfds.begin(); it != pfds.end(); it++)
 		{
-			if ((*it).revents & POLLIN)
+			if (it->revents & POLLIN)
 			{
 				for (size_t i = 0; i < pfds.size(); i++)
 				{
-					if ((*it).fd == pfds.at(i).fd && (*it).fd != client_fd && i < sockets.size())
+					if (it->fd == pfds.at(i).fd && it->fd != client_fd && i < sockets.size())
 					{
 						handleEvents(it, i);
 						break;
 					}
-					if ((*it).fd == pfds.at(i).fd)
+					if (it->fd == pfds.at(i).fd)
 					{
 						// int server_i = server_map.at(it->fd);
 						handleClient(it);
