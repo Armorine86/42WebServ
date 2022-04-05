@@ -72,7 +72,7 @@
 								<div class="fields">
 									<div class="field half">
 										<label for="file">File</label>
-										<input type="file" name="filename" onchange="validate(this)"/>
+										<input type="file" id="fileupload" name="filename" onchange="validate(this)" required/>
 									</div>
 									<div class="field half">
 										<ul class="actions" >
@@ -104,19 +104,19 @@
 									<div class="fields">
 										<div class="field half">
 											<label for="name">Name</label>
-											<input type="text" name="name" id="name" maxlength="20"/>
+											<input type="text" name="name" id="name" maxlength="20" required/>
 										</div>
 										<div class="field half">
 											<label for="email">Email</label>
-											<input type="text" name="email" id="email" maxlength="50" />
+											<input type="text" name="email" id="email" maxlength="50" required/>
 										</div>
 										<div class="field">
 											<label for="message">Message</label>
-											<textarea name="message" id="message" rows="4"></textarea>
+											<textarea name="message" id="message" rows="4" required></textarea>
 										</div>
 									</div>
 									<ul class="actions">
-										<li><input type="submit" value="Send PHP" class="primary" /></li>
+										<li><input type="submit" value="Send PHP" class="primary"/></li>
 										<li><input type="reset" value="Reset" /></li>
 									</ul>
 								</form>
@@ -135,15 +135,15 @@
 									<div class="fields">
 										<div class="field half">
 											<label for="name">Name</label>
-											<input type="text" name="name" id="name" />
+											<input type="text" name="name" id="name" required/>
 										</div>
 										<div class="field half">
 											<label for="email">Email</label>
-											<input type="text" name="email" id="email" />
+											<input type="text" name="email" id="email" required/>
 										</div>
 										<div class="field">
 											<label for="message">Message</label>
-											<textarea name="message" id="message" rows="4"></textarea>
+											<textarea name="message" id="message" rows="4" required></textarea>
 										</div>
 									</div>
 									<ul class="actions">
