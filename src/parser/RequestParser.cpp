@@ -99,11 +99,12 @@ void RequestParser::ParseFirstLine(StringIterator& line){
 
 	for (; start != end; start++)
 	{
-		if ((*start).find("cgi") != std::string::npos) {
+		if ((*start).find("cgi-bin") != std::string::npos) {
 			cgiRequest = true;
 			if ((*start).find("?") != std::string::npos) {
 				StringVector tmp = split((*start), "?");
-		 		QueryString = tmp[1];
+				if (tmp.size() > 1)
+		 			QueryString = tmp[1];
 				cgiEnvGet(start);
 				continue;
 			}
