@@ -23,6 +23,7 @@ public:
 	std::string getHost(void) { return host; }
 	std::string getBody(void) { return body; }
 	std::string getContentType(void) { return contentType; }
+	size_t getContentLength(void) { return contentLength; }
 	std::string getQuery(void) { return QueryString; }
 	std::string getScriptName(void) { return scriptName; }
 	std::string getScriptPath(void) { return scriptPath; }
@@ -47,6 +48,7 @@ private:
 	bool connection;		// Keep-Alive || Close
 	bool cgiRequest;
 	bool isCGIUpload;
+	size_t contentLength;
 
 	void cgiEnvGet(StringIterator& start);
 	void cgiEnvPOST(StringIterator& start, StringVector& vec_str);

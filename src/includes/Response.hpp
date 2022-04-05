@@ -67,6 +67,9 @@ private:
 	void setConfig();
 	void deletePath(std::string path);
 	void responseMultipart();
+	void writeToFile(size_t start, size_t pos);
+	size_t setFilename();
+	size_t findBodyEnd(size_t pos, std::string boundary);
 	std::string lookForRoot(LocationVector& location);
 	std::string setPath(LocationVector& location, StringVector& url_vec, size_t i, bool var);
 	std::string lookForContent(LocationVector& location);
