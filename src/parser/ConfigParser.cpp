@@ -52,7 +52,7 @@ void ConfigParser::parseConfig(StringVector &content)
 
 	for (size_t i = 0; i < content.size(); ++i)
 	{
-		if ((*scopeEnd).empty())
+		if (scopeEnd->empty())
 		{
 			scopeEnd++;
 			scopeStart = scopeEnd;
@@ -64,9 +64,9 @@ void ConfigParser::parseConfig(StringVector &content)
 			i++;
 			while (scopeLevel > 0)
 			{
-				if ((*scopeEnd).find('{') != std::string::npos)
+				if (scopeEnd->find('{') != std::string::npos)
 					scopeLevel++;
-				else if ((*scopeEnd).find('}') != std::string::npos)
+				else if (scopeEnd->find('}') != std::string::npos)
 					scopeLevel--;
 				if (scopeEnd == content.end())
 					break;
@@ -99,11 +99,11 @@ void ConfigParser::fillConfigVector(ParserIterator start, ParserIterator end)
 
 	for (; start != end; start++)
 	{
-		if ((*start).find("server") != std::string::npos)
+		if (start->find("server") != std::string::npos)
 			start++;
-		while ((*start).find("location") == std::string::npos)
+		while (start->find("location") == std::string::npos)
 		{
-			if (!(*start).empty() && (*start).find("}") == std::string::npos)
+			if (!start->empty() && start->find("}") == std::string::npos)
 			{
 				fillServerFields(split(*start, " "), serv_info, getFieldType(*start));
 				start++;
@@ -111,12 +111,12 @@ void ConfigParser::fillConfigVector(ParserIterator start, ParserIterator end)
 			else
 				break;
 		}
-		if ((*start).find("location") != std::string::npos){
+		if (start->find("location") != std::string::npos){
 			location_info fields;
 			//ca serait bien ici un field init
 			fields.autoindex = false;
 			fields.redirections = false;
-			while ((*start).find("}") == std::string::npos){
+			while (start->find("}") == std::string::npos){
 				fillLocationFields(split(*start, " "), fields, getLocationType(*start));
 				start++;
 			}

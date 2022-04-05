@@ -35,7 +35,7 @@ void RequestParser::RequestInfo(StringVector &content)
 		else if (start->find("Accept-Language:") != std::string::npos)
 			language = split(start->erase(0, 17), ",");
 		else if (start->find("Accept-Charset:") != std::string::npos)
-			char_set = split((*start), ",");
+			char_set = split(*start, ",");
 		else if (start->find("Content-Type:") != std::string::npos)
 		{
 			contentType.clear();
@@ -84,18 +84,18 @@ void RequestParser::cgiEnvGet(StringIterator &start)
 	scriptPath.append(tmp[0]);
 	if (tmp.size() > 1)
 		QueryString = tmp[1];
-	tmp = split((*start), "/");
+	tmp = split(*start, "/");
 	scriptName = tmp[1].erase(tmp[1].find("?"), tmp[1].length());
-	scriptType = findScriptType((*start));
+	scriptType = findScriptType(*start);
 }
 
 void RequestParser::cgiEnvPOST(StringIterator &start, StringVector &vec_str)
 {
 	scriptPath.append(ROOT);
 	scriptPath.append(vec_str[1]);
-	StringVector tmp = split((*start), "/");
+	StringVector tmp = split(*start, "/");
 	scriptName = tmp[1];
-	scriptType = findScriptType((*start));
+	scriptType = findScriptType(*start);
 }
 
 // Collect infos on the first line of the Request Header
@@ -115,7 +115,7 @@ void RequestParser::ParseFirstLine(StringIterator &line)
 			cgiRequest = true;
 			if (start->find("?") != std::string::npos)
 			{
-				StringVector tmp = split((*start), "?");
+				StringVector tmp = split(*start, "?");
 				if (tmp.size() > 1)
 					QueryString = tmp[1];
 				cgiEnvGet(start);
