@@ -41,4 +41,16 @@
 typedef std::vector<std::string> StringVector;
 typedef std::vector<std::string>::iterator StringIterator;
 
+// Print Client IP
+#define PRINT_CLIENT_IP std::cout 	<< YELLOW\
+									<< logEvent("Accepted Connection from: " + clientIP(client_fd, addrlen) + "\n")\
+									<< END << std::endl;
+
+// Debug Macros
+#define DEBUG_DISPLAY_HEADER if (DEBUG) {\
+		std::cout << TEAL << "\n+++ REQUEST HEADER +++\n\n"\
+				  << END << YELLOW << "client fd: " << it->fd\
+				  << END << "\n"\
+				  << TEAL << str_buffer << END << std::endl; }
+
 #endif // __DEFINES_H__

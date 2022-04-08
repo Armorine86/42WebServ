@@ -49,7 +49,7 @@ protected:
 	void sendResponse(std::string& str_buffer, int sender_fd, char* buf);
 
 	bool checkBufferSize(const char* buffer);
-	void closeSocket(const int bytes, PollIterator& it);
+	void closeSocket(PollIterator& it);
 
 	pollfd addToPollfd(int newfd);
 

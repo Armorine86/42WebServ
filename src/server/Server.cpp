@@ -49,17 +49,25 @@ void Server::handleEvents(PollIterator &it, size_t i)
 {
 	socklen_t addrlen = sizeof(client_addr);
 
-	if ((client_fd = accept(pfds[i].fd, (struct sockaddr *)&client_addr, &addrlen)) == -1)
-		perror("accept");
-	else
-	{
-		pfds.push_back(addToPollfd(client_fd));
-		it = pfds.begin();
+	client_fd = accept(pfds[i].fd, (struct sockaddr *)&client_addr, &addrlen);
 
-		while (it->fd != pfds[i].fd)
-			it++;
+	switch (client_fd) {
+		case -1:
+		{
+			perror("accept");
+			break;
+		}
+		default:
+		{
+			PRINT_CLIENT_IP
 
-		std::cout << YELLOW << logEvent("Accepted Connection from: " + clientIP(client_fd, addrlen) + "\n") << END << std::endl;
+			pfds.push_back(addToPollfd(client_fd));
+			it = pfds.begin();
+
+			while (it->fd != pfds[i].fd)
+				it++;
+
+		}
 	}
 }
 
@@ -67,40 +75,46 @@ void Server::handleEvents(PollIterator &it, size_t i)
 // the sender FD (client), we can send the response to the same FD
 void Server::handleClient(PollIterator &it)
 {
+	sender_fd = it->fd;
+
 	char buffer[RECV_BUFSIZE];
 	bzero(buffer, sizeof(buffer));
 
 	bytes = recv(it->fd, buffer, RECV_BUFSIZE, 0);
 
-	for (int i = 0; i < bytes; i++)
-		str_buffer.push_back(buffer[i]);
+	switch (bytes) {
+		case -1:
+		{
+			perror("recv");
+			break;
+		}
+		case 0:
+		{
+			closeSocket(it);
+			break;
+		}
+		default:
+		{
+			for (int i = 0; i < bytes; i++)
+				str_buffer.push_back(buffer[i]);
 
-	if (tropBeaucoup)
-	{
-		str_buffer = "";
-		if (bytes != RECV_BUFSIZE)
-			tropBeaucoup = false;
-		return;
-	}
+			DEBUG_DISPLAY_HEADER
 
-	// if (DEBUG)
-	// {
-	// 	std::cout << TEAL << "\n+++ REQUEST HEADER +++\n\n"
-	// 			  << END << YELLOW << "client fd: " << it->fd
-	// 			  << END << "\n"
-	// 			  << TEAL << str_buffer << END << std::endl;
-	// }
-
-	sender_fd = it->fd;
-
-	if (bytes <= 0)
-		closeSocket(bytes, it);
-
-	else if (it->fd == sender_fd)
-	{
-		sendResponse(str_buffer, sender_fd, buffer);
-		bzero(buffer, sizeof(buffer));
-		str_buffer.clear();
+			if (tropBeaucoup)
+			{
+				str_buffer = "";
+				if (bytes != RECV_BUFSIZE)
+					tropBeaucoup = false;
+				return;
+			}
+			
+			if (it->fd == sender_fd)
+			{
+				sendResponse(str_buffer, sender_fd, buffer);
+				bzero(buffer, sizeof(buffer));
+				str_buffer.clear();
+			}
+		}
 	}
 }
 
@@ -134,12 +148,9 @@ void Server::sendResponse(std::string &str_buffer, int sender_fd, char *buf)
 	}
 }
 
-void Server::closeSocket(const int bytes, PollIterator &it)
+void Server::closeSocket(PollIterator &it)
 {
-	if (bytes == 0)
-		std::cout << "pollserver: socket " << sender_fd << " hung up" << std::endl;
-	else
-		perror("recv");
+	std::cout << "pollserver: socket " << sender_fd << " hung up" << std::endl;
 
 	close(it->fd);
 	pfds.erase(it);
@@ -148,6 +159,7 @@ void Server::closeSocket(const int bytes, PollIterator &it)
 	status_code = "200";
 }
 
+// Main Loop
 void Server::run()
 {
 	for (size_t i = 0; i < sockets.size(); i++)
@@ -156,14 +168,13 @@ void Server::run()
 	while (true)
 	{
 		int ret = 0;
+
 		if ((ret = poll(&(pfds.front()), pfds.size(), 10000)) <= 0)
-		{
 			(ret == -1) ? status_code = "500" : status_code = "408";
-		}
-		/* if (status_code == "408")
-			std::cout << ORANGE << "Server is waiting..." << END << std::endl; */
+
 		if (status_code == "500")
 			std::cout << BRED << "INTERNAL SERVER ERROR [500]" << END << std::endl;
+
 		for (PollIterator it = pfds.begin(); it != pfds.end(); it++)
 		{
 			if (it->revents & POLLIN)
@@ -177,7 +188,6 @@ void Server::run()
 					}
 					if (it->fd == pfds.at(i).fd)
 					{
-						// int server_i = server_map.at(it->fd);
 						handleClient(it);
 						break;
 					}
