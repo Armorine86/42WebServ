@@ -4,7 +4,7 @@ INC_PATH		=	src/includes/
 OBJS_PATH 		=	obj/
 SRCS_PATH 		=	src/
 CC 				=	clang++
-CFLAGS			=	-Wall -Werror -Wextra -Wpedantic -std=c++98 -O2
+CFLAGS			=	-Wall -Werror -Wextra -Wpedantic -std=c++98 -O3
 RM				=	rm -rf
 
 INC_FILES 		=	colors.hpp defines.hpp status_codes.hpp
