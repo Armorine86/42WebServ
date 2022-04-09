@@ -53,4 +53,10 @@ typedef std::vector<std::string>::iterator StringIterator;
 				  << END << "\n"\
 				  << TEAL << str_buffer << END << std::endl; }
 
+#define DEBUG_DISPLAY_RESP_HEADER if (DEBUG) {\
+	std::cout	<< GREEN\
+				<< "+++ RESPONSE +++\n\n"\
+				<< END << header.data() << std::endl;\
+}
+
 #endif // __DEFINES_H__

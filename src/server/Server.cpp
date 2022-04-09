@@ -10,6 +10,7 @@ Server::Server(SocketsVector sockvector) : client_fd(0), status_code("200"), soc
 		pfds.push_back(newfd);
 		pfds[i].events = POLLIN;
 	}
+
 	run();
 }
 
@@ -83,16 +84,19 @@ void Server::handleClient(PollIterator &it)
 	bytes = recv(it->fd, buffer, RECV_BUFSIZE, 0);
 
 	switch (bytes) {
+
 		case -1:
 		{
 			perror("recv");
 			break;
 		}
+
 		case 0:
 		{
 			closeSocket(it);
 			break;
 		}
+
 		default:
 		{
 			for (int i = 0; i < bytes; i++)
@@ -138,9 +142,9 @@ void Server::sendResponse(std::string &str_buffer, int sender_fd, char *buf)
 		memcpy(buffer, header.data(), header.length());
 		memcpy(buffer + header.length(), body.data(), body.length());
 
+		DEBUG_DISPLAY_RESP_HEADER
+
 		send(sender_fd, buffer, MAX_SEND, 0);
-		// if (DEBUG)
-		// std::cout << GREEN << "+++ RESPONSE +++\n\n" << END << header.data() << std::endl;
 
 		delete[] buffer;
 		bin_boundary = "";
