@@ -55,7 +55,6 @@ char** CGI::setExecArgs(server_info& info)
 
 	len = req->getScriptPath().length();
 
-
 	args[1] = new char[len + 1];
 	strcpy(args[1], req->getScriptPath().c_str());
 
@@ -81,10 +80,14 @@ char** CGI::convToCharPtr()
 
 void CGI::createPipe()
 {
-	if (pipe(fd_pipe) == -1)
-		perror("pipe: fd_pipe");
-	dup2(fd_pipe[0], STDIN_FILENO);
-	dup2(fd_pipe[1], STDOUT_FILENO);
+	switch (pipe(fd_pipe)) {
+		case -1:
+			perror("pipe: fd_pipe");
+		default: {
+			dup2(fd_pipe[0], STDIN_FILENO);
+			dup2(fd_pipe[1], STDOUT_FILENO);
+		}
+	}
 }
 
 void printarrays(char** args, char** envp) {
@@ -125,7 +128,7 @@ void CGI::execCGI(server_info& info)
 			perror("fork");
 			break;
 		}
-		case  0:
+		case 0:
 			execScript(args, envp);
 		
 		default: {
@@ -143,11 +146,8 @@ void CGI::execCGI(server_info& info)
 
 void CGI::execScript(char** args, char** envp)
 {
-	if (execve(args[0], args, envp) == -1) {
-		std::cerr << BRED << "DIDN'T FUCKING WORK" << END << std::endl;
+	if (execve(args[0], args, envp) == -1)
 		perror("execve");
-	}
-	std::cerr << GREEN << "SUCCESS" << END << std::endl;
 }
 
 void CGI::readFromChild()
@@ -155,8 +155,12 @@ void CGI::readFromChild()
 	char buffer[100000];
 	bzero(buffer, 100000);
 
-	int ret = read(fd_pipe[0], buffer, 100000);
-
-	ret = 0;
-	output.append(buffer);
+	switch (read(fd_pipe[0], buffer, 100000)) {
+		case -1: {
+			perror("read");
+			break;
+		}
+	 	default:
+			output.append(buffer);
+	}
 }
