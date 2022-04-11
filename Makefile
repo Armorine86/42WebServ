@@ -48,28 +48,35 @@ ALL_INCLUDES	= 	-I$(INC_PATH)\
 					-I$(SERVER_PATH)\
 					-I$(CGI_PATH)\
 
+USAGE			=	"\033[38;5;57m./webserv <empty for default config file>\\n"\
+					"Default Ports: \033[38;5;135m8081 || 4242\033[0m\\n"
+
 $(OBJS_PATH)%.o: %.cpp
 	@$(CC) $(CFLAGS) $(ALL_INCLUDES) -c $< -o $@
 	@printf "\033[93m▓▓▓\033[0m"
 
 all:	$(NAME)
 
-$(NAME):	$(OBJS_PATH) $(OBJS)
+$(NAME):	$(OBJS_PATH) $(OBJS) 
 	@$(CC) $(OBJS) -o $(NAME)
 	@echo "\\n\033[32;1m\n WebServ IS READY \033[0m \\n"
+	@echo $(USAGE)
 
 $(OBJS_PATH):
 	@mkdir -p $(OBJS_PATH)
-	@echo "\033[34;1m Creating Object Directory\n \033[0m"
+	@echo "\033[34;1mCreating Object Directory\n \033[0m"
+	@printf "\033[32;1m\nCompiling with: \033[38;5;208m$(CFLAGS)\033[0m\\n\\n"
 	
 linux : CFLAGS += -g
 linux :	$(OBJS_PATH) $(OBJS)
 	@echo "\033[95m Compiling WebServ \033[0m"
 	$(CC) $(OBJS) -o $(NAME)
-	@echo "\\n\033[32;1m WebServ IS READY \033[0m \\n"
+	@echo "\\n\033[32;1mWebServ IS READY \033[0m \\n"
+	@echo $(USAGE)
 
-debug:	CFLAGS += -g -fstandalone-debug  -DDEBUG=1 -fno-limit-debug-info
+debug:	CFLAGS += -g -fstandalone-debug -DDEBUG=1 -fno-limit-debug-info
 debug:	$(NAME)
+	@printf "\033[32;1m\nCompiling with: \033[38;5;208m$(CFLAGS)\033[0m \\n"
 
 clean:
 	@$(RM) $(OBJS_FILES) $(OBJS_PATH) 

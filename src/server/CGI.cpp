@@ -120,21 +120,25 @@ void CGI::execCGI(server_info& info)
 	if (req->getMethod() == "POST")
 		write(fd_pipe[1], body.data(), req->getBody().size());
 
-	pid_t pid = fork();
-	if (pid == -1)
-		perror("fork");
-	
-	if (pid == 0) {
-		execScript(args, envp);
+	switch (pid_t pid = fork()) {
+		case -1: {
+			perror("fork");
+			break;
+		}
+		case  0:
+			execScript(args, envp);
+		
+		default: {
+			int status;
+			waitpid(pid, &status, 0);
+
+			readFromChild();
+			close(fd_pipe[0]);
+			close(fd_pipe[1]);
+
+			freeArrays(args, envp);
+		}
 	}
-	int status;
-	waitpid(pid, &status, 0);
-
-	readFromChild();
-	close(fd_pipe[0]);
-	close(fd_pipe[1]);
-
-	freeArrays(args, envp);
 }
 
 void CGI::execScript(char** args, char** envp)
