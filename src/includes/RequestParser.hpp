@@ -41,7 +41,7 @@ private:
 	std::string body; 		// Optional. Used for POST request
 	std::string QueryString;
 	std::string scriptName;
-	std::string scriptPath; //! Try char * directly
+	std::string scriptPath;
 	StringVector accept;	// type of request.  i.e: text/html
 	StringVector language;	// en-US || en-CA || etc.
 	StringVector char_set;	// UTF-8

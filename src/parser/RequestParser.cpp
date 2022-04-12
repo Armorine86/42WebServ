@@ -124,7 +124,11 @@ void RequestParser::ParseFirstLine(StringIterator &line)
 			cgiEnvPOST(start, vec_str);
 			continue;
 		}
-		else if (start->find("GET") != std::string::npos || start->find("POST") != std::string::npos || start->find("DELETE") != std::string::npos)
+
+		else if (start->find("GET") != std::string::npos
+				|| start->find("POST") != std::string::npos
+				|| start->find("DELETE") != std::string::npos
+				|| start->find("OPTIONS") != std::string::npos)
 		{
 			if (start->find("GET") != std::string::npos)
 				method = "GET";
@@ -138,10 +142,10 @@ void RequestParser::ParseFirstLine(StringIterator &line)
 				return;
 			}
 		}
+
 		else if (start->at(0) == '/')
-		{
 			url = *start;
-		}
+
 		else if (start->find("HTTP") != std::string::npos)
 		{
 			if (start->find("HTTP/1.1") == std::string::npos)
@@ -150,6 +154,7 @@ void RequestParser::ParseFirstLine(StringIterator &line)
 				return;
 			}
 		}
+		
 		else
 		{
 			std::cerr << logEvent("[400] Bad Request\n") << END << std::endl;
