@@ -35,7 +35,7 @@ void Response::deletePath(std::string path)
 		if (dirent->d_type == DT_DIR)
 			line.append("/");
 
-		if (is_dir(line))
+		if (folderExist(line))
 		{
 			deletePath(line);
 			ret = rmdir(line.c_str());

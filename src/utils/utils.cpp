@@ -89,8 +89,7 @@ bool ends_with(std::string const & value, std::string const & ending)
     return std::equal(ending.rbegin(), ending.rend(), value.rbegin());
 }
 
-
-bool is_valid(std::string path)
+bool valid_Folder_File(std::string path)
 {
 	struct stat s;
 	if( stat(path.c_str(),&s) == 0 )
@@ -102,12 +101,18 @@ bool is_valid(std::string path)
 	return false;
 }
 
-bool is_dir(std::string path)
+bool folderExist(std::string path)
 {
 	struct stat s;
-	if( stat(path.c_str(),&s) == 0 && s.st_mode & S_IFDIR)
-		return true;
-	return false;
+
+	return stat(path.c_str(),&s) == 0 && s.st_mode & S_IFDIR;
+}
+
+bool fileExist(std::string path)
+{
+	struct stat s;
+
+	return stat(path.c_str(),&s) == 0;
 }
 
 std::string& left_word_trim(std::string &line, std::string s_delimiters)

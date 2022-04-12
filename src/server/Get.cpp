@@ -11,7 +11,7 @@ void Response::responseGET()
 		handleCGI();
 		return;
 	}
-	if ((!is_dir(path) && request->getURL().find("/upload") != std::string::npos) ||
+	if ((!folderExist(path) && request->getURL().find("/upload") != std::string::npos) ||
 		request->getURL().find("/image") != std::string::npos ||
 		request->getURL().find("favicon.ico") != std::string::npos)
 		makeImage();

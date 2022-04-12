@@ -16,8 +16,13 @@ typedef std::vector<std::string> StringVector;
 std::string logEvent(const std::string &msg);
 std::string format_line(std::string &line, int& line_num);
 bool ends_with(std::string const & value, std::string const & ending);
-bool is_valid(std::string path);
-bool is_dir(std::string path);
+
+// File / Folder Utils
+bool valid_Folder_File(std::string path);
+bool fileExist(std::string path);
+bool folderExist(std::string path);
+void createFile();
+
 
 //	Split
 StringVector split(std::string line, std::string delimiter);

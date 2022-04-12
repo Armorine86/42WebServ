@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   logger.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gcollet <gcollet@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mmondell <mmondell@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/18 09:55:33 by mmondell          #+#    #+#             */
-/*   Updated: 2022/03/10 21:51:03 by gcollet          ###   ########.fr       */
+/*   Updated: 2022/04/12 10:01:17 by mmondell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,8 @@ void logToFile(time_t& t, std::stringstream& ss) {
 	
 	std::ofstream myfile;
 	myfile.open(path.c_str(), std::ios_base::app);
-	if (!myfile.good()) {perror("Max a dit qu'il s'en fou... mais ya une erreur avec le log_file"); }
+	if (!myfile.good())
+		perror("[LOGGER] log_file error");
 
 	myfile << ss.rdbuf();
 	myfile.close();

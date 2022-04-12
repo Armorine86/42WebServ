@@ -68,12 +68,16 @@ private:
 	void deletePath(std::string path);
 	void responseMultipart();
 	void writeToFile(size_t start, size_t pos);
-	size_t setFilename();
+	void setFilename();
 	size_t findBodyEnd(size_t pos, std::string boundary);
 	std::string lookForRoot(LocationVector& location);
 	std::string setPath(LocationVector& location, StringVector& url_vec, size_t i, bool var);
 	std::string lookForContent(LocationVector& location);
 	std::string findUploadPath();
+
+
+	size_t findBodyStart();
+	void handleFile();
 
 	// Image Methods
 	typedef std::pair<char *, std::streampos> ImgInfo;

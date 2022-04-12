@@ -28,8 +28,15 @@ void Response::responseMultipart()
 			server->tropBeaucoup = true;
 			return;
 		}
-		start = setFilename();
+		setFilename();
+		start = findBodyStart();
 		pos = start;
+
+		if (fileExist(path)) {
+			handleFile();
+		}
+		if (server->bytes == RECV_BUFSIZE)
+			server->isChunked = true;
 	}
 	
 	pos = findBodyEnd(pos, server->bin_boundary);
@@ -44,10 +51,22 @@ void Response::responseMultipart()
 	}
 }
 
-size_t Response::setFilename() 
+size_t Response::findBodyStart()
+{
+	size_t start = 0;
+	std::string content(request->buffer);
+
+	start = content.find("filename=", start);
+	start = content.find("\r\n\r\n", start);
+	start += 4;
+
+	return start;
+}
+
+void Response::setFilename() 
 {
 	size_t start = 0, pos = 0;
-	std::string content, filepath;
+	std::string content;
 
 	content = request->buffer;
 	pos = content.find("filename=\"", pos);
@@ -61,22 +80,29 @@ size_t Response::setFilename()
 			{
 				if (config.locations.at(i).upload_directory != "")
 				{
-					filepath.assign(config.locations.at(i).upload_directory);
+					path.assign(config.locations.at(i).upload_directory);
 					break;
 				}
 			}
-			filepath.append(content.substr(pos, start - pos));
-			server->upload_path.assign(filepath);
+			if (!folderExist(path))
+				mkdir(path.c_str(), ACCESSPERMS);
+
+			path.append(content.substr(pos, start - pos));
+			server->upload_path.assign(path);
 		}
-		start = content.find("\r\n\r\n", start);
-		start += 4;
-		std::ifstream infile(server->upload_path.c_str());
-		if (infile.good())
-			unlink(server->upload_path.c_str());
-		if (server->bytes == RECV_BUFSIZE)
-			server->isChunked = true;
 	}
-	return start;
+}
+
+void Response::handleFile()
+{
+	std::ifstream infile(server->upload_path.c_str());
+
+	if (infile.good()) {
+		logEvent("File Already Exists");
+		if (remove(server->upload_path.c_str()) == -1)
+			logEvent("Could Not Delete File");
+		logEvent("File Deleted Succesfully");
+	}
 }
 
 void Response::writeToFile(size_t start, size_t pos) 
@@ -85,7 +111,7 @@ void Response::writeToFile(size_t start, size_t pos)
 			std::ofstream::out | std::ofstream::app | std::ofstream::binary);
 
 	if (!ofs.good() || !ofs.is_open())
-		std::cout << BRED << "OFSTREAM Error in filepath" << END << std::endl;
+		std::cerr << BRED << logEvent("OFSTREAM Error in filepath") << END << std::endl;
 
 	const char *addr = &request->buffer[start];
 
@@ -99,7 +125,7 @@ void Response::writeToFile(size_t start, size_t pos)
 	ofs.close();
 
 	if (!ofs.good())
-		std::cout << BRED << "OFSTREAM Error in writing" << END << std::endl;
+		std::cerr << BRED << logEvent("OFSTREAM Error in writing") << END << std::endl;
 }
 
 size_t Response::findBodyEnd(size_t pos, std::string boundary) 

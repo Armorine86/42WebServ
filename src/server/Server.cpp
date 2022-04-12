@@ -55,7 +55,8 @@ void Server::handleEvents(PollIterator &it, size_t i)
 	switch (client_fd) {
 		case -1:
 		{
-			perror("accept");
+			std::cerr 	<< logEvent("[ACCEPT] Could not Accept Connection")
+						<< strerror(errno) << END << std::endl;
 			break;
 		}
 		default:
@@ -88,6 +89,9 @@ void Server::handleClient(PollIterator &it)
 		case -1:
 		{
 			perror("recv");
+			std::cerr 	<< logEvent("[RECV] Error Receiving Data")
+						<< strerror(errno) << END << std::endl;
+			closeSocket(it);
 			break;
 		}
 
@@ -144,7 +148,10 @@ void Server::sendResponse(std::string &str_buffer, int sender_fd, char *buf)
 
 		DEBUG_DISPLAY_RESP_HEADER
 
-		send(sender_fd, buffer, MAX_SEND, 0);
+		if (send(sender_fd, buffer, MAX_SEND, 0) == -1) {
+			std::cerr 	<< logEvent("[SEND] Error Sending Data")
+						<< strerror(errno) << END << std::endl;
+		}
 
 		delete[] buffer;
 		bin_boundary = "";
@@ -167,7 +174,8 @@ void Server::closeSocket(PollIterator &it)
 void Server::run()
 {
 	for (size_t i = 0; i < sockets.size(); i++)
-		std::cout << YELLOW << logEvent("Server is listening on: " + sockets.at(i).getHostName() + "\n") << END << std::endl;
+		std::cout 	<< YELLOW << logEvent("Server is listening on: " + sockets.at(i).getHostName() + "\n")
+					<< END << std::endl;
 
 	while (true)
 	{

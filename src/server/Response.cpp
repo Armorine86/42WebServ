@@ -97,7 +97,7 @@ std::string Response::lookForRoot(LocationVector &location)
 		}
 		if (path == "/redirection")
 			break;
-		if (!is_valid(path))
+		if (!valid_Folder_File(path))
 			path = "";
 	}
 	return path;
