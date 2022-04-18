@@ -157,7 +157,7 @@ void RequestParser::ParseFirstLine(StringIterator &line)
 		
 		else
 		{
-			std::cerr << logEvent("[400] Bad Request\n") << END << std::endl;
+			//std::cerr << logEvent("[400] Bad Request\n") << END << std::endl;
 			return;
 		}
 	}
