@@ -1,12 +1,15 @@
 # WebServ
 
 ## A 42 project
-
 > 420 - Enhance your calm
 
-### Project Objective
+---
 
-The goal of this project is to create your very own HTTP Web Server and serve a Static web page.
+### Project Score:
+[![mmondell's 42 webserv Score](https://badge42.vercel.app/api/v2/cl1mb28v7003209mtmfky9fw8/project/2549175)](https://github.com/JaeSeoKim/badge42)
+
+
+The goal of this project is to create your very own HTTP Web Server.
 ---
 [Our Notion Page](https://groovy-light-9b7.notion.site/HTTP-Web-Server-0acb4a5e283a4d9ab029827a4e390350)
 ---
