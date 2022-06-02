@@ -11,13 +11,12 @@
 /* ************************************************************************** */
 
 #include "utils.hpp"
-#include <ostream>
 #include <fstream>
+#include <ostream>
 #include <sys/stat.h>
 #include <sys/types.h>
 
-bool checkDir(const char* folderPath)
-{
+bool checkDir(const char* folderPath) {
     struct stat sb;
 
     if (stat(folderPath, &sb) == 0 && S_ISDIR(sb.st_mode))
@@ -27,39 +26,38 @@ bool checkDir(const char* folderPath)
 
 void logToFile(time_t& t, std::stringstream& ss) {
 
-	struct tm * now = localtime(&t);
+    struct tm* now = localtime(&t);
 
-	char buffer [80];
-	strftime (buffer,80,"%Y-%m-%d.",now);
+    char buffer[80];
+    strftime(buffer, 80, "%Y-%m-%d.", now);
 
-	if (!checkDir("/log"))
-		mkdir("log", ACCESSPERMS);
-		
-	std::string path("log/log_file[");
+    if (!checkDir("/log"))
+        mkdir("log", ACCESSPERMS);
 
-	path.append(buffer);
-	path.append("].txt");
-	
-	std::ofstream myfile;
-	myfile.open(path.c_str(), std::ios_base::app);
-	if (!myfile.good())
-		perror("[LOGGER] log_file error");
+    std::string path("log/log_file[");
 
-	myfile << ss.rdbuf();
-	myfile.close();
+    path.append(buffer);
+    path.append("].txt");
+
+    std::ofstream myfile;
+    myfile.open(path.c_str(), std::ios_base::app);
+    if (!myfile.good())
+        perror("[LOGGER] log_file error");
+
+    myfile << ss.rdbuf();
+    myfile.close();
 }
 
-std::string logEvent(const std::string &msg) {
+std::string logEvent(const std::string& msg) {
 
-	std::stringstream ss;
-	time_t timeNow = time(0);
+    std::stringstream ss;
+    time_t timeNow = time(0);
 
-	std::string date = (ctime(&timeNow));
-	date.resize(date.length() - 1);
-	
-	ss << "[" << date << "] " << msg;
+    std::string date = (ctime(&timeNow));
+    date.resize(date.length() - 1);
 
-	logToFile(timeNow, ss);
-	return ss.str();
+    ss << "[" << date << "] " << msg;
+
+    logToFile(timeNow, ss);
+    return ss.str();
 }
-

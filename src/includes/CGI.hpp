@@ -1,12 +1,12 @@
 #ifndef __CGI_H__
 #define __CGI_H__
 
-#include "defines.hpp"
 #include "RequestParser.hpp"
 #include "Server.hpp"
+#include "defines.hpp"
 #include "utils.hpp"
-#include <unistd.h>
 #include <algorithm>
+#include <unistd.h>
 
 #define N_ENV_VAR 14
 #define READ 0
@@ -15,37 +15,36 @@
 #define BUFFER_SIZE 570
 
 class CGI {
-	public:
-		CGI() {}
-		CGI(RequestParser* request, server_info& server);
-		~CGI() {};
-	
-		std::string getCGIouput() { return output; }
-	private:
+  public:
+    CGI() {}
+    CGI(RequestParser* request, server_info& server);
+    ~CGI(){};
 
-		RequestParser *req;
-		int fd_pipe[2];
-		std::string url;
-		std::string body;
-		
-		std::string output; // final result to be sent back to Response body field
-		StringVector envVar; // CGI Environment Variables
+    std::string getCGIouput() { return output; }
 
+  private:
+    RequestParser* req;
+    int fd_pipe[2];
+    std::string url;
+    std::string body;
 
-		//StringVector argv;
+    std::string output;  // final result to be sent back to Response body field
+    StringVector envVar; // CGI Environment Variables
 
-		std::string formatContentDisposition();
-		std::string& findScriptType(server_info& server);
-		void setEnvVariables(server_info& server);
-		char** setExecArgs(server_info& server);
-		char** convToCharPtr();
-		void execCGI(server_info& server);
-		void execScript(char** args, char** envp);
+    // StringVector argv;
 
-		void readFromChild();
+    std::string formatContentDisposition();
+    std::string& findScriptType(server_info& server);
+    void setEnvVariables(server_info& server);
+    char** setExecArgs(server_info& server);
+    char** convToCharPtr();
+    void execCGI(server_info& server);
+    void execScript(char** args, char** envp);
 
-		void createPipe();
-		void cleanPipes();
+    void readFromChild();
+
+    void createPipe();
+    void cleanPipes();
 
 }; // CGI
 

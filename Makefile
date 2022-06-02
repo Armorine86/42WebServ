@@ -4,29 +4,29 @@ INC_PATH		=	src/includes/
 OBJS_PATH 		=	obj/
 SRCS_PATH 		=	src/
 CC 				=	clang++
-CFLAGS			=	-Wall -Werror -Wextra -Wpedantic -std=c++98 -O3
+CFLAGS			=	-Wall -Werror -Wextra -Wpedantic -std=c++98
 RM				=	rm -rf
 
 INC_FILES 		=	colors.hpp defines.hpp status_codes.hpp
 
 SRCS_FILES		=	main.cpp 
 
-UTILS_FILES		=	logger.cpp utils.cpp
+UTILS_FILES		=	logger.cpp utils.cpp Error.cpp
 UTILS_HDRS		=	utils.hpp
 
 PARSER_FILES	=	ConfigParser.cpp ConfigParser_utils.cpp RequestParser.cpp
 PARSER_HDRS		=	config_fields.hpp ConfigParser.hpp RequestParser.hpp
 				
-SERVER_FILES	= 	Server.cpp Socket.cpp Response.cpp Error.cpp Get.cpp Post.cpp Delete.cpp
+SERVER_FILES	= 	Server.cpp Socket.cpp Response.cpp Get.cpp Post.cpp Delete.cpp CGI.cpp
 SERVER_HDRS		= 	Server.hpp Socket.hpp Response.hpp
 
-CGI_FILES		=	CGI.cpp	
+CGI_FILES		=		
 CGI_HDRS		=	CGI.hpp
 
-UTILS_PATH		= 	$(SRCS_PATH)utils
-SERVER_PATH		=	$(SRCS_PATH)server
-PARSER_PATH		=	$(SRCS_PATH)parser
-CGI_PATH		=	$(SRCS_PATH)cgi
+UTILS_PATH		= 	$(SRCS_PATH)utils/
+SERVER_PATH		=	$(SRCS_PATH)server/
+PARSER_PATH		=	$(SRCS_PATH)parser/
+CGI_PATH		=	$(SRCS_PATH)cgi/
 
 SRCS 			=	$(addprefix $(SRCS_PATH), $(SRCS_FILES))
 SERVER_SRCS		=	$(addprefix $(SERVER_PATH), $(SERVER_FILES))
@@ -42,17 +42,18 @@ OBJS 			=	$(addprefix $(OBJS_PATH), $(OBJS_FILES))
 
 VPATH			=	$(SRCS_PATH) $(UTILS_PATH) $(SERVER_PATH) $(PARSER_PATH) $(CGI_PATH)
 
-ALL_INCLUDES	= 	-I$(INC_PATH)\
-					-I$(UTILS_PATH)\
-					-I$(PARSER_PATH)\
-					-I$(SERVER_PATH)\
-					-I$(CGI_PATH)\
+ALL_SRCS		= 	$(addprefix $(SRCS_PATH), $(SRCS_FILES))\
+					$(addprefix $(UTILS_PATH), $(UTILS_FILES))\
+					$(addprefix $(PARSER_PATH), $(PARSER_FILES))\
+					$(addprefix $(SERVER_PATH), $(SERVER_FILES))\
+#					$(addprefix $(CGI_PATH), $(CGI_FILES))\
 
 USAGE			=	"\033[38;5;57m./webserv <empty for default config file>\\n"\
 					"Default Ports: \033[38;5;135m8081 || 4242\033[0m\\n"
 
+
 $(OBJS_PATH)%.o: %.cpp
-	@$(CC) $(CFLAGS) $(ALL_INCLUDES) -c $< -o $@
+	@$(CC) $(CFLAGS) -I$(INC_PATH) -c $< -o $@
 	@printf "\033[93m▓▓▓\033[0m"
 
 all:	$(NAME)
@@ -77,6 +78,12 @@ linux :	$(OBJS_PATH) $(OBJS)
 debug:	CFLAGS += -g -fstandalone-debug -DDEBUG=1 -fno-limit-debug-info
 debug:	$(NAME)
 	@printf "\033[32;1m\nCompiling with: \033[38;5;208m$(CFLAGS)\033[0m \\n"
+
+release: CFLAGS += -O3
+release: all
+
+fmt:
+	clang-format -i $(ALL_SRCS) $(addsuffix *.hpp, $(INC_PATH))
 
 clean:
 	@$(RM) $(OBJS_FILES) $(OBJS_PATH) 

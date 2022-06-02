@@ -2,21 +2,20 @@
 #define __DEFINES_H__
 
 #include <cstdlib>
-#include <signal.h>
-#include <vector>
-#include <map>
 #include <cstring>
-#include <string>
 #include <iostream>
+#include <map>
+#include <signal.h>
+#include <string>
+#include <vector>
 
 #include "colors.hpp"
 #include "utils.hpp"
 
 // DEBUG
-# ifndef DEBUG
-#  define DEBUG 0
-# endif
-
+#ifndef DEBUG
+#define DEBUG 0
+#endif
 
 // General Purpose defines
 #define DEFAULT_CONFIG_FILE "config_files/default.conf"
@@ -42,21 +41,22 @@ typedef std::vector<std::string> StringVector;
 typedef std::vector<std::string>::iterator StringIterator;
 
 // Print Client IP
-#define PRINT_CLIENT_IP std::cout 	<< YELLOW\
-									<< logEvent("Accepted Connection from: " + clientIP(client_fd, addrlen) + "\n")\
-									<< END << std::endl;
+#define PRINT_CLIENT_IP                                                                            \
+    std::cout << YELLOW                                                                            \
+              << logEvent("Accepted Connection from: " + clientIP(client_fd, addrlen) + "\n")      \
+              << END << std::endl;
 
 // Debug Macros
-#define DEBUG_DISPLAY_HEADER if (DEBUG) {\
-		std::cout << TEAL << "\n+++ REQUEST HEADER +++\n\n"\
-				  << END << YELLOW << "client fd: " << it->fd\
-				  << END << "\n"\
-				  << TEAL << str_buffer << END << std::endl; }
+#define DEBUG_DISPLAY_HEADER                                                                       \
+    if (DEBUG) {                                                                                   \
+        std::cout << TEAL << "\n+++ REQUEST HEADER +++\n\n"                                        \
+                  << END << YELLOW << "client fd: " << it->fd << END << "\n"                       \
+                  << TEAL << str_buffer << END << std::endl;                                       \
+    }
 
-#define DEBUG_DISPLAY_RESP_HEADER if (DEBUG) {\
-	std::cout	<< GREEN\
-				<< "+++ RESPONSE +++\n\n"\
-				<< END << header.data() << std::endl;\
-}
+#define DEBUG_DISPLAY_RESP_HEADER                                                                  \
+    if (DEBUG) {                                                                                   \
+        std::cout << GREEN << "+++ RESPONSE +++\n\n" << END << header.data() << std::endl;         \
+    }
 
 #endif // __DEFINES_H__
