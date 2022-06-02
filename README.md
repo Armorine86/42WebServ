@@ -16,9 +16,9 @@ The goal of this project is to create your very own HTTP Web Server.
 
 ### Authors:
 
-[Armorine86 - Overview](https://github.com/Armorine86)
+Armorine86 - myself
 
-[gabcollet - Overview](https://github.com/gabcollet)
+[gabcollet](https://github.com/gabcollet)
 
 ---
 
