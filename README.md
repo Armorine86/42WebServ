@@ -11,7 +11,7 @@
 
 The goal of this project is to create your very own HTTP Web Server.
 ---
-[Our Notion Page](https://groovy-light-9b7.notion.site/HTTP-Web-Server-0acb4a5e283a4d9ab029827a4e390350)
+[Notion page explaining the project](https://groovy-light-9b7.notion.site/HTTP-Web-Server-0acb4a5e283a4d9ab029827a4e390350)
 ---
 
 ### Authors:
